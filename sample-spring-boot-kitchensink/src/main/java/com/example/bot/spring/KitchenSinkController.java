@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 2016 LINE Corporation
  *
  * LINE Corporation licenses this file to you under the Apache License,
@@ -365,11 +365,7 @@ public class KitchenSinkController {
                 ));
                 break;
             default:
-                log.info("Returns echo message {}: {}", replyToken, text);
-                this.replyText(
-                        replyToken,
-                        text
-                );
+                log.info("Ignore message {}: {}", replyToken, text);
                 break;
         }
     }
