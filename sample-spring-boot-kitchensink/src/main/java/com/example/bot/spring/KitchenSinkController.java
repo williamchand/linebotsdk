@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright 2016 LINE Corporation
  *
  * LINE Corporation licenses this file to you under the Apache License,
