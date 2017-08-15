@@ -164,7 +164,7 @@ public class KitchenSinkController {
         String text = content.getText();
 
         log.info("Got text message from {}: {}", replyToken, text);
-        if (text.indexOf("/profile")>0){
+        if (text.indexOf("/profile")>=0){
                 String userId = event.getSource().getUserId();
                 if (userId != null) {
                     lineMessagingClient
@@ -187,7 +187,7 @@ public class KitchenSinkController {
                 } else {
                     this.replyText(replyToken, "Bot can't use profile API without user ID");
                 }
-        }else if (text.indexOf("/leave")>0){
+        }else if (text.indexOf("/leave")>=0){
                 Source source = event.getSource();
                 if (source instanceof GroupSource) {
                     this.replyText(replyToken, "Leaving group");
@@ -198,7 +198,7 @@ public class KitchenSinkController {
                 } else {
                     this.replyText(replyToken, "Bot can't leave from 1:1 chat");
                 }
-        }else if (text.indexOf("/question")>0){
+        }else if (text.indexOf("/question")>=0){
                 ConfirmTemplate confirmTemplate = new ConfirmTemplate(
                         "Do it?",
                         new MessageAction("Yes", "Yes!"),
@@ -206,7 +206,7 @@ public class KitchenSinkController {
                 );
                 TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
                 this.reply(replyToken, templateMessage);
-        }else if (text.indexOf("/buttons")>0){
+        }else if (text.indexOf("/buttons")>=0){
                 String imageUrl = createUri("/static/buttons/1040.jpg");
                 ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
                         imageUrl,
@@ -225,7 +225,7 @@ public class KitchenSinkController {
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
                 this.reply(replyToken, templateMessage);
-        }else if (text.indexOf("/carousel")>0){
+        }else if (text.indexOf("/carousel")>=0){
                 String imageUrl = createUri("/static/buttons/1040.jpg");
                 CarouselTemplate carouselTemplate = new CarouselTemplate(
                         Arrays.asList(
@@ -245,7 +245,7 @@ public class KitchenSinkController {
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Carousel alt text", carouselTemplate);
                 this.reply(replyToken, templateMessage);
-        }else if (text.indexOf("/imagemap")>0){
+        }else if (text.indexOf("/imagemap")>=0){
                 this.reply(replyToken, new ImagemapMessage(
                         createUri("/static/rich"),
                         "This is alt text",
@@ -277,7 +277,7 @@ public class KitchenSinkController {
                                 )
                         )
                 ));
-    }else if (text.indexOf("/help")>0){
+    }else if (text.indexOf("/help")>=0){
         	this.replyText(replyToken,
 		      "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
 		      "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
