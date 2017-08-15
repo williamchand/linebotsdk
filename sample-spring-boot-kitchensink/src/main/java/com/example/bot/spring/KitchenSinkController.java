@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 2016 LINE Corporation
  *
  * LINE Corporation licenses this file to you under the Apache License,
@@ -95,65 +95,27 @@ public class KitchenSinkController {
 
     @EventMapping
     public void handleStickerMessageEvent(MessageEvent<StickerMessageContent> event) {
-        handleSticker(event.getReplyToken(), event.getMessage());
+        log.info("Received message(Ignored): {}", event);
     }
 
     @EventMapping
     public void handleLocationMessageEvent(MessageEvent<LocationMessageContent> event) {
-        LocationMessageContent locationMessage = event.getMessage();
-        reply(event.getReplyToken(), new LocationMessage(
-                locationMessage.getTitle(),
-                locationMessage.getAddress(),
-                locationMessage.getLatitude(),
-                locationMessage.getLongitude()
-        ));
+        log.info("Received message(Ignored): {}", event);
     }
 
     @EventMapping
     public void handleImageMessageEvent(MessageEvent<ImageMessageContent> event) throws IOException {
-        // You need to install ImageMagick
-        handleHeavyContent(
-                event.getReplyToken(),
-                event.getMessage().getId(),
-                responseBody -> {
-                    DownloadedContent jpg = saveContent("jpg", responseBody);
-                    DownloadedContent previewImg = createTempFile("jpg");
-                    system(
-                            "convert",
-                            "-resize", "240x",
-                            jpg.path.toString(),
-                            previewImg.path.toString());
-                    reply(((MessageEvent) event).getReplyToken(),
-                          new ImageMessage(jpg.getUri(), jpg.getUri()));
-                });
+        log.info("Received message(Ignored): {}", event);
     }
 
     @EventMapping
     public void handleAudioMessageEvent(MessageEvent<AudioMessageContent> event) throws IOException {
-        handleHeavyContent(
-                event.getReplyToken(),
-                event.getMessage().getId(),
-                responseBody -> {
-                    DownloadedContent mp4 = saveContent("mp4", responseBody);
-                    reply(event.getReplyToken(), new AudioMessage(mp4.getUri(), 100));
-                });
+        log.info("Received message(Ignored): {}", event);
     }
 
     @EventMapping
     public void handleVideoMessageEvent(MessageEvent<VideoMessageContent> event) throws IOException {
-        // You need to install ffmpeg and ImageMagick.
-        handleHeavyContent(
-                event.getReplyToken(),
-                event.getMessage().getId(),
-                responseBody -> {
-                    DownloadedContent mp4 = saveContent("mp4", responseBody);
-                    DownloadedContent previewImg = createTempFile("jpg");
-                    system("convert",
-                           mp4.path + "[0]",
-                           previewImg.path.toString());
-                    reply(((MessageEvent) event).getReplyToken(),
-                          new VideoMessage(mp4.getUri(), previewImg.uri));
-                });
+        log.info("Received message(Ignored): {}", event);
     }
 
     @EventMapping
@@ -175,14 +137,12 @@ public class KitchenSinkController {
 
     @EventMapping
     public void handlePostbackEvent(PostbackEvent event) {
-        String replyToken = event.getReplyToken();
-        this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());
+        log.info("Received message(Ignored): {}", event);
     }
 
     @EventMapping
     public void handleBeaconEvent(BeaconEvent event) {
-        String replyToken = event.getReplyToken();
-        this.replyText(replyToken, "Got beacon message " + event.getBeacon().getHwid());
+        log.info("Received message(Ignored): {}", event);
     }
 
     @EventMapping
@@ -215,32 +175,12 @@ public class KitchenSinkController {
         this.reply(replyToken, new TextMessage(message));
     }
 
-    private void handleHeavyContent(String replyToken, String messageId,
-                                    Consumer<MessageContentResponse> messageConsumer) {
-        final MessageContentResponse response;
-        try {
-            response = lineMessagingClient.getMessageContent(messageId)
-                                          .get();
-        } catch (InterruptedException | ExecutionException e) {
-            reply(replyToken, new TextMessage("Cannot get image: " + e.getMessage()));
-            throw new RuntimeException(e);
-        }
-        messageConsumer.accept(response);
-    }
-
-    private void handleSticker(String replyToken, StickerMessageContent content) {
-        reply(replyToken, new StickerMessage(
-                content.getPackageId(), content.getStickerId())
-        );
-    }
-
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
         String text = content.getText();
 
         log.info("Got text message from {}: {}", replyToken, text);
-        switch (text) {
-            case "profile": {
+        if (text.indexOf("/profile")>0){
                 String userId = event.getSource().getUserId();
                 if (userId != null) {
                     lineMessagingClient
@@ -263,9 +203,7 @@ public class KitchenSinkController {
                 } else {
                     this.replyText(replyToken, "Bot can't use profile API without user ID");
                 }
-                break;
-            }
-            case "bye": {
+        }else if (text.indexOf("/leave")>0){
                 Source source = event.getSource();
                 if (source instanceof GroupSource) {
                     this.replyText(replyToken, "Leaving group");
@@ -276,9 +214,7 @@ public class KitchenSinkController {
                 } else {
                     this.replyText(replyToken, "Bot can't leave from 1:1 chat");
                 }
-                break;
-            }
-            case "confirm": {
+        }else if (text.indexOf("/question")>0){
                 ConfirmTemplate confirmTemplate = new ConfirmTemplate(
                         "Do it?",
                         new MessageAction("Yes", "Yes!"),
@@ -286,9 +222,7 @@ public class KitchenSinkController {
                 );
                 TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
                 this.reply(replyToken, templateMessage);
-                break;
-            }
-            case "buttons": {
+        }else if (text.indexOf("/buttons")>0){
                 String imageUrl = createUri("/static/buttons/1040.jpg");
                 ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
                         imageUrl,
@@ -307,9 +241,7 @@ public class KitchenSinkController {
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
                 this.reply(replyToken, templateMessage);
-                break;
-            }
-            case "carousel": {
+        }else if (text.indexOf("/carousel">0){
                 String imageUrl = createUri("/static/buttons/1040.jpg");
                 CarouselTemplate carouselTemplate = new CarouselTemplate(
                         Arrays.asList(
@@ -329,9 +261,7 @@ public class KitchenSinkController {
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Carousel alt text", carouselTemplate);
                 this.reply(replyToken, templateMessage);
-                break;
-            }
-            case "imagemap":
+        }else if (text.indexOf("/imagemap">0){
                 this.reply(replyToken, new ImagemapMessage(
                         createUri("/static/rich"),
                         "This is alt text",
@@ -363,10 +293,12 @@ public class KitchenSinkController {
                                 )
                         )
                 ));
-                break;
-            default:
+        }else if (text.indexOf("/help">0){
+        	this.replyText(replyToken, 
+		"feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
+		"/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
+	}else{
                 log.info("Ignore message {}: {}", replyToken, text);
-                break;
         }
     }
 
