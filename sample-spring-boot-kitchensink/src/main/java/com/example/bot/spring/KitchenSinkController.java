@@ -241,7 +241,7 @@ public class KitchenSinkController {
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
                 this.reply(replyToken, templateMessage);
-        }else if (text.indexOf("/carousel">0){
+        }else if (text.indexOf("/carousel")>0){
                 String imageUrl = createUri("/static/buttons/1040.jpg");
                 CarouselTemplate carouselTemplate = new CarouselTemplate(
                         Arrays.asList(
@@ -261,7 +261,7 @@ public class KitchenSinkController {
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Carousel alt text", carouselTemplate);
                 this.reply(replyToken, templateMessage);
-        }else if (text.indexOf("/imagemap">0){
+        }else if (text.indexOf("/imagemap")>0){
                 this.reply(replyToken, new ImagemapMessage(
                         createUri("/static/rich"),
                         "This is alt text",
@@ -293,11 +293,11 @@ public class KitchenSinkController {
                                 )
                         )
                 ));
-        }else if (text.indexOf("/help">0){
-        	this.replyText(replyToken, 
-		"feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
-		"/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
-	}else{
+    }else if (text.indexOf("/help")>0){
+        	this.replyText(replyToken,
+		      "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
+		      "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
+	  }else{
                 log.info("Ignore message {}: {}", replyToken, text);
         }
     }
