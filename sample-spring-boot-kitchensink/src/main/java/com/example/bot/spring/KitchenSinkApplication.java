@@ -42,17 +42,5 @@ public class KitchenSinkApplication {
         SpringApplication.run(KitchenSinkApplication.class, args);
    }
 
-    @PostConstruct
-    @RequestMapping("/db")
-    public void myRealMainMethod() throws SQLException {
-        Statement stmt = dataSource.getConnection().createStatement();
-        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
-        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
-        stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
-        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
-        while (rs.next()) {
-            System.out.println("Read from DB: " + rs.getTimestamp("tick"));
-        }
-    }
 
 }
