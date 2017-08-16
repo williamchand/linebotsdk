@@ -13,12 +13,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.ArrayList;
-import 
 
+@ConfigurationProperties(prefix="spring")
 @Configuration
 @ComponentScan(basePackages = "com.example.bot.spring")
 public class MainConfig {
-	@Value("${spring.datasource.url}")
 	private String dbUrl;
 
 	@Autowired
@@ -42,17 +41,6 @@ public class MainConfig {
 	    } catch (Exception e) {
 	      model.put("message", e.getMessage());
 	      return "error";
-	    }
-	}
-
-	@Bean
-	public DataSource dataSource() throws SQLException {
-	    if (dbUrl == null || dbUrl.isEmpty()) {
-	      return new HikariDataSource();
-	    } else {
-	      HikariConfig config = new HikariConfig();
-	      config.setJdbcUrl(dbUrl);
-	      return new HikariDataSource(config);
 	    }
 	}
 }
