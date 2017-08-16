@@ -13,6 +13,9 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.google.common.io.ByteStreams;
@@ -66,6 +69,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @LineMessageHandler
+@RestController
 public class KitchenSinkController {
     @Autowired
     private LineMessagingClient lineMessagingClient;
@@ -153,7 +157,7 @@ public class KitchenSinkController {
             throw new IllegalArgumentException("replyToken must not be empty");
         }
         if (message.length() > 1000) {
-            message = message.substring(0, 1000 - 2) + "……";
+            message = message.substring(0, 1000 - 2) + "â€¦â€¦";
         }
         this.reply(replyToken, new TextMessage(message));
     }
@@ -215,12 +219,12 @@ public class KitchenSinkController {
                                 new URIAction("Go to line.me",
                                               "https://line.me"),
                                 new PostbackAction("Say hello1",
-                                                   "hello こんにちは"),
-                                new PostbackAction("言 hello2",
-                                                   "hello こんにちは",
-                                                   "hello こんにちは"),
+                                                   "hello ã�“ã‚“ã�«ã�¡ã�¯"),
+                                new PostbackAction("è¨€ hello2",
+                                                   "hello ã�“ã‚“ã�«ã�¡ã�¯",
+                                                   "hello ã�“ã‚“ã�«ã�¡ã�¯"),
                                 new MessageAction("Say message",
-                                                  "Rice=米")
+                                                  "Rice=ç±³")
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
                 this.reply(replyToken, templateMessage);
@@ -232,14 +236,14 @@ public class KitchenSinkController {
                                         new URIAction("Go to line.me",
                                                       "https://line.me"),
                                         new PostbackAction("Say hello1",
-                                                           "hello こんにちは")
+                                                           "hello ã�“ã‚“ã�«ã�¡ã�¯")
                                 )),
                                 new CarouselColumn(imageUrl, "hoge", "fuga", Arrays.asList(
-                                        new PostbackAction("言 hello2",
-                                                           "hello こんにちは",
-                                                           "hello こんにちは"),
+                                        new PostbackAction("è¨€ hello2",
+                                                           "hello ã�“ã‚“ã�«ã�¡ã�¯",
+                                                           "hello ã�“ã‚“ã�«ã�¡ã�¯"),
                                         new MessageAction("Say message",
-                                                          "Rice=米")
+                                                          "Rice=ç±³")
                                 ))
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Carousel alt text", carouselTemplate);
@@ -331,5 +335,13 @@ public class KitchenSinkController {
     public static class DownloadedContent {
         Path path;
         String uri;
+    }
+    private static final String template = "Hello, %s!";
+    private static final String UserId = "";
+
+    @RequestMapping("/greeting")
+    public Greeting greeting(@RequestParam(value="name", defaultValue="World") String name) {
+        return new Greeting(UserId,
+                            String.format(template, name));
     }
 }

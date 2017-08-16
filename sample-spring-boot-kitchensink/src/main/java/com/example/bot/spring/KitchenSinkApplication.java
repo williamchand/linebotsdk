@@ -19,17 +19,44 @@ package com.example.bot.spring;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+import java.sql.*;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+@Component
 @SpringBootApplication
 public class KitchenSinkApplication {
-    static Path downloadedContentDir;
+    @Autowired
+    private DataSource dataSource;
 
+    static Path downloadedContentDir;
+    
     public static void main(String[] args) throws IOException {
         downloadedContentDir = Files.createTempDirectory("line-bot");
         SpringApplication.run(KitchenSinkApplication.class, args);
+   }
+
+    @RequestMapping("/greeting")
+    public void mains() throws Exception {
+    	AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(KitchenSinkApplication.class.getPackage().getName());
+    }
+    @PostConstruct
+    public void myRealMainMethod() throws SQLException {
+        Statement stmt = dataSource.getConnection().createStatement();
+        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
+        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
+        stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
+        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
+        while (rs.next()) {
+            System.out.println("Read from DB: " + rs.getTimestamp("tick"));
+        }
     }
 
 }
