@@ -4,6 +4,8 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,8 +18,6 @@ public class MainConfig {
 
 	@Autowired
 	private DataSource dataSource;
-
-	...
 
 	@RequestMapping("/db")
 	String db(Map<String, Object> model) {
