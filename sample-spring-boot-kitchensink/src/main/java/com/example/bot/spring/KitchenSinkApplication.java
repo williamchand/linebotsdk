@@ -43,8 +43,8 @@ public class KitchenSinkApplication {
         SpringApplication.run(KitchenSinkApplication.class, args);
    }
 
-    @RequestMapping("/greeting")
-    public void mains() throws Exception {
+    @RequestMapping("/db")
+    public static void mains() throws Exception {
     	AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(KitchenSinkApplication.class.getPackage().getName());
     }
     @PostConstruct

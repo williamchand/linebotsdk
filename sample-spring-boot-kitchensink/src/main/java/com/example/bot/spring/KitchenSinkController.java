@@ -337,7 +337,7 @@ public class KitchenSinkController {
         String uri;
     }
     private static final String template = "Hello, %s!";
-    private static final String UserId = "";
+    private static final String UserId = "run";
 
     @RequestMapping("/greeting")
     public Greeting greeting(@RequestParam(value="name", defaultValue="World") String name) {
