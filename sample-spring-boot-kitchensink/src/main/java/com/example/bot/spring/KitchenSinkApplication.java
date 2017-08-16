@@ -32,27 +32,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @SpringBootApplication
 public class KitchenSinkApplication {
-    @Autowired
-    private DataSource dataSource;
-
     static Path downloadedContentDir;
     
     public static void main(String[] args) throws IOException {
         downloadedContentDir = Files.createTempDirectory("line-bot");
         SpringApplication.run(KitchenSinkApplication.class, args);
    }
-
-    @RequestMapping("/db")
-    public void myRealMainMethod() throws SQLException {
-        Statement stmt = dataSource.getConnection().createStatement();
-        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
-        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
-        stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
-        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
-        while (rs.next()) {
-            System.out.println("Read from DB: " + rs.getTimestamp("tick"));
-        }
-    }
-    
-
 }

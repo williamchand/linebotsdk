@@ -11,21 +11,43 @@ import java.net.URISyntaxException;
 @Configuration
 @ComponentScan(basePackages = "com.example.bot.spring")
 public class MainConfig {
+	@Value("${spring.datasource.url}")
+	private String dbUrl;
 
-    @Bean
-    public BasicDataSource dataSource() throws URISyntaxException {
-        URI dbUri = new URI(System.getenv("DATABASE_URL"));
+	@Autowired
+	private DataSource dataSource;
 
-        String username = dbUri.getUserInfo().split(":")[0];
-        String password = dbUri.getUserInfo().split(":")[1];
-        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + dbUri.getPath();
+	...
 
-        BasicDataSource basicDataSource = new BasicDataSource();
-        basicDataSource.setUrl(dbUrl);
-        basicDataSource.setUsername(username);
-        basicDataSource.setPassword(password);
+	@RequestMapping("/db")
+	String db(Map<String, Object> model) {
+	    try (Connection connection = dataSource.getConnection()) {
+	      Statement stmt = connection.createStatement();
+	      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)");
+	      stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
+	      ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
 
-        return basicDataSource;
-    }
+	      ArrayList<String> output = new ArrayList<String>();
+	      while (rs.next()) {
+	        output.add("Read from DB: " + rs.getTimestamp("tick"));
+	      }
 
+	      model.put("records", output);
+	      return "db";
+	    } catch (Exception e) {
+	      model.put("message", e.getMessage());
+	      return "error";
+	    }
+	}
+
+	@Bean
+	public DataSource dataSource() throws SQLException {
+	    if (dbUrl == null || dbUrl.isEmpty()) {
+	      return new HikariDataSource();
+	    } else {
+	      HikariConfig config = new HikariConfig();
+	      config.setJdbcUrl(dbUrl);
+	      return new HikariDataSource(config);
+	    }
+	}
 }
