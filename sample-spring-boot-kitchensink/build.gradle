@@ -16,6 +16,12 @@
 
 apply plugin: 'org.springframework.boot'
 
+jar {
+    baseName = 'gs-rest-service'
+    version =  '0.1.0'
+}
+
 dependencies {
     compile project(':line-bot-spring-boot')
+    testCompile('com.jayway.jsonpath:json-path')
 }
