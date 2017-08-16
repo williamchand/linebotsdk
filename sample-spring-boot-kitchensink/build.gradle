@@ -17,6 +17,7 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
+    compile 'postgresql:postgresql:42.1.1'
     compile 'commons-dbcp:commons-dbcp:1.4'
     compile project(':line-bot-spring-boot')
     testCompile('com.jayway.jsonpath:json-path')
