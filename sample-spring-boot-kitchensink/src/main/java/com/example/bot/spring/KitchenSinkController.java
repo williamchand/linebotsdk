@@ -293,7 +293,7 @@ public class KitchenSinkController {
         			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
 		    		  "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
 	  }else if(text.indexOf("/time")>=0){
-		  try{
+		    try{
 	    		Statement stmt = dataSource.getConnection().createStatement();
 	        	stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
 	        	stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
