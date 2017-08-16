@@ -30,7 +30,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Component
 @SpringBootApplication
 public class KitchenSinkApplication {
     @Autowired
@@ -43,11 +42,8 @@ public class KitchenSinkApplication {
         SpringApplication.run(KitchenSinkApplication.class, args);
    }
 
-    @RequestMapping("/db")
-    public static void mains() throws Exception {
-    	AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(KitchenSinkApplication.class.getPackage().getName());
-    }
     @PostConstruct
+    @RequestMapping("/db")
     public void myRealMainMethod() throws SQLException {
         Statement stmt = dataSource.getConnection().createStatement();
         stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
