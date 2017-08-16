@@ -3,6 +3,7 @@ package com.example.bot.spring;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,9 @@ import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.ArrayList;
 
-@ConfigurationProperties(prefix="spring")
 @Configuration
 @ComponentScan(basePackages = "com.example.bot.spring")
 public class MainConfig {
-	private String dbUrl;
 
 	@Autowired
 	private DataSource dataSource;
