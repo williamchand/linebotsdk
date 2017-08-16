@@ -301,7 +301,6 @@ public class KitchenSinkController {
 	        		while (rs.next()) {
 	        			this.replyText(replyToken,"Read from DB: " + rs.getTimestamp("tick"));
 	        		}
-	    			this.replyText(replyToken,e.getMessage());
 	  }else{
                 log.info("Ignore message {}: {}", replyToken, text);
         }
