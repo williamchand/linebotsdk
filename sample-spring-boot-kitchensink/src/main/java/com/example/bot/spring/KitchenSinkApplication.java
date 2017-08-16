@@ -19,13 +19,8 @@ package com.example.bot.spring;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-import java.sql.*;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
