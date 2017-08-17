@@ -338,7 +338,7 @@ public class KitchenSinkController {
    	 		  	        	Statement stmt = connection.createStatement();
    	 		  	        	stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
    	 		  	        	stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
-   	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR') , ");
+   	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
    	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
    	 		  	        	while (rs.next()) {
    	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback,"Read from DB: " + rs.getTimestamp("tick"));
@@ -349,7 +349,7 @@ public class KitchenSinkController {
    	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback,err.getMessage());
    	 		  			}
    	   				}
-   	   			}, 100, 100); // Every second
+   	   			}, 30000, 100); // Every second
       }else if(text.indexOf("/cancel")>=0){
     	  		Source source = event.getSource();
 		  		String groupid="";
