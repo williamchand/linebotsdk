@@ -29,14 +29,17 @@ import java.sql.DriverManager;
 @SpringBootApplication
 public class KitchenSinkApplication {
     static Path downloadedContentDir;
-    public Connection connection; 
+    private Connection c;
+    public Connection connection{
+    	return c;
+    }
     public static void main(String[] args) throws IOException {
         try {
             Class.forName("org.postgresql.Driver");
-            connection = DriverManager
+            c = DriverManager
                .getConnection("jdbc:postgres://ec2-54-83-48-188.compute-1.amazonaws.com:5432/dd0o9u061jj8k6",
                "okkpzunfngqddy", "3368af043d89677c824553247b1026010cad749945f4e6a3f03e8d6173e0d92c");
-            connection.setAutoCommit(false);
+            c.setAutoCommit(false);
         }catch(Exception e){
         }
         downloadedContentDir = Files.createTempDirectory("line-bot");
