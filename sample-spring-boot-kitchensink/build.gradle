@@ -17,17 +17,9 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-  runtime "org.slf4j:slf4j-simple:1.7.12"
   compile "com.heroku.sdk:heroku-jdbc:0.1.1"
   compile "org.postgresql:postgresql:9.4-1201-jdbc4"    
-  compile 'commons-dbcp:commons-dbcp:1.4'
-  compile 'org.liquibase:liquibase-core:3.4.1'
-  compile 'cglib:cglib:3.2.0'
-  compile 'com.h2database:h2:1.4.191'
-  compile 'javax.validation:validation-api:1.1.0.Final'
-  compile 'org.hsqldb:hsqldb'
   compile project(':line-bot-spring-boot')       
   compile 'org.springframework:spring-jdbc:4.3.10.RELEASE'
-  compile 'org.flywaydb:flyway-core:3.2.1'
   testCompile('com.jayway.jsonpath:json-path')
 }

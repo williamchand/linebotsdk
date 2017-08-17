@@ -1,4 +1,5 @@
 package com.example.bot.spring;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
@@ -11,12 +12,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
-import java.net.URISyntaxException;
 import java.net.URI;
 import java.sql.*;
 import javax.sql.DataSource;;
 
-import com.heroku.sdk.jdbc.DatabaseUrl;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -29,7 +28,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import com.google.common.io.ByteStreams;
+
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.client.MessageContentResponse;
 import com.linecorp.bot.model.ReplyMessage;
