@@ -90,6 +90,7 @@ public class KitchenSinkController {
     private LineMessagingClient lineMessagingClient;
     public Timer t0;
     public String TokenCallback;
+    
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
         TextMessageContent message = event.getMessage();
@@ -129,13 +130,13 @@ public class KitchenSinkController {
     @EventMapping
     public void handleFollowEvent(FollowEvent event) {
         String replyToken = event.getReplyToken();
-        this.replyText(replyToken, "Got followed event");
+        this.replyText(replyToken, "Anda mengikuti bot");
     }
 
     @EventMapping
     public void handleJoinEvent(JoinEvent event) {
         String replyToken = event.getReplyToken();
-        this.replyText(replyToken, "Joined " + event.getSource());
+        this.replyText(replyToken, "Bot telah bergabung ke grup anda untuk info lebih lanjut /help" );
     }
 
     @EventMapping
@@ -170,13 +171,39 @@ public class KitchenSinkController {
 
     private void replyText(@NonNull String replyToken, @NonNull String message) {
         if (replyToken.isEmpty()) {
-            throw new IllegalArgumentException("replyToken must not be empty");
+            throw new IllegalArgumentException("replyToken tidak boleh kosong");
         }
         if (message.length() > 1000) {
-            message = message.substring(0, 1000 - 2) + "â€¦â€¦";
+            message = message.substring(0, 1000 - 2);
         }
         this.reply(replyToken, new TextMessage(message));
     }
+
+    private void push(@NonNull String To, @NonNull Message message) {
+        push(To, Collections.singletonList(message));
+    }
+
+    private void push(@NonNull String To, @NonNull List<Message> messages) {
+        try {
+            BotApiResponse apiResponse = lineMessagingClient
+                    .pushMessage(new PushMessage(To, messages))
+                    .get();
+            log.info("Sent messages: {}", apiResponse);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void pushText(@NonNull String To, @NonNull String message) {
+        if (To.isEmpty()) {
+            throw new IllegalArgumentException("replyToken tidak boleh kosong");
+        }
+        if (message.length() > 1000) {
+            message = message.substring(0, 1000 - 2);
+        }
+        this.push(To, new TextMessage(message));
+    }
+
     private Timer startTimer(final String value) {
     	   Timer timer = new Timer("Timer" + value);
     	   return timer;
@@ -187,7 +214,7 @@ public class KitchenSinkController {
         String text = content.getText();
         
         log.info("Got text message from {}: {}", replyToken, text);
-        if (text.indexOf("/profile")>=0){
+        if (text.indexOf("/create")>=0){
                 String userId = event.getSource().getUserId();
                 if (userId != null) {
                     lineMessagingClient
@@ -197,31 +224,22 @@ public class KitchenSinkController {
                                     this.replyText(replyToken, throwable.getMessage());
                                     return;
                                 }
-
-                                this.reply(
-                                        replyToken,
-                                        Arrays.asList(new TextMessage(
-                                                	          "Id: " + userId),
-                                        			  new TextMessage(
-                                                              "Display name: " + profile.getDisplayName()),
-                                                      new TextMessage(
-                                                    		  "Status message: " + profile.getStatusMessage()))
-                                );
+                                this.replyText(replyToken, profile.getDisplayName()+" Telah Membuat Game");
                             });
                 } else {
-                    this.replyText(replyToken, "Bot can't use profile API without user ID");
+                    this.replyText(replyToken, "Tolong izinkan Bot mengakses akun");
                 }
                 
         }else if (text.indexOf("/leave")>=0){
                 Source source = event.getSource();
                 if (source instanceof GroupSource) {
-                    this.replyText(replyToken, "Leaving group");
+                    this.replyText(replyToken, "Bot meninggalkan grup");
                     lineMessagingClient.leaveGroup(((GroupSource) source).getGroupId()).get();
                 } else if (source instanceof RoomSource) {
-                    this.replyText(replyToken, "Leaving room");
+                    this.replyText(replyToken, "Bot meninggalkan ruangan");
                     lineMessagingClient.leaveRoom(((RoomSource) source).getRoomId()).get();
                 } else {
-                    this.replyText(replyToken, "Bot can't leave from 1:1 chat");
+                    this.replyText(replyToken, "ini room 1:1 tidak bisa menggunakan perintah /leave");
                 }
         }else if (text.indexOf("/question")>=0){
                 ConfirmTemplate confirmTemplate = new ConfirmTemplate(
@@ -235,74 +253,16 @@ public class KitchenSinkController {
                 String imageUrl = createUri("/static/buttons/1040.jpg");
                 ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
                         imageUrl,
-                        "My button sample",
-                        "Hello, my button",
+                        "Klik join Untuk Bergabung dalam permainan",
+                        "Teka Teki Indonesia",
                         Arrays.asList(
-                                new URIAction("Go to line.me",
-                                              "https://line.me"),
-                                new PostbackAction("Say hello1",
-                                                   "hello ã�“ã‚“ã�«ã�¡ã�¯"),
-                                new PostbackAction("è¨€ hello2",
-                                                   "hello ã�“ã‚“ã�«ã�¡ã�¯",
-                                                   "hello ã�“ã‚“ã�«ã�¡ã�¯"),
-                                new MessageAction("Say message",
-                                                  "Rice=ç±³")
+                               new MessageAction("join","telah Bergabung ke dalam game"
+                                                 
+                            		   			)
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
                 this.reply(replyToken, templateMessage);
-        }else if (text.indexOf("/carousel")>=0){
-                String imageUrl = createUri("/static/buttons/1040.jpg");
-                CarouselTemplate carouselTemplate = new CarouselTemplate(
-                        Arrays.asList(
-                                new CarouselColumn(imageUrl, "hoge", "fuga", Arrays.asList(
-                                        new URIAction("Go to line.me",
-                                                      "https://line.me"),
-                                        new PostbackAction("Say hello1",
-                                                           "hello ã�“ã‚“ã�«ã�¡ã�¯")
-                                )),
-                                new CarouselColumn(imageUrl, "hoge", "fuga", Arrays.asList(
-                                        new PostbackAction("è¨€ hello2",
-                                                           "hello ã�“ã‚“ã�«ã�¡ã�¯",
-                                                           "hello ã�“ã‚“ã�«ã�¡ã�¯"),
-                                        new MessageAction("Say message",
-                                                          "Rice=ç±³")
-                                ))
-                        ));
-                TemplateMessage templateMessage = new TemplateMessage("Carousel alt text", carouselTemplate);
-                this.reply(replyToken, templateMessage);
-        }else if (text.indexOf("/imagemap")>=0){
-                this.reply(replyToken, new ImagemapMessage(
-                        createUri("/static/rich"),
-                        "This is alt text",
-                        new ImagemapBaseSize(1040, 1040),
-                        Arrays.asList(
-                                new URIImagemapAction(
-                                        "https://store.line.me/family/manga/en",
-                                        new ImagemapArea(
-                                                0, 0, 520, 520
-                                        )
-                                ),
-                                new URIImagemapAction(
-                                        "https://store.line.me/family/music/en",
-                                        new ImagemapArea(
-                                                520, 0, 520, 520
-                                        )
-                                ),
-                                new URIImagemapAction(
-                                        "https://store.line.me/family/play/en",
-                                        new ImagemapArea(
-                                                0, 520, 520, 520
-                                        )
-                                ),
-                                new MessageImagemapAction(
-                                        "URANAI!",
-                                        new ImagemapArea(
-                                                520, 520, 520, 520
-                                        )
-                                )
-                        )
-                ));
-      }else if (text.indexOf("/help")>=0){
+        }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
 		    		  "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
@@ -321,15 +281,19 @@ public class KitchenSinkController {
 		  			this.replyText(replyToken,e.getMessage());
 		  		}catch(URISyntaxException err){
 		  				this.replyText(replyToken,err.getMessage());
-		  			}
+		  		}
 	  }else if(text.indexOf("/delay")>=0){
 		  		Source source = event.getSource();
 		  		String groupid="";
-		  		this.TokenCallback = replyToken;
+		  		String userId="";
+		  		this.TokenCallback1 = replyToken;
 		  		if (source instanceof GroupSource) {
 		  			groupid = ((GroupSource) source).getGroupId();
 		  		}
-		  		KitchenSinkController.this.t0 = startTimer(groupid);
+		  		if (groupid ==""){
+	                userId = event.getSource().getUserId();
+		  		}
+		  		KitchenSinkController.this.t0 = startTimer(userid);
 		  		KitchenSinkController.this.t0.schedule( new TimerTask() {
    	   				@Override
    	   				public void run() {
@@ -341,21 +305,25 @@ public class KitchenSinkController {
    	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
    	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
    	 		  	        	while (rs.next()) {
-   	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback,"Read from DB: " + rs.getTimestamp("tick"));
+   	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,"Read from DB: " + rs.getTimestamp("tick"));
    	 		  	        	}
    	 		  			}catch(SQLException e){
-   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback,e.getMessage());
+   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,e.getMessage());
    	 		  			}catch(URISyntaxException err){
-   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback,err.getMessage());
+   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,err.getMessage());
    	 		  			}
    	   				}
    	   			}, 5000, 100); // Every second
       }else if(text.indexOf("/cancel")>=0){
     	  		Source source = event.getSource();
 		  		String groupid="";
-	  			if (source instanceof GroupSource) {
-	  				groupid = ((GroupSource) source).getGroupId();
-	  			}
+		  		String userId="";
+				if (source instanceof GroupSource) {
+				  	groupid = ((GroupSource) source).getGroupId();
+				}
+				if (groupid ==""){
+			        userId = event.getSource().getUserId();
+				}
 	  			KitchenSinkController.this.t0 = startTimer(groupid);
 	  			KitchenSinkController.this.t0.cancel();
       }else{
@@ -423,30 +391,5 @@ public class KitchenSinkController {
     public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="message", defaultValue="") String message) {
        this.pushText(User, message);
        return new Greeting(User,message);
-    }
-
-    private void push(@NonNull String To, @NonNull Message message) {
-        push(To, Collections.singletonList(message));
-    }
-
-    private void push(@NonNull String To, @NonNull List<Message> messages) {
-        try {
-            BotApiResponse apiResponse = lineMessagingClient
-                    .pushMessage(new PushMessage(To, messages))
-                    .get();
-            log.info("Sent messages: {}", apiResponse);
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void pushText(@NonNull String To, @NonNull String message) {
-        if (To.isEmpty()) {
-            throw new IllegalArgumentException("replyToken must not be empty");
-        }
-        if (message.length() > 1000) {
-            message = message.substring(0, 1000 - 2) + "â€¦â€¦";
-        }
-        this.push(To, new TextMessage(message));
     }
 }
