@@ -88,8 +88,7 @@ import lombok.extern.slf4j.Slf4j;
 public class KitchenSinkController {
     @Autowired
     private LineMessagingClient lineMessagingClient;
-    @Autowired
-    private String TokenCalltest;
+    
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
         TextMessageContent message = event.getMessage();
@@ -177,47 +176,11 @@ public class KitchenSinkController {
         }
         this.reply(replyToken, new TextMessage(message));
     }
-
-    private void push(@NonNull String To, @NonNull Message message) {
-        push(To, Collections.singletonList(message));
-    }
-
-    private void push(@NonNull String To, @NonNull List<Message> messages) {
-        try {
-            BotApiResponse apiResponse = lineMessagingClient
-                    .pushMessage(new PushMessage(To, messages))
-                    .get();
-            log.info("Sent messages: {}", apiResponse);
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void pushText(@NonNull String To, @NonNull String message) {
-        if (To.isEmpty()) {
-            throw new IllegalArgumentException("replyToken must not be empty");
-        }
-        if (message.length() > 1000) {
-            message = message.substring(0, 1000 - 2) + "â€¦â€¦";
-        }
-        this.push(To, new TextMessage(message));
-    }
-    
     private Timer startTimer(final String value) {
- 	   Timer timer = new Timer("Timer" + value);
- 	   return timer;
+    	   Timer timer = new Timer("Timer" + value);
+    	   return timer;
     }
 
-    private static Connection getConnection() throws URISyntaxException, SQLException {
-        URI dbUri = new URI(System.getenv("DATABASE_URL"));
-
-        String username = dbUri.getUserInfo().split(":")[0];
-        String password = dbUri.getUserInfo().split(":")[1];
-        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + dbUri.getPath();
-
-        return DriverManager.getConnection(dbUrl, username, password);
-    }
-    
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
         String text = content.getText();
@@ -355,13 +318,58 @@ public class KitchenSinkController {
 		  	        }
 		  		}catch(SQLException e){
 		  			this.replyText(replyToken,e.getMessage());
+		  		}catch(URISyntaxException err){
+		  				this.replyText(replyToken,err.getMessage());
+		  			}
+	  }else if(text.indexOf("/delay")>=0){
+		  		Source source = event.getSource();
+		  		String groupid="";
+		  		if (source instanceof GroupSource) {
+		  			groupid = ((GroupSource) source).getGroupId();
 		  		}
-	  
+		  		Timer t0 = startTimer(groupid);
+   	   			t0.schedule( new TimerTask() {
+   	   				@Override
+   	   				public void run() {
+   	   					try{
+   	 		  				Connection connection = KitchenSinkController.getConnection();
+   	 		  	        	Statement stmt = connection.createStatement();
+   	 		  	        	stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
+   	 		  	        	stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
+   	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR') , ");
+   	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
+   	 		  	        	while (rs.next()) {
+   	 		  	        		KitchenSinkController.this.replyText(replyToken,"Read from DB: " + rs.getTimestamp("tick"));
+   	 		  	        	}
+   	 		  			}catch(SQLException e){
+   	 		  				KitchenSinkController.this.replyText(replyToken,e.getMessage());
+   	 		  			}catch(URISyntaxException err){
+   	 		  				KitchenSinkController.this.replyText(replyToken,err.getMessage());
+   	 		  			}
+   	   				}
+   	   			}, 100, 100); // Every second
+      }else if(text.indexOf("/cancel")>=0){
+    	  		Source source = event.getSource();
+		  		String groupid="";
+	  			if (source instanceof GroupSource) {
+	  				groupid = ((GroupSource) source).getGroupId();
+	  			}
+    	  	    Timer t0 = startTimer(groupid);
+    	  		t0.cancel();
       }else{
                 log.info("Ignore message {}: {}", replyToken, text);
       }
     }
     
+    private static Connection getConnection() throws URISyntaxException, SQLException {
+        URI dbUri = new URI(System.getenv("DATABASE_URL"));
+
+        String username = dbUri.getUserInfo().split(":")[0];
+        String password = dbUri.getUserInfo().split(":")[1];
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + dbUri.getPath();
+
+        return DriverManager.getConnection(dbUrl, username, password);
+    }
     private static String createUri(String path) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                                           .path(path).build()
@@ -413,5 +421,30 @@ public class KitchenSinkController {
     public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="message", defaultValue="") String message) {
        this.pushText(User, message);
        return new Greeting(User,message);
+    }
+
+    private void push(@NonNull String To, @NonNull Message message) {
+        push(To, Collections.singletonList(message));
+    }
+
+    private void push(@NonNull String To, @NonNull List<Message> messages) {
+        try {
+            BotApiResponse apiResponse = lineMessagingClient
+                    .pushMessage(new PushMessage(To, messages))
+                    .get();
+            log.info("Sent messages: {}", apiResponse);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void pushText(@NonNull String To, @NonNull String message) {
+        if (To.isEmpty()) {
+            throw new IllegalArgumentException("replyToken must not be empty");
+        }
+        if (message.length() > 1000) {
+            message = message.substring(0, 1000 - 2) + "â€¦â€¦";
+        }
+        this.push(To, new TextMessage(message));
     }
 }
