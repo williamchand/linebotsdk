@@ -177,11 +177,47 @@ public class KitchenSinkController {
         }
         this.reply(replyToken, new TextMessage(message));
     }
-    private Timer startTimer(final String value) {
-    	   Timer timer = new Timer("Timer" + value);
-    	   return timer;
+
+    private void push(@NonNull String To, @NonNull Message message) {
+        push(To, Collections.singletonList(message));
     }
 
+    private void push(@NonNull String To, @NonNull List<Message> messages) {
+        try {
+            BotApiResponse apiResponse = lineMessagingClient
+                    .pushMessage(new PushMessage(To, messages))
+                    .get();
+            log.info("Sent messages: {}", apiResponse);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void pushText(@NonNull String To, @NonNull String message) {
+        if (To.isEmpty()) {
+            throw new IllegalArgumentException("replyToken must not be empty");
+        }
+        if (message.length() > 1000) {
+            message = message.substring(0, 1000 - 2) + "â€¦â€¦";
+        }
+        this.push(To, new TextMessage(message));
+    }
+    
+    private Timer startTimer(final String value) {
+ 	   Timer timer = new Timer("Timer" + value);
+ 	   return timer;
+    }
+
+    private static Connection getConnection() throws URISyntaxException, SQLException {
+        URI dbUri = new URI(System.getenv("DATABASE_URL"));
+
+        String username = dbUri.getUserInfo().split(":")[0];
+        String password = dbUri.getUserInfo().split(":")[1];
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + dbUri.getPath();
+
+        return DriverManager.getConnection(dbUrl, username, password);
+    }
+    
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
         String text = content.getText();
@@ -363,15 +399,6 @@ public class KitchenSinkController {
       }
     }
     
-    private static Connection getConnection() throws URISyntaxException, SQLException {
-        URI dbUri = new URI(System.getenv("DATABASE_URL"));
-
-        String username = dbUri.getUserInfo().split(":")[0];
-        String password = dbUri.getUserInfo().split(":")[1];
-        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + dbUri.getPath();
-
-        return DriverManager.getConnection(dbUrl, username, password);
-    }
     private static String createUri(String path) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                                           .path(path).build()
@@ -423,30 +450,5 @@ public class KitchenSinkController {
     public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="message", defaultValue="") String message) {
        this.pushText(User, message);
        return new Greeting(User,message);
-    }
-
-    private void push(@NonNull String To, @NonNull Message message) {
-        push(To, Collections.singletonList(message));
-    }
-
-    private void push(@NonNull String To, @NonNull List<Message> messages) {
-        try {
-            BotApiResponse apiResponse = lineMessagingClient
-                    .pushMessage(new PushMessage(To, messages))
-                    .get();
-            log.info("Sent messages: {}", apiResponse);
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void pushText(@NonNull String To, @NonNull String message) {
-        if (To.isEmpty()) {
-            throw new IllegalArgumentException("replyToken must not be empty");
-        }
-        if (message.length() > 1000) {
-            message = message.substring(0, 1000 - 2) + "â€¦â€¦";
-        }
-        this.push(To, new TextMessage(message));
     }
 }
