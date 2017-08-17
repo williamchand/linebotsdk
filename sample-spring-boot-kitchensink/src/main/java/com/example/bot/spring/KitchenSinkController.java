@@ -82,8 +82,12 @@ public class KitchenSinkController {
 	@Bean
     @Primary
     @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource dataSource() {
-        return DataSourceBuilder.create().build();
+    public void DataSource dataSource() {
+		try{
+			return DataSourceBuilder.create().build();
+		}catch{
+			return 0;
+        }
     }
     @Autowired
     private LineMessagingClient lineMessagingClient;
