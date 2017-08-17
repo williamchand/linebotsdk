@@ -1,5 +1,4 @@
 package com.example.bot.spring;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
@@ -12,10 +11,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+import java.net.URISyntaxException;
 import java.net.URI;
 import java.sql.*;
 import javax.sql.DataSource;;
 
+import com.heroku.sdk.jdbc.DatabaseUrl;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -28,9 +29,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.google.common.io.ByteStreams;
-
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.client.MessageContentResponse;
 import com.linecorp.bot.model.ReplyMessage;
@@ -297,9 +296,32 @@ public class KitchenSinkController {
         			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
 		    		  "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
 	  }else if(text.indexOf("/time")>=0){
+		  		try{
+		  			Connection connection = getConnection();
+		  	        Statement stmt = connection.createStatement();
+		  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
+		  	        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
+		  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
+		  	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
+		  	        while (rs.next()) {
+		  	        	this.replyText(replyToken,"Read from DB: " + rs.getTimestamp("tick"));
+		  	        }
+		  		}catch(SQLException e){
+		  			this.replyText(replyToken,e.getMessage());
+		  		}
 	  }else{
                 log.info("Ignore message {}: {}", replyToken, text);
       }
+    }
+    
+    private static Connection getConnection() throws URISyntaxException, SQLException {
+        URI dbUri = new URI(System.getenv("DATABASE_URL"));
+
+        String username = dbUri.getUserInfo().split(":")[0];
+        String password = dbUri.getUserInfo().split(":")[1];
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + dbUri.getPath();
+
+        return DriverManager.getConnection(dbUrl, username, password);
     }
     private static String createUri(String path) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
