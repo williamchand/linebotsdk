@@ -176,7 +176,7 @@ public class KitchenSinkController {
         }
         this.reply(replyToken, new TextMessage(message));
     }
-    private Timer startTimer(final int value) {
+    private Timer startTimer(final String value) {
     	   Timer timer = new Timer("Timer" + value);
     	   return timer;
     }
@@ -320,7 +320,11 @@ public class KitchenSinkController {
 		  			this.replyText(replyToken,e.getMessage());
 		  		}
 	  }else if(text.indexOf("/delay")>=0){
-		  		Timer t0 = startTimer(0);
+		  		Source source = event.getSource();
+		  		if (source instanceof GroupSource) {
+		  			String groupid = ((GroupSource) source).getGroupId();
+		  		}
+		  		Timer t0 = startTimer(groupid);
    	   			t0.schedule( new TimerTask() {
    	   				public void run() {
    	   					try{
@@ -339,6 +343,11 @@ public class KitchenSinkController {
    	   				}
    	   			}, 30000, 1000); // Every second
       }else if(text.indexOf("/cancel")>=0){
+    	  		Source source = event.getSource();
+	  			if (source instanceof GroupSource) {
+	  				String groupid = ((GroupSource) source).getGroupId();
+	  			}
+    	  	    Timer t0 = startTimer(groupid);
     	  		t0.cancel();
       }else{
                 log.info("Ignore message {}: {}", replyToken, text);
