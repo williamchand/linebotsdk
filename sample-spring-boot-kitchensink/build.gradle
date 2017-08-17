@@ -17,6 +17,7 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
+    compile 'cglib:cglib:3.2.0'
     compile 'org.postgresql:postgresql:9.2-1002-jdbc4'
     compile 'commons-dbcp:commons-dbcp:1.4'
     compile project(':line-bot-spring-boot')

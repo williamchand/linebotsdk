@@ -11,6 +11,10 @@ import java.net.URISyntaxException;
 @Configuration
 @ComponentScan(basePackages = "com.example.bot.spring")
 public class MainConfig {
+	private static Connection getConnection() throws URISyntaxException, SQLException {
+		String dbUrl = System.getenv("JDBC_DATABASE_URL");
+    	return DriverManager.getConnection(dbUrl);
+	}
     @Bean
     public BasicDataSource dataSource() throws URISyntaxException {
         URI dbUri = new URI(System.getenv("DATABASE_URL"));
