@@ -12,15 +12,20 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.sql.*;
-import javax.sql.*;
+import javax.sql.DataSource;;
 
 import com.heroku.sdk.jdbc.DatabaseUrl;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.google.common.io.ByteStreams;
 import com.linecorp.bot.client.LineMessagingClient;
@@ -74,6 +79,12 @@ import lombok.extern.slf4j.Slf4j;
 @LineMessageHandler
 @RestController
 public class KitchenSinkController {
+	@Bean
+    @Primary
+    @ConfigurationProperties(prefix = "spring.datasource")
+    public DataSource dataSource() {
+        return DataSourceBuilder.create().build();
+    }
     @Autowired
     private LineMessagingClient lineMessagingClient;
     
