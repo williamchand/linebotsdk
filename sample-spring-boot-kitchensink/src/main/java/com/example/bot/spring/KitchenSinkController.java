@@ -355,45 +355,8 @@ public class KitchenSinkController {
 		  	        }
 		  		}catch(SQLException e){
 		  			this.replyText(replyToken,e.getMessage());
-		  		}catch(URISyntaxException err){
-		  			this.replyText(replyToken,err.getMessage());
 		  		}
-	  }else if(text.indexOf("/delay")>=0){
-		  		Source source = event.getSource();
-		  		String groupid="";
-		  		this.TokenCalltest=replyToken;
-		  		if (source instanceof GroupSource) {
-		  			groupid = ((GroupSource) source).getGroupId();
-		  		}
-		  		Timer t0 = startTimer(groupid);
-   	   			t0.schedule( new TimerTask() {
-   	   				@Override
-   	   				public void run() {
-   	   					try{
-   	 		  				Connection connection = KitchenSinkController.getConnection();
-   	 		  	        	Statement stmt = connection.createStatement();
-   	 		  	        	stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
-   	 		  	        	stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
-   	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR') , ");
-   	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
-   	 		  	        	while (rs.next()) {
-   	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCalltest,"Read from DB: " + rs.getTimestamp("tick"));
-   	 		  	        	}
-   	 		  			}catch(SQLException e){
-   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCalltest,e.getMessage());
-   	 		  			}catch(URISyntaxException err){
-   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCalltest,err.getMessage());
-   	 		  			}
-   	   				}
-   	   			}, 30000, 1000); // Every second
-      }else if(text.indexOf("/cancel")>=0){
-    	  		Source source = event.getSource();
-		  		String groupid="";
-	  			if (source instanceof GroupSource) {
-	  				groupid = ((GroupSource) source).getGroupId();
-	  			}
-    	  	    Timer t0 = startTimer(groupid);
-    	  		t0.cancel();
+	  
       }else{
                 log.info("Ignore message {}: {}", replyToken, text);
       }
