@@ -314,10 +314,10 @@ public class KitchenSinkController {
 		  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
 		  	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
 		  	        while (rs.next()) {
-		  	        	this.replyText(replyToken,"Read from DB: " + rs.getTimestamp("tick"));
+		  	        	replyText(replyToken,"Read from DB: " + rs.getTimestamp("tick"));
 		  	        }
 		  		}catch(SQLException e){
-		  			this.replyText(replyToken,e.getMessage());
+		  			replyText(replyToken,e.getMessage());
 		  		}
 	  }else if(text.indexOf("/delay")>=0){
 		  		Source source = event.getSource();
@@ -334,7 +334,7 @@ public class KitchenSinkController {
    	 		  	        	Statement stmt = connection.createStatement();
    	 		  	        	stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
    	 		  	        	stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
-   	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
+   	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR') , ");
    	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
    	 		  	        	while (rs.next()) {
    	 		  	        		this.replyText(replyToken,"Read from DB: " + rs.getTimestamp("tick"));
