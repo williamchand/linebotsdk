@@ -82,7 +82,7 @@ public class KitchenSinkController {
 	@Bean
     @Primary
     @ConfigurationProperties(prefix = "spring.datasource")
-    public void DataSource dataSource() {
+    public DataSource dataSource() {
         return DataSourceBuilder.create().build();
     }
     @Autowired
