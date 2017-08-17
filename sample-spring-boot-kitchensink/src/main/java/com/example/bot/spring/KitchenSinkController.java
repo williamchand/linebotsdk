@@ -17,7 +17,7 @@ import java.sql.*;
 import javax.sql.DataSource;;
 import java.util.Timer;
 import java.util.TimerTask;
-
+import java.lang.Override;
 import com.heroku.sdk.jdbc.DatabaseUrl;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -321,11 +321,13 @@ public class KitchenSinkController {
 		  		}
 	  }else if(text.indexOf("/delay")>=0){
 		  		Source source = event.getSource();
+		  		String groupid;
 		  		if (source instanceof GroupSource) {
-		  			String groupid = ((GroupSource) source).getGroupId();
+		  			groupid = ((GroupSource) source).getGroupId();
 		  		}
 		  		Timer t0 = startTimer(groupid);
    	   			t0.schedule( new TimerTask() {
+   	   				@Override
    	   				public void run() {
    	   					try{
    	 		  				Connection connection = getConnection();
@@ -344,8 +346,9 @@ public class KitchenSinkController {
    	   			}, 30000, 1000); // Every second
       }else if(text.indexOf("/cancel")>=0){
     	  		Source source = event.getSource();
+		  		String groupid;
 	  			if (source instanceof GroupSource) {
-	  				String groupid = ((GroupSource) source).getGroupId();
+	  				groupid = ((GroupSource) source).getGroupId();
 	  			}
     	  	    Timer t0 = startTimer(groupid);
     	  		t0.cancel();
