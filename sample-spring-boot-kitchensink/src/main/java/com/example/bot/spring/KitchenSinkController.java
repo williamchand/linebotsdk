@@ -376,7 +376,7 @@ public class KitchenSinkController {
     }
     @RequestMapping("/greeting")
     public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="message", defaultValue="") String message) {
-       this.pushText(User, name);
+       this.pushText(User, message);
        return new Greeting(User,message);
     }
 
