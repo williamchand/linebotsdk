@@ -89,7 +89,7 @@ public class KitchenSinkController {
     @Autowired
     private LineMessagingClient lineMessagingClient;
     public Timer t0;
-    public String TokenCallback;
+    public String TokenCallback1;
     
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
@@ -251,12 +251,14 @@ public class KitchenSinkController {
                 this.reply(replyToken, templateMessage);
         }else if (text.indexOf("/buttons")>=0){
                 String imageUrl = createUri("/static/buttons/1040.jpg");
+                lineMessagingClient.getProfile(userId);
+        
                 ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
                         imageUrl,
                         "Klik join Untuk Bergabung dalam permainan",
                         "Teka Teki Indonesia",
                         Arrays.asList(
-                               new MessageAction("join","telah Bergabung ke dalam game"
+                               new MessageAction("join", profile.getDisplayName() +"telah Bergabung ke dalam game"
                                                  
                             		   			)
                         ));
@@ -285,15 +287,16 @@ public class KitchenSinkController {
 	  }else if(text.indexOf("/delay")>=0){
 		  		Source source = event.getSource();
 		  		String groupid="";
-		  		String userId="";
+		  		String userid="";
 		  		this.TokenCallback1 = replyToken;
 		  		if (source instanceof GroupSource) {
 		  			groupid = ((GroupSource) source).getGroupId();
+		  			KitchenSinkController.this.t0 = startTimer(groupid);
 		  		}
 		  		if (groupid ==""){
-	                userId = event.getSource().getUserId();
+	                userid = event.getSource().getUserId();
+	                KitchenSinkController.this.t0 = startTimer(userid);
 		  		}
-		  		KitchenSinkController.this.t0 = startTimer(userid);
 		  		KitchenSinkController.this.t0.schedule( new TimerTask() {
    	   				@Override
    	   				public void run() {
@@ -317,14 +320,15 @@ public class KitchenSinkController {
       }else if(text.indexOf("/cancel")>=0){
     	  		Source source = event.getSource();
 		  		String groupid="";
-		  		String userId="";
+		  		String userid="";
 				if (source instanceof GroupSource) {
 				  	groupid = ((GroupSource) source).getGroupId();
+		  			KitchenSinkController.this.t0 = startTimer(groupid);
 				}
 				if (groupid ==""){
-			        userId = event.getSource().getUserId();
+			        userid = event.getSource().getUserId();
+		  			KitchenSinkController.this.t0 = startTimer(userid);
 				}
-	  			KitchenSinkController.this.t0 = startTimer(groupid);
 	  			KitchenSinkController.this.t0.cancel();
       }else{
                 log.info("Ignore message {}: {}", replyToken, text);
