@@ -321,7 +321,7 @@ public class KitchenSinkController {
 		  		}
 	  }else if(text.indexOf("/delay")>=0){
 		  		Source source = event.getSource();
-		  		String groupid;
+		  		String groupid="";
 		  		if (source instanceof GroupSource) {
 		  			groupid = ((GroupSource) source).getGroupId();
 		  		}
@@ -330,7 +330,7 @@ public class KitchenSinkController {
    	   				@Override
    	   				public void run() {
    	   					try{
-   	 		  				Connection connection = getConnection();
+   	 		  				Connection connection = KitchenSinkController.getConnection();
    	 		  	        	Statement stmt = connection.createStatement();
    	 		  	        	stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
    	 		  	        	stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
@@ -346,7 +346,7 @@ public class KitchenSinkController {
    	   			}, 30000, 1000); // Every second
       }else if(text.indexOf("/cancel")>=0){
     	  		Source source = event.getSource();
-		  		String groupid;
+		  		String groupid="";
 	  			if (source instanceof GroupSource) {
 	  				groupid = ((GroupSource) source).getGroupId();
 	  			}
