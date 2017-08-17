@@ -11,5 +11,9 @@
             "description": "LINE bot Channel secret from the Channel Console",
             "required":  true
         }
+	"DATABASE_URL":{
+	    "description": "database"
+	    "required": true
+	}
     }
 }

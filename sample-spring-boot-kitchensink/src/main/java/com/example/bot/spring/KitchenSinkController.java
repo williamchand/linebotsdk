@@ -295,7 +295,8 @@ public class KitchenSinkController {
 		    		  "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
 	  }else if(text.indexOf("/time")>=0){
 		  		try{
-		  	        Statement stmt = KitchenSinkApplication.connection().createStatement();
+		  			Connection connection = getConnection();
+		  	        Statement stmt = connection.createStatement();
 		  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
 		  	        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
 		  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
@@ -310,7 +311,16 @@ public class KitchenSinkController {
                 log.info("Ignore message {}: {}", replyToken, text);
       }
     }
+    
+    private static Connection getConnection() throws URISyntaxException, SQLException {
+        URI dbUri = new URI(System.getenv("DATABASE_URL"));
 
+        String username = dbUri.getUserInfo().split(":")[0];
+        String password = dbUri.getUserInfo().split(":")[1];
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + dbUri.getPath();
+
+        return DriverManager.getConnection(dbUrl, username, password);
+    }
     private static String createUri(String path) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                                           .path(path).build()

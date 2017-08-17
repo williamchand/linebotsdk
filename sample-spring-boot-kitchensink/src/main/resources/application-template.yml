@@ -20,11 +20,6 @@ line.bot:
   channel-token: 'Put Your Channel Token Here.'
   channel-secret: 'Put Your Channel Secret Here.'
   handler.path: /callback
-spring:
-  datasource:
-    url: ${JDBC_DATABASE_URL}
-    username: ${JDBC_DATABASE_USERNAME}
-    password: ${JDBC_DATABASE_PASSWORD}
 # To remove Client wire logs. Please comment out following lines.
 # See: https://docs.spring.io/spring-boot/docs/current/reference/html/howto-logging.html
 #
