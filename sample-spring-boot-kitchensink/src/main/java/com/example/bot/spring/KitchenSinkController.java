@@ -349,7 +349,7 @@ public class KitchenSinkController {
    	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback,err.getMessage());
    	 		  			}
    	   				}
-   	   			}, 100, 100); // Every second
+   	   			}, 5000, 100); // Every second
       }else if(text.indexOf("/cancel")>=0){
     	  		Source source = event.getSource();
 		  		String groupid="";
