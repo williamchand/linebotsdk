@@ -88,7 +88,8 @@ import lombok.extern.slf4j.Slf4j;
 public class KitchenSinkController {
     @Autowired
     private LineMessagingClient lineMessagingClient;
-    
+    @Autowired
+    private String TokenCalltest;
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
         TextMessageContent message = event.getMessage();
@@ -324,6 +325,7 @@ public class KitchenSinkController {
 	  }else if(text.indexOf("/delay")>=0){
 		  		Source source = event.getSource();
 		  		String groupid="";
+		  		this.TokenCalltest=replyToken;
 		  		if (source instanceof GroupSource) {
 		  			groupid = ((GroupSource) source).getGroupId();
 		  		}
@@ -339,12 +341,12 @@ public class KitchenSinkController {
    	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR') , ");
    	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
    	 		  	        	while (rs.next()) {
-   	 		  	        		KitchenSinkController.this.replyText(replyToken,"Read from DB: " + rs.getTimestamp("tick"));
+   	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCalltest,"Read from DB: " + rs.getTimestamp("tick"));
    	 		  	        	}
    	 		  			}catch(SQLException e){
-   	 		  				KitchenSinkController.this.replyText(replyToken,e.getMessage());
+   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCalltest,e.getMessage());
    	 		  			}catch(URISyntaxException err){
-   	 		  				KitchenSinkController.this.replyText(replyToken,err.getMessage());
+   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCalltest,err.getMessage());
    	 		  			}
    	   				}
    	   			}, 30000, 1000); // Every second
