@@ -383,6 +383,10 @@ public class KitchenSinkController {
                             String.format(template, name));
     }
 
+    private void push(@NonNull String To, @NonNull Message message) {
+        push(To, Collections.singletonList(message));
+    }
+
     private void push(@NonNull String To, @NonNull List<Message> messages) {
         try {
             BotApiResponse apiResponse = lineMessagingClient
@@ -394,9 +398,9 @@ public class KitchenSinkController {
         }
     }
 
-    private void push(@NonNull String To, @NonNull String message) {
+    private void pushText(@NonNull String To, @NonNull String message) {
         if (To.isEmpty()) {
-            throw new IllegalArgumentException("To must not be empty");
+            throw new IllegalArgumentException("replyToken must not be empty");
         }
         if (message.length() > 1000) {
             message = message.substring(0, 1000 - 2) + "â€¦â€¦";
