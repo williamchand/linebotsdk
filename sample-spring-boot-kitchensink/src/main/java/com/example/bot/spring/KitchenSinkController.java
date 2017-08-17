@@ -337,7 +337,7 @@ public class KitchenSinkController {
    	 		  				this.replyText(replyToken,e.getMessage());
    	 		  			}
    	   				}
-   	   			}, 5000, 1000); // Every second
+   	   			}, 30000, 1000); // Every second
       }else if(text.indexOf("/cancel")>=0){
     	  		t0.cancel();
       }else{
