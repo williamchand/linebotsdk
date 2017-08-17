@@ -20,6 +20,8 @@ dependencies {
   runtime "org.slf4j:slf4j-simple:1.7.12"
   compile "com.heroku.sdk:heroku-jdbc:0.1.1"
   compile "org.postgresql:postgresql:9.4-1201-jdbc4"    
+  compile 'commons-dbcp:commons-dbcp:1.4'
+  compile 'cglib:cglib:3.2.0'
   compile project(':line-bot-spring-boot')
   testCompile('com.jayway.jsonpath:json-path')
 }

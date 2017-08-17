@@ -17,7 +17,6 @@ import javax.sql.*;
 
 import com.heroku.sdk.jdbc.DatabaseUrl;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
