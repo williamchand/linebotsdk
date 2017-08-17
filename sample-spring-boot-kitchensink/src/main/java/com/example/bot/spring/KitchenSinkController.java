@@ -15,6 +15,8 @@ import java.net.URISyntaxException;
 import java.net.URI;
 import java.sql.*;
 import javax.sql.DataSource;;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.heroku.sdk.jdbc.DatabaseUrl;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
@@ -174,11 +176,15 @@ public class KitchenSinkController {
         }
         this.reply(replyToken, new TextMessage(message));
     }
+    private Timer startTimer(final int value) {
+    	   Timer timer = new Timer("Timer" + value);
+    	   return timer;
+    }
 
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
         String text = content.getText();
-
+        
         log.info("Got text message from {}: {}", replyToken, text);
         if (text.indexOf("/profile")>=0){
                 String userId = event.getSource().getUserId();
@@ -313,7 +319,28 @@ public class KitchenSinkController {
 		  		}catch(SQLException e){
 		  			this.replyText(replyToken,e.getMessage());
 		  		}
-	  }else{
+	  }else if(text.indexOf("/delay")>=0){
+		  		Timer t0 = startTimer(0);
+   	   			t0.schedule( new TimerTask() {
+   	   				public void run() {
+   	   					try{
+   	 		  				Connection connection = getConnection();
+   	 		  	        	Statement stmt = connection.createStatement();
+   	 		  	        	stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
+   	 		  	        	stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
+   	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
+   	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
+   	 		  	        	while (rs.next()) {
+   	 		  	        		this.replyText(replyToken,"Read from DB: " + rs.getTimestamp("tick"));
+   	 		  	        	}
+   	 		  			}catch(SQLException e){
+   	 		  				this.replyText(replyToken,e.getMessage());
+   	 		  			}
+   	   				}
+   	   			}, 5000, 1000); // Every second
+      }else if(text.indexOf("/cancel")>=0){
+    	  		t0.cancel();
+      }else{
                 log.info("Ignore message {}: {}", replyToken, text);
       }
     }
