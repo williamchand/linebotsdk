@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+import java.net.URISyntaxException;
 import java.sql.*;
 import javax.sql.DataSource;;
 
