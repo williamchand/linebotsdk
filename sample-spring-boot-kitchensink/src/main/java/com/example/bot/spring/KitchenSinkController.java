@@ -394,7 +394,7 @@ public class KitchenSinkController {
         }
     }
 
-    private void pushText(@NonNull String To, @NonNull String message) {
+    private void push(@NonNull String To, @NonNull String message) {
         if (To.isEmpty()) {
             throw new IllegalArgumentException("To must not be empty");
         }
