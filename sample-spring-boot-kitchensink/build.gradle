@@ -27,7 +27,7 @@ dependencies {
   compile 'javax.validation:validation-api:1.1.0.Final'
   compile 'org.hsqldb:hsqldb'
   compile project(':line-bot-spring-boot')       
-  compile 'org.springframework:spring-jdbc'
+  compile 'org.springframework:spring-jdbc:4.3.10.RELEASE'
   compile 'org.flywaydb:flyway-core:3.2.1'
   testCompile('com.jayway.jsonpath:json-path')
 }
