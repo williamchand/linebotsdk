@@ -23,12 +23,22 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 @SpringBootApplication
 public class KitchenSinkApplication {
     static Path downloadedContentDir;
-    
+    public Connection connection; 
     public static void main(String[] args) throws IOException {
+        try {
+            Class.forName("org.postgresql.Driver");
+            connection = DriverManager
+               .getConnection("jdbc:postgres://ec2-54-83-48-188.compute-1.amazonaws.com:5432/dd0o9u061jj8k6",
+               "okkpzunfngqddy", "3368af043d89677c824553247b1026010cad749945f4e6a3f03e8d6173e0d92c");
+            connection.setAutoCommit(false);
+        }catch(Exception e){
+        }
         downloadedContentDir = Files.createTempDirectory("line-bot");
         SpringApplication.run(KitchenSinkApplication.class, args);
    }

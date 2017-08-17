@@ -79,12 +79,6 @@ import lombok.extern.slf4j.Slf4j;
 @LineMessageHandler
 @RestController
 public class KitchenSinkController {
-	@Bean
-    @Primary
-    @ConfigurationProperties(prefix = "spring.datasource")
-    private DataSource dataSource() {
-        return DataSourceBuilder.create().build();
-    }
     @Autowired
     private LineMessagingClient lineMessagingClient;
     
@@ -301,7 +295,7 @@ public class KitchenSinkController {
 		    		  "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
 	  }else if(text.indexOf("/time")>=0){
 		  		try{
-		  	        Statement stmt = dataSource.getConnection().createStatement();
+		  	        Statement stmt = connection().createStatement();
 		  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
 		  	        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
 		  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
