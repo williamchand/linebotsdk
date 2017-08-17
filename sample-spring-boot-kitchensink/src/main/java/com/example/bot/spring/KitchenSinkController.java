@@ -356,6 +356,7 @@ public class KitchenSinkController {
 	  			if (source instanceof GroupSource) {
 	  				groupid = ((GroupSource) source).getGroupId();
 	  			}
+	  			KitchenSinkController.this.t0 = startTimer(groupid);
 	  			KitchenSinkController.this.t0.cancel();
       }else{
                 log.info("Ignore message {}: {}", replyToken, text);
