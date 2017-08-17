@@ -25,6 +25,6 @@ dependencies {
   compile 'com.h2database:h2:1.4.196'
   compile 'javax.validation:validation-api:2.0.0.Final'
   compile project(':line-bot-spring-boot')       
-  compile 'org.springframework:spring-jdbc:5.0.0.M5'
+  compile 'org.springframework:spring-jdbc:4.3.10.RELEASE'
   testCompile('com.jayway.jsonpath:json-path')
 }
