@@ -374,13 +374,10 @@ public class KitchenSinkController {
         Path path;
         String uri;
     }
-    private static final String template = "Hello, %s!";
-
     @RequestMapping("/greeting")
-    public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="name", defaultValue="") String name) {
+    public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="message", defaultValue="") String message) {
        this.pushText(User, name);
-       return new Greeting(User,
-                            String.format(template, name));
+       return new Greeting(User,message);
     }
 
     private void push(@NonNull String To, @NonNull Message message) {
