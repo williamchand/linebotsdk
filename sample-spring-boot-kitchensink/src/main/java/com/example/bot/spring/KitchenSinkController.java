@@ -375,7 +375,19 @@ public class KitchenSinkController {
 
     @RequestMapping("/greeting")
     public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="name", defaultValue="") String name) {
-  
+    	TextMessage textMessage = new TextMessage("hello");
+    	PushMessage pushMessage = new PushMessage(
+    	        User,
+    	        textMessage
+    	);
+
+    	Response<BotApiResponse> response =
+    	        LineMessagingServiceBuilder
+    	                .create("<channel access token>")
+    	                .build()
+    	                .pushMessage(pushMessage)
+    	                .execute();
+    	System.out.println(response.code() + " " + response.message());
         return new Greeting(User,
                             String.format(template, name));
     }
