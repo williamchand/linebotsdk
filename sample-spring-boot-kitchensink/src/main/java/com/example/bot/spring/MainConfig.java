@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.*;
+import javax.sql.*;
 
 @Configuration
 @ComponentScan(basePackages = "com.example.bot.spring")
