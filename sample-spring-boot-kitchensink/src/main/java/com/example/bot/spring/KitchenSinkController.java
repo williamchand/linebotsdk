@@ -318,6 +318,8 @@ public class KitchenSinkController {
 		  	        }
 		  		}catch(SQLException e){
 		  			this.replyText(replyToken,e.getMessage());
+		  		}catch(URISyntaxException err){
+		  				KitchenSinkController.this.replyText(replyToken,err.getMessage());
 		  		}
 	  }else if(text.indexOf("/delay")>=0){
 		  		Source source = event.getSource();
@@ -341,6 +343,8 @@ public class KitchenSinkController {
    	 		  	        	}
    	 		  			}catch(SQLException e){
    	 		  				KitchenSinkController.this.replyText(replyToken,e.getMessage());
+   	 		  			}catch(URISyntaxException err){
+   	 		  				KitchenSinkController.this.replyText(replyToken,err.getMessage());
    	 		  			}
    	   				}
    	   			}, 30000, 1000); // Every second
