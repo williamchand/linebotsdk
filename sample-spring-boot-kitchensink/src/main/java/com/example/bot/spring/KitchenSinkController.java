@@ -295,7 +295,7 @@ public class KitchenSinkController {
 		    		  "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
 	  }else if(text.indexOf("/time")>=0){
 		  		try{
-		  	        Statement stmt = connection().createStatement();
+		  	        Statement stmt = KitchenSinkApplication.connection().createStatement();
 		  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
 		  	        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
 		  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
