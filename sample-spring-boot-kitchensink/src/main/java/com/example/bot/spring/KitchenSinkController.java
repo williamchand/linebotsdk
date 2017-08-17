@@ -191,11 +191,12 @@ public class KitchenSinkController {
                                 this.reply(
                                         replyToken,
                                         Arrays.asList(new TextMessage(
+                                                	          "Id: " + userId),
+                                        			  new TextMessage(
                                                               "Display name: " + profile.getDisplayName()),
-                                                      new TextMessage("Status message: "
-                                                                      + profile.getStatusMessage()))
+                                                      new TextMessage(
+                                                    		  "Status message: " + profile.getStatusMessage()))
                                 );
-
                             });
                 } else {
                     this.replyText(replyToken, "Bot can't use profile API without user ID");
@@ -374,7 +375,28 @@ public class KitchenSinkController {
 
     @RequestMapping("/greeting")
     public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="name", defaultValue="") String name) {
+    	this.pushText(User,name);
         return new Greeting(User,
                             String.format(template, name));
+    }
+    private void push(@NonNull String To, @NonNull List<Message> messages) {
+        try {
+            BotApiResponse apiResponse = lineMessagingClient
+                    .pushMessage(new PushMessage(To, messages))
+                    .get();
+            log.info("Sent messages: {}", apiResponse);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void pushText(@NonNull String To, @NonNull String message) {
+        if (To.isEmpty()) {
+            throw new IllegalArgumentException("To must not be empty");
+        }
+        if (message.length() > 1000) {
+            message = message.substring(0, 1000 - 2) + "â€¦â€¦";
+        }
+        this.push(To, new TextMessage(message));
     }
 }
