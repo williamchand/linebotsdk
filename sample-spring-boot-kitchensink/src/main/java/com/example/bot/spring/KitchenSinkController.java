@@ -371,11 +371,10 @@ public class KitchenSinkController {
         String uri;
     }
     private static final String template = "Hello, %s!";
-    private static final String UserId = "run";
 
     @RequestMapping("/greeting")
-    public Greeting greeting(@RequestParam(value="name", defaultValue="World") String name) {
-        return new Greeting(UserId,
+    public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="name", defaultValue="") String name) {
+        return new Greeting(User,
                             String.format(template, name));
     }
 }
