@@ -88,7 +88,7 @@ import lombok.extern.slf4j.Slf4j;
 public class KitchenSinkController {
     @Autowired
     private LineMessagingClient lineMessagingClient;
-    
+    public Timer t0;
     public String TokenCallback;
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
@@ -329,8 +329,8 @@ public class KitchenSinkController {
 		  		if (source instanceof GroupSource) {
 		  			groupid = ((GroupSource) source).getGroupId();
 		  		}
-		  		Timer t0 = startTimer(groupid);
-   	   			t0.schedule( new TimerTask() {
+		  		KitchenSinkController.this.t0 = startTimer(groupid);
+		  		KitchenSinkController.this.t0.schedule( new TimerTask() {
    	   				@Override
    	   				public void run() {
    	   					try{
@@ -356,8 +356,7 @@ public class KitchenSinkController {
 	  			if (source instanceof GroupSource) {
 	  				groupid = ((GroupSource) source).getGroupId();
 	  			}
-    	  	    Timer t0 = startTimer(groupid);
-    	  		t0.cancel();
+	  			KitchenSinkController.this.t0.cancel();
       }else{
                 log.info("Ignore message {}: {}", replyToken, text);
       }
