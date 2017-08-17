@@ -79,7 +79,7 @@ import lombok.extern.slf4j.Slf4j;
 public class KitchenSinkController {
     @Autowired
     private LineMessagingClient lineMessagingClient;
-
+    
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
         TextMessageContent message = event.getMessage();
@@ -292,7 +292,18 @@ public class KitchenSinkController {
         			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
 		    		  "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
 	  }else if(text.indexOf("/time")>=0){
-		  		
+		  		try{
+		  	        Statement stmt = dataSource.getConnection().createStatement();
+		  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
+		  	        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
+		  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
+		  	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
+		  	        while (rs.next()) {
+		  	        	this.replyText(replyToken,"Read from DB: " + rs.getTimestamp("tick"));
+		  	        }
+		  		}catch(SQLException e){
+		  			this.replyText(replyToken,e.getMessage());
+		  		}
 	  }else{
                 log.info("Ignore message {}: {}", replyToken, text);
       }
