@@ -129,13 +129,13 @@ public class KitchenSinkController {
     @EventMapping
     public void handleFollowEvent(FollowEvent event) {
         String replyToken = event.getReplyToken();
-        this.replyText(replyToken, "Got followed event");
+        this.replyText(replyToken, "bot telah di ikuti info lebih lanjut /help");
     }
 
     @EventMapping
     public void handleJoinEvent(JoinEvent event) {
         String replyToken = event.getReplyToken();
-        this.replyText(replyToken, "Joined " + event.getSource());
+        this.replyText(replyToken, "Bot telah bergabung ke grup info lebih lanjut /help" );
     }
 
     @EventMapping
@@ -173,7 +173,7 @@ public class KitchenSinkController {
             throw new IllegalArgumentException("replyToken must not be empty");
         }
         if (message.length() > 1000) {
-            message = message.substring(0, 1000 - 2) + "â€¦â€¦";
+            message = message.substring(0, 1000 - 2);
         }
         this.reply(replyToken, new TextMessage(message));
     }
@@ -198,7 +198,7 @@ public class KitchenSinkController {
             throw new IllegalArgumentException("replyToken must not be empty");
         }
         if (message.length() > 1000) {
-            message = message.substring(0, 1000 - 2) + "â€¦â€¦";
+            message = message.substring(0, 1000 - 2);
         }
         this.push(To, new TextMessage(message));
     }
@@ -213,7 +213,7 @@ public class KitchenSinkController {
         String text = content.getText();
         
         log.info("Got text message from {}: {}", replyToken, text);
-        if (text.indexOf("/profile")>=0){
+        if (text.indexOf("/create")>=0){
                 String userId = event.getSource().getUserId();
                 if (userId != null) {
                     lineMessagingClient
@@ -223,7 +223,7 @@ public class KitchenSinkController {
                                     this.replyText(replyToken, throwable.getMessage());
                                     return;
                                 }
-
+                                
                                 this.reply(
                                         replyToken,
                                         Arrays.asList(new TextMessage(
@@ -238,25 +238,6 @@ public class KitchenSinkController {
                     this.replyText(replyToken, "Tolong izinkan Bot mengakses akun");
                 }
                 
-        }else if (text.indexOf("/leave")>=0){
-                Source source = event.getSource();
-                if (source instanceof GroupSource) {
-                    this.replyText(replyToken, "Bot meninggalkan grup");
-                    lineMessagingClient.leaveGroup(((GroupSource) source).getGroupId()).get();
-                } else if (source instanceof RoomSource) {
-                    this.replyText(replyToken, "Bot meninggalkan ruangan");
-                    lineMessagingClient.leaveRoom(((RoomSource) source).getRoomId()).get();
-                } else {
-                    this.replyText(replyToken, "ini room 1:1 tidak bisa menggunakan perintah /leave");
-                }
-        }else if (text.indexOf("/question")>=0){
-                ConfirmTemplate confirmTemplate = new ConfirmTemplate(
-                        "Do it?",
-                        new MessageAction("Yes", "Yes!"),
-                        new MessageAction("No", "No!")
-                );
-                TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
-                this.reply(replyToken, templateMessage);
         }else if (text.indexOf("/buttons")>=0){
                 String imageUrl = createUri("/static/buttons/1040.jpg");
                 ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
@@ -267,68 +248,16 @@ public class KitchenSinkController {
                                 new URIAction("Go to line.me",
                                               "https://line.me"),
                                 new PostbackAction("Say hello1",
-                                                   "hello ã�“ã‚“ã�«ã�¡ã�¯"),
-                                new PostbackAction("è¨€ hello2",
-                                                   "hello ã�“ã‚“ã�«ã�¡ã�¯",
-                                                   "hello ã�“ã‚“ã�«ã�¡ã�¯"),
+                                                   "hello"),
+                                new PostbackAction("hello2",
+                                                   "hello",
+                                                   "hello"),
                                 new MessageAction("Say message",
-                                                  "Rice=ç±³")
+                                                  "Rice")
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
                 this.reply(replyToken, templateMessage);
-        }else if (text.indexOf("/carousel")>=0){
-                String imageUrl = createUri("/static/buttons/1040.jpg");
-                CarouselTemplate carouselTemplate = new CarouselTemplate(
-                        Arrays.asList(
-                                new CarouselColumn(imageUrl, "hoge", "fuga", Arrays.asList(
-                                        new URIAction("Go to line.me",
-                                                      "https://line.me"),
-                                        new PostbackAction("Say hello1",
-                                                           "hello ã�“ã‚“ã�«ã�¡ã�¯")
-                                )),
-                                new CarouselColumn(imageUrl, "hoge", "fuga", Arrays.asList(
-                                        new PostbackAction("è¨€ hello2",
-                                                           "hello ã�“ã‚“ã�«ã�¡ã�¯",
-                                                           "hello ã�“ã‚“ã�«ã�¡ã�¯"),
-                                        new MessageAction("Say message",
-                                                          "Rice=ç±³")
-                                ))
-                        ));
-                TemplateMessage templateMessage = new TemplateMessage("Carousel alt text", carouselTemplate);
-                this.reply(replyToken, templateMessage);
-        }else if (text.indexOf("/imagemap")>=0){
-                this.reply(replyToken, new ImagemapMessage(
-                        createUri("/static/rich"),
-                        "This is alt text",
-                        new ImagemapBaseSize(1040, 1040),
-                        Arrays.asList(
-                                new URIImagemapAction(
-                                        "https://store.line.me/family/manga/en",
-                                        new ImagemapArea(
-                                                0, 0, 520, 520
-                                        )
-                                ),
-                                new URIImagemapAction(
-                                        "https://store.line.me/family/music/en",
-                                        new ImagemapArea(
-                                                520, 0, 520, 520
-                                        )
-                                ),
-                                new URIImagemapAction(
-                                        "https://store.line.me/family/play/en",
-                                        new ImagemapArea(
-                                                0, 520, 520, 520
-                                        )
-                                ),
-                                new MessageImagemapAction(
-                                        "URANAI!",
-                                        new ImagemapArea(
-                                                520, 520, 520, 520
-                                        )
-                                )
-                        )
-                ));
-      }else if (text.indexOf("/help")>=0){
+        }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
 		    		  "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
@@ -394,6 +323,17 @@ public class KitchenSinkController {
 		  			KitchenSinkController.this.t0 = startTimer(userid);
 				}
 	  			KitchenSinkController.this.t0.cancel();
+      }else if (text.indexOf("/leave")>=0){
+          Source source = event.getSource();
+          if (source instanceof GroupSource) {
+              this.replyText(replyToken, "Bot meninggalkan grup");
+              lineMessagingClient.leaveGroup(((GroupSource) source).getGroupId()).get();
+          } else if (source instanceof RoomSource) {
+              this.replyText(replyToken, "Bot meninggalkan ruangan");
+              lineMessagingClient.leaveRoom(((RoomSource) source).getRoomId()).get();
+          } else {
+              this.replyText(replyToken, "ini room 1:1 tidak bisa menggunakan perintah /leave");
+          }
       }else{
                 log.info("Ignore message {}: {}", replyToken, text);
       }
@@ -408,6 +348,7 @@ public class KitchenSinkController {
 
         return DriverManager.getConnection(dbUrl, username, password);
     }
+    
     private static String createUri(String path) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                                           .path(path).build()
@@ -455,6 +396,7 @@ public class KitchenSinkController {
         Path path;
         String uri;
     }
+    
     @RequestMapping("/greeting")
     public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="message", defaultValue="") String message) {
        this.pushText(User, message);
