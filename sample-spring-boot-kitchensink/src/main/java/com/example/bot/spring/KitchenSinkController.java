@@ -223,6 +223,7 @@ public class KitchenSinkController {
   		}catch(URISyntaxException err){
   				this.replyText(replyToken,err.getMessage());
   		}
+    	return "";
     }
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
