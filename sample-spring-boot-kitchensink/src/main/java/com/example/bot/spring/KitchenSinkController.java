@@ -217,9 +217,7 @@ public class KitchenSinkController {
         if (text.indexOf("/create")>=0){
                 String userId = event.getSource().getUserId();
                 if (userId != null) {
-                    lineMessagingClient
-                            .getProfile(userId)
-                            .whenComplete((profile, throwable) -> {
+                    lineMessagingClient.getProfile(userId).whenComplete((profile, throwable) -> {
                                 if (throwable != null) {
                                     this.replyText(replyToken, throwable.getMessage());
                                     return;
@@ -235,6 +233,35 @@ public class KitchenSinkController {
                                         ));
                                 TemplateMessage templateMessage = new TemplateMessage("Teka Teki Indonesia", buttonsTemplate);
                                 this.reply(replyToken, templateMessage);
+                                Source source = event.getSource();
+                		  		String groupid="";
+                		  		String userid="";
+                		  		this.TokenCallback1 = replyToken;
+                		  		if (source instanceof GroupSource) {
+                		  			groupid = ((GroupSource) source).getGroupId();
+                		  			KitchenSinkController.this.t0 = startTimer(groupid);
+                		  		}
+                		  		if (groupid ==""){
+                	                userid = event.getSource().getUserId();
+                	                KitchenSinkController.this.t0 = startTimer(userid);
+                		  		}
+                		  		KitchenSinkController.this.t0.schedule( new TimerTask() {
+                   	   				@Override
+                   	   				public void run() {
+                   	   					try{
+                   	 		  				Connection connection = KitchenSinkController.getConnection();
+                   	 		  	        	Statement stmt = connection.createStatement();
+                   	 		  	        	stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
+                   	 		  	        	stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
+                   	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
+                   	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
+                   	 		  			}catch(SQLException e){
+                   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,e.getMessage());
+                   	 		  			}catch(URISyntaxException err){
+                   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,err.getMessage());
+                   	 		  			}
+                   	   				}
+                   	   			}, 60000, 100); // Every second
                             });
                     
                 } else {
@@ -253,6 +280,7 @@ public class KitchenSinkController {
                     this.replyText(replyToken, "ini room 1:1 tidak bisa menggunakan perintah /leave");
                 }
         }else if (text.indexOf("/join")>=0){
+        		String userId = event.getSource().getUserId();
                 String imageUrl = createUri("/static/buttons/1040.jpg");
                 lineMessagingClient.getProfile(userId);
         
@@ -287,40 +315,7 @@ public class KitchenSinkController {
 		  		}catch(URISyntaxException err){
 		  				this.replyText(replyToken,err.getMessage());
 		  		}
-	  }else if(text.indexOf("/delay")>=0){
-		  		Source source = event.getSource();
-		  		String groupid="";
-		  		String userid="";
-		  		this.TokenCallback1 = replyToken;
-		  		if (source instanceof GroupSource) {
-		  			groupid = ((GroupSource) source).getGroupId();
-		  			KitchenSinkController.this.t0 = startTimer(groupid);
-		  		}
-		  		if (groupid ==""){
-	                userid = event.getSource().getUserId();
-	                KitchenSinkController.this.t0 = startTimer(userid);
-		  		}
-		  		KitchenSinkController.this.t0.schedule( new TimerTask() {
-   	   				@Override
-   	   				public void run() {
-   	   					try{
-   	 		  				Connection connection = KitchenSinkController.getConnection();
-   	 		  	        	Statement stmt = connection.createStatement();
-   	 		  	        	stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
-   	 		  	        	stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
-   	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
-   	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
-   	 		  	        	while (rs.next()) {
-   	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,"Read from DB: " + rs.getTimestamp("tick"));
-   	 		  	        	}
-   	 		  			}catch(SQLException e){
-   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,e.getMessage());
-   	 		  			}catch(URISyntaxException err){
-   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,err.getMessage());
-   	 		  			}
-   	   				}
-   	   			}, 5000, 100); // Every second
-      }else if(text.indexOf("/cancel")>=0){
+	  }else if(text.indexOf("/cancel")>=0){
     	  		Source source = event.getSource();
 		  		String groupid="";
 		  		String userid="";
