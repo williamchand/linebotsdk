@@ -228,7 +228,7 @@ public class KitchenSinkController {
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
         String text = content.getText();
-        
+		Connection connection = getConnection();
         log.info("Got text message from {}: {}", replyToken, text);
         if (text.indexOf("/create")>=0){
                 String userId = event.getSource().getUserId();
@@ -295,7 +295,6 @@ public class KitchenSinkController {
             this.reply(replyToken, templateMessage);
         }else if(text.indexOf("/time")>=0){
 		  		try{
-		  			Connection connection = getConnection();
 		  	        Statement stmt = connection.createStatement();
 		  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
 		  	        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
