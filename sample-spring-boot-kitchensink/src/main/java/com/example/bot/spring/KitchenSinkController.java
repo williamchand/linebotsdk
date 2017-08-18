@@ -280,21 +280,9 @@ public class KitchenSinkController {
                     this.replyText(replyToken, "ini room 1:1 tidak bisa menggunakan perintah /leave");
                 }
         }else if (text.indexOf("/join")>=0){
-        		String userId = event.getSource().getUserId();
-                String imageUrl = createUri("/static/buttons/1040.jpg");
+        		String userId = event.getSource().getUserId();S
                 lineMessagingClient.getProfile(userId);
-        
-                ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
-                        imageUrl,
-                        "Klik join Untuk Bergabung dalam permainan",
-                        "Teka Teki Indonesia",
-                        Arrays.asList(
-                               new MessageAction("join", profile.getDisplayName() +"telah Bergabung ke dalam game"
-                                                 
-                            		   			)
-                        ));
-                TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
-                this.reply(replyToken, templateMessage);
+         		this.reply(replyToken,"join", profile.getDisplayName() +" telah Bergabung ke dalam game");                        	
         }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
