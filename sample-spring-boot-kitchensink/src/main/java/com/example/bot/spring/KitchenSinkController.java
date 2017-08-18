@@ -89,7 +89,7 @@ public class KitchenSinkController {
     @Autowired
     private LineMessagingClient lineMessagingClient;
     public Timer t0;
-    public String TokenCallback1;
+    private String TokenCallback1;
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
         TextMessageContent message = event.getMessage();
@@ -207,7 +207,23 @@ public class KitchenSinkController {
     	   Timer timer = new Timer("Timer" + value);
     	   return timer;
     }
-
+    private String DB1(String replyToken){
+    	try{
+  			Connection connection = getConnection();
+  	        Statement stmt = connection.createStatement();
+  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
+  	        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
+  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
+  	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
+  	        while (rs.next()) {
+  	        	this.replyText(replyToken,"Waktu Indonesia Barat: " + rs.getTimestamp("tick"));
+  	        }
+  		}catch(SQLException e){
+  				this.replyText(replyToken,e.getMessage());
+  		}catch(URISyntaxException err){
+  				this.replyText(replyToken,err.getMessage());
+  		}
+    }
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
         String text = content.getText();
@@ -238,7 +254,7 @@ public class KitchenSinkController {
                     this.replyText(replyToken, "Tolong izinkan Bot mengakses akun");
                 }
                 
-        }else if (text.indexOf("/buttons")>=0){
+        }else if (text.indexOf("/join")>=0){
                 String imageUrl = createUri("/static/buttons/1040.jpg");
                 ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
                         imageUrl,
@@ -257,11 +273,26 @@ public class KitchenSinkController {
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
                 this.reply(replyToken, templateMessage);
-        }else if (text.indexOf("/help")>=0){
-        		this.replyText(replyToken,
-        			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
-		    		  "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
-	  }else if(text.indexOf("/time")>=0){
+        }else if (text.indexOf("/start")>=0){
+            String imageUrl = createUri("/static/buttons/1040.jpg");
+            ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
+                    imageUrl,
+                    "My button sample",
+                    "Hello, my button",
+                    Arrays.asList(
+                            new URIAction("Go to line.me",
+                                          "https://line.me"),
+                            new PostbackAction("Say hello1",
+                                               "hello"),
+                            new PostbackAction("hello2",
+                                               "hello",
+                                               "hello"),
+                            new MessageAction("Say message",
+                                              "Rice")
+                    ));
+            TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
+            this.reply(replyToken, templateMessage);
+        }else if(text.indexOf("/time")>=0){
 		  		try{
 		  			Connection connection = getConnection();
 		  	        Statement stmt = connection.createStatement();
@@ -270,14 +301,14 @@ public class KitchenSinkController {
 		  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
 		  	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
 		  	        while (rs.next()) {
-		  	        	this.replyText(replyToken,"Read from DB: " + rs.getTimestamp("tick"));
+		  	        	this.replyText(replyToken,"Waktu Indonesia Barat: " + rs.getTimestamp("tick"));
 		  	        }
 		  		}catch(SQLException e){
 		  			this.replyText(replyToken,e.getMessage());
 		  		}catch(URISyntaxException err){
-		  				this.replyText(replyToken,err.getMessage());
-		  			}
-	  }else if(text.indexOf("/delay")>=0){
+		  			this.replyText(replyToken,err.getMessage());
+		  		}
+        }else if(text.indexOf("/delay")>=0){
 		  		Source source = event.getSource();
 		  		String groupid="";
 		  		String userid="";
@@ -310,7 +341,7 @@ public class KitchenSinkController {
    	 		  			}
    	   				}
    	   			}, 5000, 100); // Every second
-      }else if(text.indexOf("/cancel")>=0){
+       }else if(text.indexOf("/cancel")>=0){
     	  		Source source = event.getSource();
 		  		String groupid="";
 		  		String userid="";
@@ -323,7 +354,11 @@ public class KitchenSinkController {
 		  			KitchenSinkController.this.t0 = startTimer(userid);
 				}
 	  			KitchenSinkController.this.t0.cancel();
-      }else if (text.indexOf("/leave")>=0){
+      }else if (text.indexOf("/help")>=0){
+        		this.replyText(replyToken,
+        			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
+		    		  "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
+	  }else if (text.indexOf("/leave")>=0){
           Source source = event.getSource();
           if (source instanceof GroupSource) {
               this.replyText(replyToken, "Bot meninggalkan grup");
