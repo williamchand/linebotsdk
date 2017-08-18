@@ -351,15 +351,16 @@ public class KitchenSinkController {
 	  }else if(text.indexOf("/delay")>=0){
 		  		Source source = event.getSource();
 		  		String groupid="";
-		  		String userId="";
+		  		String userid="";
 		  		this.TokenCallback1 = replyToken;
 		  		if (source instanceof GroupSource) {
 		  			groupid = ((GroupSource) source).getGroupId();
+			  		KitchenSinkController.this.t0 = startTimer(groupid);
 		  		}
 		  		if (groupid ==""){
-	                userId = event.getSource().getUserId();
+	                userid = event.getSource().getUserId();
+			  		KitchenSinkController.this.t0 = startTimer(userid);
 		  		}
-		  		KitchenSinkController.this.t0 = startTimer(userid);
 		  		KitchenSinkController.this.t0.schedule( new TimerTask() {
    	   				@Override
    	   				public void run() {
@@ -383,14 +384,15 @@ public class KitchenSinkController {
       }else if(text.indexOf("/cancel")>=0){
     	  		Source source = event.getSource();
 		  		String groupid="";
-		  		String userId="";
+		  		String userid="";
 				if (source instanceof GroupSource) {
 				  	groupid = ((GroupSource) source).getGroupId();
+		  			KitchenSinkController.this.t0 = startTimer(groupid);
 				}
 				if (groupid ==""){
-			        userId = event.getSource().getUserId();
+			        userid = event.getSource().getUserId();
+		  			KitchenSinkController.this.t0 = startTimer(userid);
 				}
-	  			KitchenSinkController.this.t0 = startTimer(groupid);
 	  			KitchenSinkController.this.t0.cancel();
       }else{
                 log.info("Ignore message {}: {}", replyToken, text);
