@@ -232,6 +232,7 @@ public class KitchenSinkController {
         log.info("Got text message from {}: {}", replyToken, text);
         if (text.indexOf("/create")>=0){
                 String userId = event.getSource().getUserId();
+	  			groupid = ((GroupSource) event.getsource()).getGroupId();
                 if (userId != null) {
                     lineMessagingClient
                             .getProfile(userId)
