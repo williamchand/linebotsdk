@@ -305,12 +305,11 @@ public class KitchenSinkController {
         	try{
 		  			Connection connection = getConnection();
 		  	        Statement stmt = connection.createStatement();
-		  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
-		  	        stmt.executeUpdate("CREATE TABLE ticks (id VARCHAR(64),tick timestamp)");
 		  	        stmt.executeUpdate("INSERT INTO ticks(id,tick) VALUES ('"+ id +"',now() + INTERVAL '7 HOUR')");
 		  	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
 		  	        while (rs.next()) {
 		  	        	this.replyText(replyToken,"Waktu Indonesia Barat: " + rs.getTimestamp("tick"));
+			  	        stmt.executeUpdate("DELETE FROM ticks WHERE tick.id = "+id);
 		  	        }
 		  		}catch(SQLException e){
 		  			this.replyText(replyToken,e.getMessage());
@@ -346,8 +345,6 @@ public class KitchenSinkController {
    	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
    	 		  	        	while (rs.next()) {
    	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,"Read from DB: " + rs.getTimestamp("tick"));
-   	 		  	        		stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
-   	 		  	        	
    	 		  	        	}
    	 		  			}catch(SQLException e){
    	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,e.getMessage());
