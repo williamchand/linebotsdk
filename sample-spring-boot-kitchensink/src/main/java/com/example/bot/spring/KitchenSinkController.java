@@ -89,7 +89,7 @@ public class KitchenSinkController {
     @Autowired
     private LineMessagingClient lineMessagingClient;
     public Timer t0;
-    public String TokenCallback;
+    public String TokenCallback1;
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
         TextMessageContent message = event.getMessage();
