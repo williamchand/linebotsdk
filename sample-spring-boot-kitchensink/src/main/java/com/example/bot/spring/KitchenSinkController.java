@@ -237,11 +237,11 @@ public class KitchenSinkController {
 		  		if (source instanceof GroupSource) {
 		  			groupid = ((GroupSource) source).getGroupId();
 		  		}
-                if (groupid != ""){
-                	this.replyText(replyToken,"GroupId: " + groupid);
-                }
 		  		if (userId != null) {
-                    lineMessagingClient
+		  			if (groupid != ""){
+	                	this.replyText(replyToken,"GroupId: " + groupid);
+	                }
+		  			lineMessagingClient
                             .getProfile(userId)
                             .whenComplete((profile, throwable) -> {
                                 if (throwable != null) {
@@ -266,18 +266,11 @@ public class KitchenSinkController {
                 String imageUrl = createUri("/static/buttons/1040.jpg");
                 ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
                         imageUrl,
-                        "My button sample",
-                        "Hello, my button",
+                        "Klik untuk bergabung ke permainan",
+                        "Teka Teki Indonesia",
                         Arrays.asList(
-                                new URIAction("Go to line.me",
-                                              "https://line.me"),
-                                new PostbackAction("Say hello1",
-                                                   "hello"),
-                                new PostbackAction("hello2",
-                                                   "hello",
-                                                   "hello"),
-                                new MessageAction("Say message",
-                                                  "Rice")
+                                new MessageAction("Join Game",
+                                                  "/join")
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
                 this.reply(replyToken, templateMessage);
