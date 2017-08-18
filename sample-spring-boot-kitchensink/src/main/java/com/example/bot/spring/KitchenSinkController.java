@@ -88,8 +88,11 @@ import lombok.extern.slf4j.Slf4j;
 public class KitchenSinkController {
     @Autowired
     private LineMessagingClient lineMessagingClient;
-    public Timer t0;
+    
+    private Timer t0;
+    
     private String TokenCallback1;
+    
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
         TextMessageContent message = event.getMessage();
@@ -207,6 +210,7 @@ public class KitchenSinkController {
     	   Timer timer = new Timer("Timer" + value);
     	   return timer;
     }
+    
     private String DB1(String replyToken){
     	try{
   			Connection connection = getConnection();
