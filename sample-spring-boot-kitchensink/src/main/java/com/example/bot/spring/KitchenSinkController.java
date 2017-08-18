@@ -233,10 +233,6 @@ public class KitchenSinkController {
         if (text.indexOf("/create")>=0){
 	  			Source source = event.getSource();
                 String userId = event.getSource().getUserId();
-                String groupid="";
-		  		if (source instanceof GroupSource) {
-		  			groupid = ((GroupSource) source).getGroupId();
-		  		}
 		  		if (userId != null) {
 		  			lineMessagingClient
                             .getProfile(userId)
@@ -255,9 +251,6 @@ public class KitchenSinkController {
                                                     		  "Status message: " + profile.getStatusMessage()))
                                 );
                             });
-		  			if (groupid != ""){
-	                	this.replyText(replyToken,"GroupId: " + groupid);
-	                }
                 } else {
                     this.replyText(replyToken, "Tolong izinkan Bot mengakses akun");
                 }
@@ -330,7 +323,7 @@ public class KitchenSinkController {
 		  		try{
 		  			Connection connection = getConnection();
 		  	        Statement stmt = connection.createStatement();
-		  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
+		  	        stmt.executeUpdate("INSERT INTO ticks(id,tick) VALUES ('"+ id +"',now() + INTERVAL '7 HOUR')");
 		  		}catch(SQLException e){
 		  			this.replyText(replyToken,e.getMessage());
 		  		}catch(URISyntaxException err){
@@ -338,12 +331,13 @@ public class KitchenSinkController {
 		  		}
 		  		KitchenSinkController.this.t0.scheduleAtFixedRate( new TimerTask() {
    	   				@Override
-   	   				public void run() {
+   	   				public void run(String id) {
    	   					try{
    	 		  				Connection connection = KitchenSinkController.getConnection();
    	 		  	        	Statement stmt = connection.createStatement();
    	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
    	 		  	        	while (rs.next()) {
+   	 		  	        		stmt.executeUpdate("DELETE FROM ticks WHERE tick.id = "+id);
    	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,"Waktu Indonesia Barat:  " + rs.getTimestamp("tick"));
    	 		  	        	}
    	 		  			}catch(SQLException e){
