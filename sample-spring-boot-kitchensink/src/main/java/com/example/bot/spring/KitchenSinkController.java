@@ -89,7 +89,7 @@ public class KitchenSinkController {
     @Autowired
     private LineMessagingClient lineMessagingClient;
     public Timer t0;
-    public String TokenCallback1;
+    private String TokenCallback1;
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
         TextMessageContent message = event.getMessage();
@@ -204,7 +204,7 @@ public class KitchenSinkController {
     }
 
     private Timer startTimer(final String value) {
-    	   Timer timer = Timer("Timer" + value);
+    	   Timer timer = new Timer("Timer" + value);
     	   return timer;
     }
     private String DB1(String replyToken){
@@ -310,10 +310,10 @@ public class KitchenSinkController {
 		  			this.replyText(replyToken,err.getMessage());
 		  		}
         }else if(text.indexOf("/delay")>=0){
+	  			this.TokenCallback1 = replyToken;
 		  		Source source = event.getSource();
 		  		String groupid="";
 		  		String userid="";
-		  		this.TokenCallback1 = replyToken;
 		  		if (source instanceof GroupSource) {
 		  			groupid = ((GroupSource) source).getGroupId();
 			  		KitchenSinkController.this.t0 = startTimer(groupid);
@@ -348,11 +348,9 @@ public class KitchenSinkController {
 		  		String userid="";
 				if (source instanceof GroupSource) {
 				  	groupid = ((GroupSource) source).getGroupId();
-		  			KitchenSinkController.this.t0 = startTimer(groupid);
 				}
 				if (groupid ==""){
 			        userid = event.getSource().getUserId();
-		  			KitchenSinkController.this.t0 = startTimer(userid);
 				}
 	  			KitchenSinkController.this.t0.cancel();
         }else if (text.indexOf("/help")>=0){
