@@ -237,6 +237,9 @@ public class KitchenSinkController {
 		  		if (source instanceof GroupSource) {
 		  			groupid = ((GroupSource) source).getGroupId();
 		  		}
+                if (groupid != ""){
+                	this.replyText(replyToken,"GroupId: " + groupid);
+                }
 		  		if (userId != null) {
                     lineMessagingClient
                             .getProfile(userId)
@@ -244,9 +247,6 @@ public class KitchenSinkController {
                                 if (throwable != null) {
                                     this.replyText(replyToken, throwable.getMessage());
                                     return;
-                                }
-                                if (groupid != ""){
-                                	this.replyText(replyToken,"GroupId: " + groupid);
                                 }
                                 this.reply(
                                         replyToken,
