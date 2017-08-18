@@ -263,17 +263,6 @@ public class KitchenSinkController {
                 }
                 
         }else if (text.indexOf("/join")>=0){
-                String imageUrl = createUri("/static/buttons/1040.jpg");
-                ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
-                        imageUrl,
-                        "Klik untuk bergabung ke permainan",
-                        "Teka Teki Indonesia",
-                        Arrays.asList(
-                                new MessageAction("Join Game",
-                                                  "/join")
-                        ));
-                TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
-                this.reply(replyToken, templateMessage);
         }else if (text.indexOf("/start")>=0){
             String imageUrl = createUri("/static/buttons/1040.jpg");
             ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
@@ -344,7 +333,7 @@ public class KitchenSinkController {
    	 		  	        	Statement stmt = connection.createStatement();
    	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
    	 		  	        	while (rs.next()) {
-   	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,"Read from DB: " + rs.getTimestamp("tick"));
+   	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,"Waktu Indonesia Barat:  " + rs.getTimestamp("tick"));
    	 		  	        	}
    	 		  			}catch(SQLException e){
    	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,e.getMessage());
