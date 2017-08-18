@@ -325,7 +325,7 @@ public class KitchenSinkController {
 		  		if (source instanceof GroupSource) {
 		  			id = ((GroupSource) source).getGroupId();
 		  		}
-		  		if (groupid ==""){
+		  		if (id ==""){
 	                id = event.getSource().getUserId();
 		  		}
 		  		KitchenSinkController.this.t0 = startTimer(id);
