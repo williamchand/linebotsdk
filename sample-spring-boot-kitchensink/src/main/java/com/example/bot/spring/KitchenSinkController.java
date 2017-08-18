@@ -290,8 +290,25 @@ public class KitchenSinkController {
                                         new PostbackAction("è¨€ hello2",
                                                            "hello ã�“ã‚“ã�«ã�¡ã�¯",
                                                            "hello ã�“ã‚“ã�«ã�¡ã�¯"),
-                                        new MessageAction("Say message",
-                                                          "Rice=ç±³")
+                                        new MessageAction("Say message",{
+                                        		@Override
+                               	   				public void run() {
+                               	   					try{
+                               	 		  				Connection connection = KitchenSinkController.getConnection();
+                               	 		  	        	Statement stmt = connection.createStatement();
+                               	 		  	        	stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
+                               	 		  	        	stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
+                               	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
+                               	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
+                               	 		  	        	while (rs.next()) {
+                               	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,"Read from DB: " + rs.getTimestamp("tick"));
+                               	 		  	        	}
+                               	 		  			}catch(SQLException e){
+                               	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,e.getMessage());
+                               	 		  			}catch(URISyntaxException err){
+                               	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,err.getMessage());
+                               	 		  			}
+                               	   				}})
                                 ))
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Carousel alt text", carouselTemplate);
@@ -459,5 +476,8 @@ public class KitchenSinkController {
     public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="message", defaultValue="") String message) {
        this.pushText(User, message);
        return new Greeting(User,message);
+    }
+    private String DB1(){
+    	
     }
 }
