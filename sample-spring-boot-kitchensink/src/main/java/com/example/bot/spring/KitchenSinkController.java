@@ -233,8 +233,9 @@ public class KitchenSinkController {
         if (text.indexOf("/create")>=0){
 	  			Source source = event.getSource();
                 String userId = event.getSource().getUserId();
+                String groupid;
 		  		if (source instanceof GroupSource) {
-		  			String groupid = ((GroupSource) source).getGroupId();
+		  			groupid = ((GroupSource) source).getGroupId();
 		  		}
 		  		if (userId != null) {
                     lineMessagingClient
@@ -244,9 +245,8 @@ public class KitchenSinkController {
                                     this.replyText(replyToken, throwable.getMessage());
                                     return;
                                 }
-                                if (groupid!=null){
-                                	this.replyText(replyToken,new TextMessage(
-                                                	          "GroupId: " + groupid));
+                                if (groupid != null){
+                                	this.replyText(replyToken,"GroupId: " + groupid);
                                 }
                                 this.reply(
                                         replyToken,
