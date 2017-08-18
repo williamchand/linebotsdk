@@ -294,6 +294,7 @@ public class KitchenSinkController {
             TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
             this.reply(replyToken, templateMessage);
         }else if(text.indexOf("/time")>=0){
+	  		Source source = event.getSource();
         	String id="";
 	  		if (source instanceof GroupSource) {
 	  			id = ((GroupSource) source).getGroupId();
@@ -319,16 +320,14 @@ public class KitchenSinkController {
         }else if(text.indexOf("/delay")>=0){
 	  			this.TokenCallback1 = replyToken;
 		  		Source source = event.getSource();
-		  		String groupid="";
-		  		String userid="";
+		  		String id="";
 		  		if (source instanceof GroupSource) {
-		  			groupid = ((GroupSource) source).getGroupId();
-			  		KitchenSinkController.this.t0 = startTimer(groupid);
+		  			id = ((GroupSource) source).getGroupId();
 		  		}
 		  		if (groupid ==""){
-	                userid = event.getSource().getUserId();
-			  		KitchenSinkController.this.t0 = startTimer(userid);
+	                id = event.getSource().getUserId();
 		  		}
+		  		KitchenSinkController.this.t0 = startTimer(id);
 		  		try{
 		  			Connection connection = getConnection();
 		  	        Statement stmt = connection.createStatement();
@@ -359,13 +358,12 @@ public class KitchenSinkController {
    	   			}, 5000, 100); // Every second
         }else if(text.indexOf("/cancel")>=0){
     	  		Source source = event.getSource();
-		  		String groupid="";
-		  		String userid="";
+		  		String id="";
 				if (source instanceof GroupSource) {
-				  	groupid = ((GroupSource) source).getGroupId();
+				  	id = ((GroupSource) source).getGroupId();
 				}
-				if (groupid ==""){
-			        userid = event.getSource().getUserId();
+				if (id ==""){
+			        id = event.getSource().getUserId();
 				}
 	  			KitchenSinkController.this.t0.cancel();
         }else if (text.indexOf("/help")>=0){
