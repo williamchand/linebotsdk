@@ -204,7 +204,7 @@ public class KitchenSinkController {
     }
 
     private Timer startTimer(final String value) {
-    	   Timer timer = new Timer("Timer" + value);
+    	   Timer timer = Timer("Timer" + value);
     	   return timer;
     }
     private String DB1(String replyToken){
