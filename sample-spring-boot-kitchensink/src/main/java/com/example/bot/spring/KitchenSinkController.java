@@ -233,14 +233,8 @@ public class KitchenSinkController {
         if (text.indexOf("/create")>=0){
 	  			Source source = event.getSource();
                 String userId = event.getSource().getUserId();
-                String groupid="";
-		  		if (source instanceof GroupSource) {
-		  			groupid = ((GroupSource) source).getGroupId();
-		  		}
 		  		if (userId != null) {
-		  			if (groupid != ""){
-	                	this.replyText(replyToken,"GroupId: " + groupid);
-	                }
+	                	this.replyText(replyToken,"GroupId: " + replyToken);
 		  			lineMessagingClient
                             .getProfile(userId)
                             .whenComplete((profile, throwable) -> {
