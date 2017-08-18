@@ -225,7 +225,18 @@ public class KitchenSinkController {
                                     return;
                                 }
                                 this.replyText(replyToken, profile.getDisplayName()+" Telah Membuat Game");
+                                String imageUrl = createUri("/static/buttons/1040.jpg");
+                                ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
+                                        imageUrl,
+                                        "Klik join Untuk Bergabung dalam permainan",
+                                        "Teka Teki Indonesia",
+                                        Arrays.asList(
+                                               new MessageAction("join", "/join")
+                                        ));
+                                TemplateMessage templateMessage = new TemplateMessage("Teka Teki Indonesia", buttonsTemplate);
+                                this.reply(replyToken, templateMessage);
                             });
+                    
                 } else {
                     this.replyText(replyToken, "Tolong izinkan Bot mengakses akun");
                 }
@@ -241,15 +252,7 @@ public class KitchenSinkController {
                 } else {
                     this.replyText(replyToken, "ini room 1:1 tidak bisa menggunakan perintah /leave");
                 }
-        }else if (text.indexOf("/question")>=0){
-                ConfirmTemplate confirmTemplate = new ConfirmTemplate(
-                        "Do it?",
-                        new MessageAction("Yes", "Yes!"),
-                        new MessageAction("No", "No!")
-                );
-                TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
-                this.reply(replyToken, templateMessage);
-        }else if (text.indexOf("/buttons")>=0){
+        }else if (text.indexOf("/join")>=0){
                 String imageUrl = createUri("/static/buttons/1040.jpg");
                 lineMessagingClient.getProfile(userId);
         
