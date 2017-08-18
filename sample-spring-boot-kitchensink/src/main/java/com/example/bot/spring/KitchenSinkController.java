@@ -231,7 +231,12 @@ public class KitchenSinkController {
         
         log.info("Got text message from {}: {}", replyToken, text);
         if (text.indexOf("/create")>=0){
+	  			Source source = event.getSource();
                 String userId = event.getSource().getUserId();
+                String groupid="";
+		  		if (source instanceof GroupSource) {
+		  			groupid = ((GroupSource) source).getGroupId();
+		  		}
 		  		if (userId != null) {
 		  			lineMessagingClient
                             .getProfile(userId)
@@ -250,11 +255,25 @@ public class KitchenSinkController {
                                                     		  "Status message: " + profile.getStatusMessage()))
                                 );
                             });
+		  			if (groupid != ""){
+	                	this.replyText(replyToken,"GroupId: " + groupid);
+	                }
                 } else {
                     this.replyText(replyToken, "Tolong izinkan Bot mengakses akun");
                 }
                 
         }else if (text.indexOf("/join")>=0){
+                String imageUrl = createUri("/static/buttons/1040.jpg");
+                ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
+                        imageUrl,
+                        "Klik untuk bergabung ke permainan",
+                        "Teka Teki Indonesia",
+                        Arrays.asList(
+                                new MessageAction("Join Game",
+                                                  "/join")
+                        ));
+                TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
+                this.reply(replyToken, templateMessage);
         }else if (text.indexOf("/start")>=0){
             String imageUrl = createUri("/static/buttons/1040.jpg");
             ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
