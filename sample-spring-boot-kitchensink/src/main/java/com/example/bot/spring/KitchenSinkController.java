@@ -88,11 +88,8 @@ import lombok.extern.slf4j.Slf4j;
 public class KitchenSinkController {
     @Autowired
     private LineMessagingClient lineMessagingClient;
-    
-    private Timer t0;
-    
-    private String TokenCallback1;
-    
+    public Timer t0;
+    public String TokenCallback1;
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
         TextMessageContent message = event.getMessage();
@@ -210,7 +207,6 @@ public class KitchenSinkController {
     	   Timer timer = new Timer("Timer" + value);
     	   return timer;
     }
-    
     private String DB1(String replyToken){
     	try{
   			Connection connection = getConnection();
@@ -227,7 +223,6 @@ public class KitchenSinkController {
   		}catch(URISyntaxException err){
   				this.replyText(replyToken,err.getMessage());
   		}
-    	return "";
     }
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
@@ -320,13 +315,13 @@ public class KitchenSinkController {
 		  		this.TokenCallback1 = replyToken;
 		  		if (source instanceof GroupSource) {
 		  			groupid = ((GroupSource) source).getGroupId();
-			  		this.t0 = startTimer(groupid);
+			  		KitchenSinkController.this.t0 = startTimer(groupid);
 		  		}
 		  		if (groupid ==""){
 	                userid = event.getSource().getUserId();
-			  		this.t0 = startTimer(userid);
+			  		KitchenSinkController.this.t0 = startTimer(userid);
 		  		}
-		  		this.t0.schedule( new TimerTask() {
+		  		KitchenSinkController.this.t0.schedule( new TimerTask() {
    	   				@Override
    	   				public void run() {
    	   					try{
@@ -346,24 +341,24 @@ public class KitchenSinkController {
    	 		  			}
    	   				}
    	   			}, 5000, 100); // Every second
-       }else if(text.indexOf("/cancel")>=0){
+        }else if(text.indexOf("/cancel")>=0){
     	  		Source source = event.getSource();
 		  		String groupid="";
 		  		String userid="";
 				if (source instanceof GroupSource) {
 				  	groupid = ((GroupSource) source).getGroupId();
-		  			this.t0 = startTimer(groupid);
+		  			KitchenSinkController.this.t0 = startTimer(groupid);
 				}
 				if (groupid ==""){
 			        userid = event.getSource().getUserId();
-		  			this.t0 = startTimer(userid);
+		  			KitchenSinkController.this.t0 = startTimer(userid);
 				}
-	  			this.t0.cancel();
-      }else if (text.indexOf("/help")>=0){
+	  			KitchenSinkController.this.t0.cancel();
+        }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
 		    		  "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
-	  }else if (text.indexOf("/leave")>=0){
+	    }else if (text.indexOf("/leave")>=0){
           Source source = event.getSource();
           if (source instanceof GroupSource) {
               this.replyText(replyToken, "Bot meninggalkan grup");
@@ -374,7 +369,7 @@ public class KitchenSinkController {
           } else {
               this.replyText(replyToken, "ini room 1:1 tidak bisa menggunakan perintah /leave");
           }
-      }else{
+        }else{
                 log.info("Ignore message {}: {}", replyToken, text);
       }
     }
