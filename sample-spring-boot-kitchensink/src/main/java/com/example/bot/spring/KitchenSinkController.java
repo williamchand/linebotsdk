@@ -305,8 +305,6 @@ public class KitchenSinkController {
 		  	        }
 		  		}catch(SQLException e){
 		  			this.replyText(replyToken,e.getMessage());
-		  		}catch(URISyntaxException err){
-		  			this.replyText(replyToken,err.getMessage());
 		  		}
         }else if(text.indexOf("/delay")>=0){
 		  		Source source = event.getSource();
