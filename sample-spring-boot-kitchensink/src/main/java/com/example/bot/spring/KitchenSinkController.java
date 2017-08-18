@@ -316,13 +316,13 @@ public class KitchenSinkController {
 		  		this.TokenCallback1 = replyToken;
 		  		if (source instanceof GroupSource) {
 		  			groupid = ((GroupSource) source).getGroupId();
-			  		KitchenSinkController.this.t0 = startTimer(groupid);
+			  		this.t0 = startTimer(groupid);
 		  		}
 		  		if (groupid ==""){
 	                userid = event.getSource().getUserId();
-			  		KitchenSinkController.this.t0 = startTimer(userid);
+			  		this.t0 = startTimer(userid);
 		  		}
-		  		KitchenSinkController.this.t0.schedule( new TimerTask() {
+		  		this.t0.schedule( new TimerTask() {
    	   				@Override
    	   				public void run() {
    	   					try{
@@ -348,13 +348,13 @@ public class KitchenSinkController {
 		  		String userid="";
 				if (source instanceof GroupSource) {
 				  	groupid = ((GroupSource) source).getGroupId();
-		  			KitchenSinkController.this.t0 = startTimer(groupid);
+		  			this.t0 = startTimer(groupid);
 				}
 				if (groupid ==""){
 			        userid = event.getSource().getUserId();
-		  			KitchenSinkController.this.t0 = startTimer(userid);
+		  			this.t0 = startTimer(userid);
 				}
-	  			KitchenSinkController.this.t0.cancel();
+	  			this.t0.cancel();
       }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
