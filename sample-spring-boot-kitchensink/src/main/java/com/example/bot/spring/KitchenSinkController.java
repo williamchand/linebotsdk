@@ -231,9 +231,12 @@ public class KitchenSinkController {
         
         log.info("Got text message from {}: {}", replyToken, text);
         if (text.indexOf("/create")>=0){
+	  			Source source = event.getSource();
                 String userId = event.getSource().getUserId();
-	  			String groupid = ((GroupSource) event.getsource()).getGroupId();
-                if (userId != null) {
+		  		if (source instanceof GroupSource) {
+		  			String groupid = ((GroupSource) source).getGroupId();
+		  		}
+		  		if (userId != null) {
                     lineMessagingClient
                             .getProfile(userId)
                             .whenComplete((profile, throwable) -> {
@@ -241,7 +244,10 @@ public class KitchenSinkController {
                                     this.replyText(replyToken, throwable.getMessage());
                                     return;
                                 }
-                                
+                                if (groupid!=null){
+                                	this.replyText(replyToken,new TextMessage(
+                                                	          "GroupId: " + groupid))
+                                }
                                 this.reply(
                                         replyToken,
                                         Arrays.asList(new TextMessage(
