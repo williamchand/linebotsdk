@@ -281,8 +281,8 @@ public class KitchenSinkController {
                 }
         }else if (text.indexOf("/join")>=0){
         		String userId = event.getSource().getUserId();
-                lineMessagingClient.getProfile(userId);
-         		this.reply(replyToken,"join", profile.getDisplayName() +" telah Bergabung ke dalam game");                        	
+                string profil = lineMessagingClient.getProfile(userId).getDisplayName();
+         		this.reply(replyToken,"join",  profil+" telah Bergabung ke dalam game");                        	
         }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
