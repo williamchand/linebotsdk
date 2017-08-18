@@ -307,7 +307,7 @@ public class KitchenSinkController {
 		  	        Statement stmt = connection.createStatement();
 		  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
 		  	        stmt.executeUpdate("CREATE TABLE ticks (id VARCHAR(64),tick timestamp)");
-		  	        stmt.executeUpdate("INSERT INTO ticks VALUES ("+id +",now() + INTERVAL '7 HOUR')");
+		  	        stmt.executeUpdate("INSERT INTO ticks(id,tick) VALUES ('"+ id +"',now() + INTERVAL '7 HOUR')");
 		  	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
 		  	        while (rs.next()) {
 		  	        	this.replyText(replyToken,"Waktu Indonesia Barat: " + rs.getTimestamp("tick"));
