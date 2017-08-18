@@ -294,12 +294,19 @@ public class KitchenSinkController {
             TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
             this.reply(replyToken, templateMessage);
         }else if(text.indexOf("/time")>=0){
-		  		try{
+        	String id="";
+	  		if (source instanceof GroupSource) {
+	  			id = ((GroupSource) source).getGroupId();
+	  		}
+	  		if (id ==""){
+                id = event.getSource().getUserId();
+	  		}	
+        	try{
 		  			Connection connection = getConnection();
 		  	        Statement stmt = connection.createStatement();
 		  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
-		  	        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
-		  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
+		  	        stmt.executeUpdate("CREATE TABLE ticks (id VARCHAR(64),tick timestamp)");
+		  	        stmt.executeUpdate("INSERT INTO ticks VALUES ("+id +",now() + INTERVAL '7 HOUR')");
 		  	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
 		  	        while (rs.next()) {
 		  	        	this.replyText(replyToken,"Waktu Indonesia Barat: " + rs.getTimestamp("tick"));
@@ -322,18 +329,26 @@ public class KitchenSinkController {
 	                userid = event.getSource().getUserId();
 			  		KitchenSinkController.this.t0 = startTimer(userid);
 		  		}
-		  		KitchenSinkController.this.t0.schedule( new TimerTask() {
+		  		try{
+		  			Connection connection = getConnection();
+		  	        Statement stmt = connection.createStatement();
+		  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
+		  		}catch(SQLException e){
+		  			this.replyText(replyToken,e.getMessage());
+		  		}catch(URISyntaxException err){
+		  			this.replyText(replyToken,err.getMessage());
+		  		}
+		  		KitchenSinkController.this.t0.scheduleAtFixedRate( new TimerTask() {
    	   				@Override
    	   				public void run() {
    	   					try{
    	 		  				Connection connection = KitchenSinkController.getConnection();
    	 		  	        	Statement stmt = connection.createStatement();
-   	 		  	        	stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
-   	 		  	        	stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
-   	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
    	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
    	 		  	        	while (rs.next()) {
    	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,"Read from DB: " + rs.getTimestamp("tick"));
+   	 		  	        		stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
+   	 		  	        	
    	 		  	        	}
    	 		  			}catch(SQLException e){
    	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,e.getMessage());
