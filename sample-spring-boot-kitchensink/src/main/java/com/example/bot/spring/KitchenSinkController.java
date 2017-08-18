@@ -331,13 +331,12 @@ public class KitchenSinkController {
 		  		}
 		  		KitchenSinkController.this.t0.scheduleAtFixedRate( new TimerTask() {
    	   				@Override
-   	   				public void run(String id) {
+   	   				public void run() {
    	   					try{
    	 		  				Connection connection = KitchenSinkController.getConnection();
    	 		  	        	Statement stmt = connection.createStatement();
    	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
    	 		  	        	while (rs.next()) {
-   	 		  	        		stmt.executeUpdate("DELETE FROM ticks WHERE tick.id = "+id);
    	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,"Waktu Indonesia Barat:  " + rs.getTimestamp("tick"));
    	 		  	        	}
    	 		  			}catch(SQLException e){
