@@ -246,7 +246,7 @@ public class KitchenSinkController {
                                 }
                                 if (groupid!=null){
                                 	this.replyText(replyToken,new TextMessage(
-                                                	          "GroupId: " + groupid))
+                                                	          "GroupId: " + groupid));
                                 }
                                 this.reply(
                                         replyToken,
