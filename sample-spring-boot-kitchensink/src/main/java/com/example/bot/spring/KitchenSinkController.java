@@ -280,7 +280,7 @@ public class KitchenSinkController {
                     this.replyText(replyToken, "ini room 1:1 tidak bisa menggunakan perintah /leave");
                 }
         }else if (text.indexOf("/join")>=0){
-        		String userId = event.getSource().getUserId();S
+        		String userId = event.getSource().getUserId();
                 lineMessagingClient.getProfile(userId);
          		this.reply(replyToken,"join", profile.getDisplayName() +" telah Bergabung ke dalam game");                        	
         }else if (text.indexOf("/help")>=0){
