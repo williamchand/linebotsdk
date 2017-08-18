@@ -291,7 +291,7 @@ public class KitchenSinkController {
                                                            "hello ã�“ã‚“ã�«ã�¡ã�¯",
                                                            "hello ã�“ã‚“ã�«ã�¡ã�¯"),
                                         new MessageAction("Say message",
-                                                          "")
+                                                          "Rice=ç±³")
                                 ))
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Carousel alt text", carouselTemplate);
@@ -459,8 +459,5 @@ public class KitchenSinkController {
     public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="message", defaultValue="") String message) {
        this.pushText(User, message);
        return new Greeting(User,message);
-    }
-    private String DB1(){
-    	
     }
 }
