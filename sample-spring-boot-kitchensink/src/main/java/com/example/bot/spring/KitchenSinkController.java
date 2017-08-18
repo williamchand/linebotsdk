@@ -204,7 +204,7 @@ public class KitchenSinkController {
     }
 
     private Timer startTimer(final String value) {
-    	   Timer timer = new Timer("Timer" + value);
+    	   Timer timer =new Timer("Timer" + value);
     	   return timer;
     }
     private String DB1(String replyToken){
@@ -231,16 +231,16 @@ public class KitchenSinkController {
         
         log.info("Got text message from {}: {}", replyToken, text);
         if (text.indexOf("/create")>=0){
-	  			Source source = event.getSource();
                 String userId = event.getSource().getUserId();
-		  		if (userId != null) {
-		  			lineMessagingClient
+                if (userId != null) {
+                    lineMessagingClient
                             .getProfile(userId)
                             .whenComplete((profile, throwable) -> {
                                 if (throwable != null) {
                                     this.replyText(replyToken, throwable.getMessage());
                                     return;
                                 }
+                                
                                 this.reply(
                                         replyToken,
                                         Arrays.asList(new TextMessage(
@@ -259,11 +259,18 @@ public class KitchenSinkController {
                 String imageUrl = createUri("/static/buttons/1040.jpg");
                 ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
                         imageUrl,
-                        "Klik untuk bergabung ke permainan",
-                        "Teka Teki Indonesia",
+                        "My button sample",
+                        "Hello, my button",
                         Arrays.asList(
-                                new MessageAction("Join Game",
-                                                  "/join")
+                                new URIAction("Go to line.me",
+                                              "https://line.me"),
+                                new PostbackAction("Say hello1",
+                                                   "hello"),
+                                new PostbackAction("hello2",
+                                                   "hello",
+                                                   "hello"),
+                                new MessageAction("Say message",
+                                                  "Rice")
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
                 this.reply(replyToken, templateMessage);
@@ -287,22 +294,15 @@ public class KitchenSinkController {
             TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
             this.reply(replyToken, templateMessage);
         }else if(text.indexOf("/time")>=0){
-	  		Source source = event.getSource();
-        	String id="";
-	  		if (source instanceof GroupSource) {
-	  			id = ((GroupSource) source).getGroupId();
-	  		}
-	  		if (id ==""){
-                id = event.getSource().getUserId();
-	  		}	
-        	try{
+		  		try{
 		  			Connection connection = getConnection();
 		  	        Statement stmt = connection.createStatement();
-		  	        stmt.executeUpdate("INSERT INTO ticks(id,tick) VALUES ('"+ id +"',now() + INTERVAL '7 HOUR')");
+		  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
+		  	        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
+		  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
 		  	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
 		  	        while (rs.next()) {
 		  	        	this.replyText(replyToken,"Waktu Indonesia Barat: " + rs.getTimestamp("tick"));
-			  	        stmt.executeUpdate("DELETE FROM ticks WHERE tick.id = "+id);
 		  	        }
 		  		}catch(SQLException e){
 		  			this.replyText(replyToken,e.getMessage());
@@ -310,9 +310,9 @@ public class KitchenSinkController {
 		  			this.replyText(replyToken,err.getMessage());
 		  		}
         }else if(text.indexOf("/delay")>=0){
-	  			this.TokenCallback1 = replyToken;
 		  		Source source = event.getSource();
 		  		String id="";
+		  		this.TokenCallback1 = replyToken;
 		  		if (source instanceof GroupSource) {
 		  			id = ((GroupSource) source).getGroupId();
 		  		}
@@ -320,24 +320,18 @@ public class KitchenSinkController {
 	                id = event.getSource().getUserId();
 		  		}
 		  		KitchenSinkController.this.t0 = startTimer(id);
-		  		try{
-		  			Connection connection = getConnection();
-		  	        Statement stmt = connection.createStatement();
-		  	        stmt.executeUpdate("INSERT INTO ticks(id,tick) VALUES ('"+ id +"',now() + INTERVAL '7 HOUR')");
-		  		}catch(SQLException e){
-		  			this.replyText(replyToken,e.getMessage());
-		  		}catch(URISyntaxException err){
-		  			this.replyText(replyToken,err.getMessage());
-		  		}
-		  		KitchenSinkController.this.t0.scheduleAtFixedRate( new TimerTask() {
+		  		KitchenSinkController.this.t0.schedule( new TimerTask() {
    	   				@Override
    	   				public void run() {
    	   					try{
    	 		  				Connection connection = KitchenSinkController.getConnection();
    	 		  	        	Statement stmt = connection.createStatement();
+   	 		  	        	stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
+   	 		  	        	stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
+   	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
    	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
    	 		  	        	while (rs.next()) {
-   	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,"Waktu Indonesia Barat:  " + rs.getTimestamp("tick"));
+   	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,"Read from DB: " + rs.getTimestamp("tick"));
    	 		  	        	}
    	 		  			}catch(SQLException e){
    	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,e.getMessage());
@@ -355,6 +349,7 @@ public class KitchenSinkController {
 				if (id ==""){
 			        id = event.getSource().getUserId();
 				}
+	  			KitchenSinkController.this.t0 = startTimer(id);
 	  			KitchenSinkController.this.t0.cancel();
         }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
