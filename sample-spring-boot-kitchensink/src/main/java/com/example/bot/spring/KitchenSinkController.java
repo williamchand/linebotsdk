@@ -206,7 +206,7 @@ public class KitchenSinkController {
     	   Timer timer =new Timer();
     	   return timer;
     }
-    private String DB1(String replyToken,Connection connection){
+    private String DB1(Connection connection){
     	try{
   	        Statement stmt = connection.createStatement();
   	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
@@ -217,7 +217,7 @@ public class KitchenSinkController {
   	        	return "Waktu Indonesia Barat: " + rs.getTimestamp("tick");
   	        }
   		}catch(SQLException e){
-  				return replyToken,e.getMessage();
+  				return e.getMessage();
   		}catch(URISyntaxException err){
   				return err.getMessage();
   		}
@@ -263,7 +263,7 @@ public class KitchenSinkController {
                                 new URIAction("Go to line.me",
                                               "https://line.me"),
                                 new PostbackAction("Say hello1",
-                                                   DB1),
+                                                   DB1(connection)),
                                 new PostbackAction("hello2",
                                                    "hello",
                                                    "hello"),
