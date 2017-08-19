@@ -211,14 +211,40 @@ public class KitchenSinkController {
     	String Messages="";
     	try{
   	        Statement stmt = connection.createStatement();
-  	        ResultSet rs = stmt.executeQuery("SELECT GroupId FROM 'Tabel Pemain' WHERE 'Tabel Pemain'.GroupId = "+groupId);
-  	        if (rs.getString("GroupId")==groupId){
+  	        ResultSet rs = stmt.executeQuery("SELECT UserId,GroupId FROM 'Tabel Pemain' WHERE 'Tabel Pemain'.UserId ="+userId);
+  	        rs.next();
+  	        if ((rs.getString("UserId")==userId)){
   	        	Messages = "Already";
   	        }
   	        else{
-  	        	stmt.executeUpdate("INSERT INTO 'Tabel Pemain' (UserId,GroupId) VALUES ("+userId+","+groupId+")");
+  	        	stmt.executeUpdate("INSERT INTO 'Tabel Pemain' (UserId,GroupId) VALUES ('"+userId+"','"+groupId+"')");
+  	        	stmt.executeUpdate("INSERT INTO 'ticks' (Condition,GroupId,tick) VALUES (0,'"+groupId+"',now() + INTERVAL '7 HOUR')");  	        	
   	        	Messages = "Insert";
   	        }
+  		}catch(SQLException e){
+  			Messages = e.getMessage();
+  		}
+    	return Messages;
+    }
+    private String DB2(String userId,String groupId,Connection connection){
+    	String Messages="";
+    	try{
+  	        Statement stmt = connection.createStatement();
+  	        Statement statement2 = connection.createStatement();
+  	        ResultSet rs = stmt.executeQuery("SELECT UserId,GroupId FROM 'Tabel Pemain' WHERE 'Tabel Pemain'.UserId ="+userId);
+  	        ResultSet rs2 = statement2.executeQuery("SELECT COUNT(GroupId) AS GroupId FROM 'Tabel Pemain' WHERE 'Tabel Pemain'.GroupId = "+groupId+" GROUPBY = GroupId");
+  	        rs.next();
+  	        if ((rs.getString("UserId")==userId)){
+  	        	Messages = "Already";
+  	        }else{
+  	        	rs2.next();
+  	        	if((rs.getString("GroupId")>0)){
+  	        		stmt.executeUpdate("INSERT INTO 'Tabel Pemain' (UserId,GroupId) VALUES ('"+userId+"','"+groupId+"')");	        	
+  	        		Messages = "Insert";
+  	        	}else{
+  	        		Messages = "Game Belum"
+  	        	}
+  	        } 	        
   		}catch(SQLException e){
   			Messages = e.getMessage();
   		}
@@ -265,61 +291,104 @@ public class KitchenSinkController {
                     	TemplateMessage templateMessage = new TemplateMessage("Teka Teki Indonesia", buttonsTemplate);
                     	this.reply(replyToken, templateMessage);
                 	}else{
-                		this.replyText(replyToken,"Permainan telah dibuat");
+                		this.replyText(replyToken,"Tidak bisa membuat permainan");
                 	}
                 } else {
                     this.replyText(replyToken, "Tolong izinkan Bot mengakses akun");
-                } 
-        }else if (text.indexOf("/join")>=0){
-        }else if (text.indexOf("/start")>=0){
-        }else if(text.indexOf("/time")>=0){
-		  		try{
-		  	        Statement stmt = connection.createStatement();
-		  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
-		  	        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
-		  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
-		  	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
-		  	        while (rs.next()) {
-		  	        	this.replyText(replyToken,"Waktu Indonesia Barat: " + rs.getTimestamp("tick"));
-		  	        }
-		  		}catch(SQLException e){
-		  			this.replyText(replyToken,e.getMessage());
-		  		}
-        }else if(text.indexOf("/delay")>=0){
-		  		Source source = event.getSource();
-		  		String id="";
-		  		this.TokenCallback1 = replyToken;
-		  		if (source instanceof GroupSource) {
-		  			id = ((GroupSource) source).getGroupId();
-		  		}
-		  		if (id ==""){
-	                id = event.getSource().getUserId();
-		  		}
-		  		t0 = startTimer();
-		  		t0.schedule( new TimerTask() {
+                }
+                t0 = startTimer();
+		  		t0.scheduleAtFixedRate( new TimerTask() {
    	   				@Override
    	   				public void run() {
    	   					try{
    	 		  				Connection connection = KitchenSinkController.getConnection();
    	 		  	        	Statement stmt = connection.createStatement();
-   	 		  	        	stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
-   	 		  	        	stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
-   	 		  	        	stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
-   	 		  	        	ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
-   	 		  	        	while (rs.next()) {
-   	 		  	        		KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,"Read from DB: " + rs.getTimestamp("tick"));
+   	 		  	        	ResultSet rs = stmt.executeQuery("SELECT Condition,GroupId FROM 'ticks' WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.Condition = 0");
+   	 		  	        	while (rs.next()&&rs.getString("Condition")==0) {   	 		  	        		
+   	 		  	        		KitchenSinkController.this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
    	 		  	        	}
+   	 		  	        	stmt.executeUpdate("UPDATE 'ticks' SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
+   	 		  	        			+ "WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.Condition = 0")
    	 		  			}catch(SQLException e){
-   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,e.getMessage());
+   	 		  				e.getMessage();
    	 		  			}catch(URISyntaxException err){
-   	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,err.getMessage());
+   	 		  				err.getMessage();
    	 		  			}
    	   				}
-   	   			}, 5000, 100); // Every second
+   	   			}, 0, 100); // Every second        
+        }else if (text.indexOf("/join")>=0){
+  			Source source = event.getSource();
+  			String groupId="";
+  			if (source instanceof GroupSource) {
+  				groupId = ((GroupSource) source).getGroupId();
+  			}
+            String userId = event.getSource().getUserId();
+            if (userId != null && groupId != "") {
+                if (DB2(userId,groupId,connection)=="Insert"){
+                	lineMessagingClient
+                        	.getProfile(userId)
+                        	.whenComplete((profile, throwable) -> {
+                        		if (throwable != null) {
+                        			this.replyText(replyToken, throwable.getMessage());
+                        			return;
+                        		}
+                        		this.reply(
+                        				replyToken,
+                        				Arrays.asList(new TextMessage( profile.getDisplayName()+" Bergabung ke Permainan" )
+                                    			      )
+                            );
+                        });
+                } else {
+                	lineMessagingClient
+                	.getProfile(userId)
+                	.whenComplete((profile, throwable) -> {
+                		if (throwable != null) {
+                			this.replyText(replyToken, throwable.getMessage());
+                			return;
+                		}
+                		this.reply(
+                				replyToken,
+                				Arrays.asList(new TextMessage( profile.getDisplayName()+" tidak bisa bergabung dalam permainan" )
+                            			      )
+                				);
+                	});
+                }
+            }
+        }else if (text.indexOf("/start")>=0){
+        	Source source = event.getSource();
+  			String groupId="";
+  			if (source instanceof GroupSource) {
+  				groupId = ((GroupSource) source).getGroupId();
+  			}
+        	try{
+	  	        	Statement stmt = connection.createStatement();
+	  	        	ResultSet rs = stmt.executeQuery("SELECT GroupId FROM 'ticks' WHERE 'ticks'.GroupId = "+groupId);
+	  	        	rs.next();        		
+	  	        	this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+	  	        	stmt.executeUpdate("UPDATE 'ticks' SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
+	  	        			+ "WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.Condition = 0")
+	  			}catch(SQLException e){
+	  				e.getMessage();
+	  			}
+        }else if (text.indexOf("/stop")>=0){
+        	Source source = event.getSource();
+  			String groupId="";
+  			if (source instanceof GroupSource) {
+  				groupId = ((GroupSource) source).getGroupId();
+  			}
+        	try{
+	  	        	Statement stmt = connection.createStatement();
+	  	        	stmt.executeUpdate("DELETE 'ticks' WHERE 'ticks'.GroupId = "+groupId);		 
+	  	        	stmt.executeUpdate("DELETE 'tabel Jawaban' WHERE 'tabel Jawaban'.GroupId = "+groupId);	
+	  	        	stmt.executeUpdate("DELETE 'Tabel Pemain' WHERE 'Tabel Pemain'.GroupId = "+groupId);		  	        		
+	  	        	this.pushText(groupId,"Permainan Berhenti");
+	  		}catch(SQLException e){
+	  				e.getMessage();
+	  		}
         }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
-        			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
-		    		  "/question:pertanyaan\n"+"/carousel:carousel\n"+"/leave:keluar dari grup\n"+"/profile:user ID\n");
+        			  "feature /help : bantuan\n"+"/create : Membuat game\n"+"/join:Memasuki game\n"+
+		    		  "/Start:memulai game\n"+"/stop : Menghentikan Game\n"+"/leave:keluar dari grup\n");
 	    }else if (text.indexOf("/leave")>=0){
           Source source = event.getSource();
           if (source instanceof GroupSource) {
@@ -333,7 +402,7 @@ public class KitchenSinkController {
           }
         }else{
                 log.info("Ignore message {}: {}", replyToken, text);
-      }
+        }
     }
     
     private static Connection getConnection() throws URISyntaxException, SQLException {
@@ -379,6 +448,7 @@ public class KitchenSinkController {
         }
     }
 
+    
     private static DownloadedContent createTempFile(String ext) {
         String fileName = LocalDateTime.now().toString() + '-' + UUID.randomUUID().toString() + '.' + ext;
         Path tempFile = KitchenSinkApplication.downloadedContentDir.resolve(fileName);
@@ -399,4 +469,5 @@ public class KitchenSinkController {
        this.pushText(User, message);
        return new Greeting(User,message);
     }
+
 }
