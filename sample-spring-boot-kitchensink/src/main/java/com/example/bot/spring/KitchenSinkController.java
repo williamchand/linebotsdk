@@ -226,7 +226,7 @@ public class KitchenSinkController {
     }
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
-    	Timer t0=startTimer();
+    	Timer t0;
         String text = content.getText();
 		Connection connection = getConnection();
         log.info("Got text message from {}: {}", replyToken, text);
@@ -316,8 +316,8 @@ public class KitchenSinkController {
 		  		if (id ==""){
 	                id = event.getSource().getUserId();
 		  		}
-		  		KitchenSinkController.this.t0 = startTimer(id);
-		  		KitchenSinkController.this.t0.schedule( new TimerTask() {
+		  		t0 = startTimer();
+		  		t0.schedule( new TimerTask() {
    	   				@Override
    	   				public void run() {
    	   					try{
