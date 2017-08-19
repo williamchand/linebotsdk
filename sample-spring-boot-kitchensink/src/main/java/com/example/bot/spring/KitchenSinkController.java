@@ -220,6 +220,8 @@ public class KitchenSinkController {
   	        }
   		}catch(SQLException e){
   			Messages = e.getMessage();
+  		}catch(URISyntaxException err){
+  			Messages = err.getMessage();
   		}
     	return Messages;
     }
