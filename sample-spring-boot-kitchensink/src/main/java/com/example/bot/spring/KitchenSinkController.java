@@ -306,7 +306,7 @@ public class KitchenSinkController {
    	 		  				Connection connection = KitchenSinkController.getConnection();
    	 		  	        	Statement stmt = connection.createStatement();
    	 		  	        	ResultSet rs = stmt.executeQuery("SELECT Condition,GroupId FROM 'ticks' WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.Condition = 0");
-   	 		  	        	while ((rs.next()) {   	 
+   	 		  	        	while (rs.next()) {   	 
    	 		  	        		if (rs.getInt("Condition")==0){
    	 		  	        			KitchenSinkController.this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
    	 		  	        		}
