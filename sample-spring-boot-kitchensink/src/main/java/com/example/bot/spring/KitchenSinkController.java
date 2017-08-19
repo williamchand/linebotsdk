@@ -202,8 +202,8 @@ public class KitchenSinkController {
         this.push(To, new TextMessage(message));
     }
 
-    private Timer startTimer(final String value) {
-    	   Timer timer =new Timer("Timer" + value);
+    private Timer startTimer() {
+    	   Timer timer =new Timer();
     	   return timer;
     }
     private String DB1(String replyToken){
@@ -226,6 +226,7 @@ public class KitchenSinkController {
     }
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
+    	Timer t0=startTimer();
         String text = content.getText();
 		Connection connection = getConnection();
         log.info("Got text message from {}: {}", replyToken, text);
