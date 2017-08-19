@@ -238,7 +238,7 @@ public class KitchenSinkController {
   	        	Messages = "Already";
   	        }else{
   	        	rs2.next();
-  	        	if((rs.getString("GroupId")>0)){
+  	        	if((rs.getInt("GroupId")>0)){
   	        		stmt.executeUpdate("INSERT INTO 'Tabel Pemain' (UserId,GroupId) VALUES ('"+userId+"','"+groupId+"')");	        	
   	        		Messages = "Insert";
   	        	}else{
@@ -261,7 +261,9 @@ public class KitchenSinkController {
 	  			String groupId="";
 	  			if (source instanceof GroupSource) {
 	  				groupId = ((GroupSource) source).getGroupId();
-	  			}
+	  			}else if (source instanceof RoomSource) {
+                    groupId = ((RoomSource) source).getRoomId();
+                } 
                 String userId = event.getSource().getUserId();
                 if (userId != null && groupId != "") {
                     if (DB1(userId,groupId,connection)=="Insert"){
@@ -304,8 +306,10 @@ public class KitchenSinkController {
    	 		  				Connection connection = KitchenSinkController.getConnection();
    	 		  	        	Statement stmt = connection.createStatement();
    	 		  	        	ResultSet rs = stmt.executeQuery("SELECT Condition,GroupId FROM 'ticks' WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.Condition = 0");
-   	 		  	        	while (rs.next()&&rs.getString("Condition")==0) {   	 		  	        		
-   	 		  	        		KitchenSinkController.this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+   	 		  	        	while ((rs.next()) {   	 
+   	 		  	        		if (rs.getInt("Condition")==0){
+   	 		  	        			KitchenSinkController.this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+   	 		  	        		}
    	 		  	        	}
    	 		  	        	stmt.executeUpdate("UPDATE 'ticks' SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
    	 		  	        			+ "WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.Condition = 0");
@@ -321,7 +325,9 @@ public class KitchenSinkController {
   			String groupId="";
   			if (source instanceof GroupSource) {
   				groupId = ((GroupSource) source).getGroupId();
-  			}
+  			}else if (source instanceof RoomSource) {
+                groupId = ((RoomSource) source).getRoomId();
+            } 
             String userId = event.getSource().getUserId();
             if (userId != null && groupId != "") {
                 if (DB2(userId,groupId,connection)=="Insert"){
@@ -359,7 +365,9 @@ public class KitchenSinkController {
   			String groupId="";
   			if (source instanceof GroupSource) {
   				groupId = ((GroupSource) source).getGroupId();
-  			}
+  			}else if (source instanceof RoomSource) {
+                groupId = ((RoomSource) source).getRoomId();
+            } 
         	try{
 	  	        	Statement stmt = connection.createStatement();
 	  	        	ResultSet rs = stmt.executeQuery("SELECT GroupId FROM 'ticks' WHERE 'ticks'.GroupId = "+groupId);
@@ -375,7 +383,9 @@ public class KitchenSinkController {
   			String groupId="";
   			if (source instanceof GroupSource) {
   				groupId = ((GroupSource) source).getGroupId();
-  			}
+  			}else if (source instanceof RoomSource) {
+                groupId = ((RoomSource) source).getRoomId();
+            } 
         	try{
 	  	        	Statement stmt = connection.createStatement();
 	  	        	stmt.executeUpdate("DELETE 'ticks' WHERE 'ticks'.GroupId = "+groupId);		 
