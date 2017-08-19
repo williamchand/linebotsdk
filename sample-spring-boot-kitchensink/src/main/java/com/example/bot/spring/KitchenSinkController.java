@@ -264,9 +264,9 @@ public class KitchenSinkController {
                                 new URIAction("Go to line.me",
                                               "https://line.me"),
                                 new PostbackAction("Say hello1",
-                                                   "hi",DB1(getConnection())),
+                                                   "hi"),
                                 new PostbackAction("hello2",
-                                                   "hello",
+                                                   "Usernya siapa ya?",
                                                    "hello"),
                                 new MessageAction("Say message",
                                                   "Rice")
