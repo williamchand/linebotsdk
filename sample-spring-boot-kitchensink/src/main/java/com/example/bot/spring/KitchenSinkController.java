@@ -242,7 +242,7 @@ public class KitchenSinkController {
   	        		stmt.executeUpdate("INSERT INTO 'Tabel Pemain' (UserId,GroupId) VALUES ('"+userId+"','"+groupId+"')");	        	
   	        		Messages = "Insert";
   	        	}else{
-  	        		Messages = "Game Belum"
+  	        		Messages = "Game Belum";
   	        	}
   	        } 	        
   		}catch(SQLException e){
@@ -308,7 +308,7 @@ public class KitchenSinkController {
    	 		  	        		KitchenSinkController.this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
    	 		  	        	}
    	 		  	        	stmt.executeUpdate("UPDATE 'ticks' SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
-   	 		  	        			+ "WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.Condition = 0")
+   	 		  	        			+ "WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.Condition = 0");
    	 		  			}catch(SQLException e){
    	 		  				e.getMessage();
    	 		  			}catch(URISyntaxException err){
@@ -366,7 +366,7 @@ public class KitchenSinkController {
 	  	        	rs.next();        		
 	  	        	this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
 	  	        	stmt.executeUpdate("UPDATE 'ticks' SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
-	  	        			+ "WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.Condition = 0")
+	  	        			+ "WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.Condition = 0");
 	  			}catch(SQLException e){
 	  				e.getMessage();
 	  			}
