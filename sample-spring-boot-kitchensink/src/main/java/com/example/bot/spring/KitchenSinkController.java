@@ -172,7 +172,7 @@ public class KitchenSinkController {
             throw new IllegalArgumentException("replyToken must not be empty");
         }
         if (message.length() > 1000) {
-            message = message.substring(0, 1000 - 2);
+            message = message.substring(0, 1000 - 2) + "……";
         }
         this.reply(replyToken, new TextMessage(message));
     }
