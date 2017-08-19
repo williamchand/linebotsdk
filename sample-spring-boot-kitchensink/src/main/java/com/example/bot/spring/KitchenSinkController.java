@@ -211,7 +211,7 @@ public class KitchenSinkController {
     	String Messages="";
     	try{
   	        Statement stmt = connection.createStatement();
-  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
+  	        stmt.executeUpdate("DELETE TABLE IF EXISTS ticks");
   	        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
   	        stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
   	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
@@ -235,6 +235,16 @@ public class KitchenSinkController {
                     lineMessagingClient
                             .getProfile(userId)
                             .whenComplete((profile, throwable) -> {
+                                String imageUrl = createUri("/static/buttons/1040.jpg");
+                                ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
+                                        imageUrl,
+                                        "Teka Teki Indonesia",
+                                        "Mari Bermain permainan teka teki indonesia",
+                                        Arrays.asList(
+                                                new MessageAction("Join Game",
+                                                                  "/join")
+                                        ));
+                                TemplateMessage templateMessage = new TemplateMessage("Teka Teki Indonesia", buttonsTemplate);
                                 if (throwable != null) {
                                     this.replyText(replyToken, throwable.getMessage());
                                     return;
@@ -242,12 +252,8 @@ public class KitchenSinkController {
                                 
                                 this.reply(
                                         replyToken,
-                                        Arrays.asList(new TextMessage(
-                                                	          "Id: " + userId),
-                                        			  new TextMessage(
-                                                              "Display name: " + profile.getDisplayName()),
-                                                      new TextMessage(
-                                                    		  "Status message: " + profile.getStatusMessage()))
+                                        Arrays.asList(new TextMessage( profile.getDisplayName()+" Memulai Permainan" ),
+                                        			      templateMessage)
                                 );
                             });
                 } else {
@@ -255,24 +261,6 @@ public class KitchenSinkController {
                 }
                 
         }else if (text.indexOf("/join")>=0){
-                String imageUrl = createUri("/static/buttons/1040.jpg");
-                ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
-                        imageUrl,
-                        "My button sample",
-                        "Hello, my button",
-                        Arrays.asList(
-                                new URIAction("Go to line.me",
-                                              "https://line.me"),
-                                new PostbackAction("Say hello1",
-                                                   "hi"),
-                                new PostbackAction("hello2",
-                                                   "Usernya siapa ya?",
-                                                   "hello"),
-                                new MessageAction("Say message",
-                                                  "Rice")
-                        ));
-                TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
-                this.reply(replyToken, templateMessage);
         }else if (text.indexOf("/start")>=0){
             String imageUrl = createUri("/static/buttons/1040.jpg");
             ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
@@ -334,7 +322,6 @@ public class KitchenSinkController {
    	 		  			}catch(URISyntaxException err){
    	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,err.getMessage());
    	 		  			}
-   	   					t0.cancel();
    	   				}
    	   			}, 5000, 100); // Every second
         }else if (text.indexOf("/help")>=0){
