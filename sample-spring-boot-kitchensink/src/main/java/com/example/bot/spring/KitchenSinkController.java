@@ -206,23 +206,21 @@ public class KitchenSinkController {
     	   Timer timer =new Timer();
     	   return timer;
     }
-    private String DB1(String replyToken){
+    private String DB1(String replyToken,Connection connection){
     	try{
-  			Connection connection = getConnection();
   	        Statement stmt = connection.createStatement();
   	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
   	        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
   	        stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
   	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
   	        while (rs.next()) {
-  	        	this.replyText(replyToken,"Waktu Indonesia Barat: " + rs.getTimestamp("tick"));
+  	        	return "Waktu Indonesia Barat: " + rs.getTimestamp("tick");
   	        }
   		}catch(SQLException e){
-  				this.replyText(replyToken,e.getMessage());
+  				return replyToken,e.getMessage();
   		}catch(URISyntaxException err){
-  				this.replyText(replyToken,err.getMessage());
+  				return err.getMessage();
   		}
-    	return "";
     }
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
@@ -265,7 +263,7 @@ public class KitchenSinkController {
                                 new URIAction("Go to line.me",
                                               "https://line.me"),
                                 new PostbackAction("Say hello1",
-                                                   "hello"),
+                                                   DB1),
                                 new PostbackAction("hello2",
                                                    "hello",
                                                    "hello"),
