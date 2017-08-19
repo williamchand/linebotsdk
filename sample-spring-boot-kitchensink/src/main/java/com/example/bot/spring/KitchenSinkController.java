@@ -335,19 +335,9 @@ public class KitchenSinkController {
    	 		  			}catch(URISyntaxException err){
    	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,err.getMessage());
    	 		  			}
+   	   					t0.cancel();
    	   				}
    	   			}, 5000, 100); // Every second
-        }else if(text.indexOf("/cancel")>=0){
-    	  		Source source = event.getSource();
-		  		String id="";
-				if (source instanceof GroupSource) {
-				  	id = ((GroupSource) source).getGroupId();
-				}
-				if (id ==""){
-			        id = event.getSource().getUserId();
-				}
-	  			KitchenSinkController.this.t0 = startTimer(id);
-	  			KitchenSinkController.this.t0.cancel();
         }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
