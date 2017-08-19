@@ -245,6 +245,18 @@ public class KitchenSinkController {
                                         			      )
                                 );
                             });
+
+                    String imageUrl = createUri("/static/buttons/1040.jpg");
+                    ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
+                            imageUrl,
+                            "Teka Teki Indonesia",
+                            "Mari Bermain permainan teka teki indonesia",
+                            Arrays.asList(
+                                    new MessageAction("Join Game",
+                                                      "/join")
+                            ));
+                    TemplateMessage templateMessage = new TemplateMessage("Teka Teki Indonesia", buttonsTemplate);
+                    this.reply(replyToken, templateMessage);
                 } else {
                     this.replyText(replyToken, "Tolong izinkan Bot mengakses akun");
                 }
