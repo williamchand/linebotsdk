@@ -202,8 +202,8 @@ public class KitchenSinkController {
         this.push(To, new TextMessage(message));
     }
 
-    private Timer startTimer() {
-    	   Timer timer =new Timer();
+    private Timer startTimer(final String value) {
+    	   Timer timer =new Timer("Timer" + value);
     	   return timer;
     }
     private String DB1(String replyToken){
@@ -219,15 +219,17 @@ public class KitchenSinkController {
   	        }
   		}catch(SQLException e){
   				this.replyText(replyToken,e.getMessage());
+  		}catch(URISyntaxException err){
+  				this.replyText(replyToken,err.getMessage());
+  		}
     	return "";
     }
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
-        Timer t0=startTimer();
         String text = content.getText();
 		Connection connection = getConnection();
         log.info("Got text message from {}: {}", replyToken, text);
-        if (text.indexOf("/getid")>=0){
+        if (text.indexOf("/create")>=0){
                 String userId = event.getSource().getUserId();
                 if (userId != null) {
                     lineMessagingClient
@@ -290,16 +292,7 @@ public class KitchenSinkController {
                     ));
             TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
             this.reply(replyToken, templateMessage);
-        }else if(text.indexOf("/delay")>=0){
-		  		Source source = event.getSource();
-		  		String id="";
-		  		this.TokenCallback1 = replyToken;
-		  		if (source instanceof GroupSource) {
-		  			id = ((GroupSource) source).getGroupId();
-		  		}
-		  		if (id ==""){
-	                id = event.getSource().getUserId();
-		  		}
+        }else if(text.indexOf("/time")>=0){
 		  		try{
 		  	        Statement stmt = connection.createStatement();
 		  	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
@@ -312,7 +305,18 @@ public class KitchenSinkController {
 		  		}catch(SQLException e){
 		  			this.replyText(replyToken,e.getMessage());
 		  		}
-		  		t0.schedule( new TimerTask() {
+        }else if(text.indexOf("/delay")>=0){
+		  		Source source = event.getSource();
+		  		String id="";
+		  		this.TokenCallback1 = replyToken;
+		  		if (source instanceof GroupSource) {
+		  			id = ((GroupSource) source).getGroupId();
+		  		}
+		  		if (id ==""){
+	                id = event.getSource().getUserId();
+		  		}
+		  		KitchenSinkController.this.t0 = startTimer(id);
+		  		KitchenSinkController.this.t0.schedule( new TimerTask() {
    	   				@Override
    	   				public void run() {
    	   					try{
@@ -330,9 +334,19 @@ public class KitchenSinkController {
    	 		  			}catch(URISyntaxException err){
    	 		  				KitchenSinkController.this.replyText(KitchenSinkController.this.TokenCallback1,err.getMessage());
    	 		  			}
-   	   					t0.cancel();
    	   				}
    	   			}, 5000, 100); // Every second
+        }else if(text.indexOf("/cancel")>=0){
+    	  		Source source = event.getSource();
+		  		String id="";
+				if (source instanceof GroupSource) {
+				  	id = ((GroupSource) source).getGroupId();
+				}
+				if (id ==""){
+			        id = event.getSource().getUserId();
+				}
+	  			KitchenSinkController.this.t0 = startTimer(id);
+	  			KitchenSinkController.this.t0.cancel();
         }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/imagemap:gambar yang dapat diklik\n"+"/buttons:tombol\n"+
