@@ -238,7 +238,7 @@ public class KitchenSinkController {
 	  			}
                 String userId = event.getSource().getUserId();
                 if (userId != null && groupId != "") {
-                    if (DB1(userId,groupId,connection)=="Insert")
+                    if (DB1(userId,groupId,connection)=="Insert"){
                     	lineMessagingClient
                             	.getProfile(userId)
                             	.whenComplete((profile, throwable) -> {
@@ -269,28 +269,9 @@ public class KitchenSinkController {
                 	}
                 } else {
                     this.replyText(replyToken, "Tolong izinkan Bot mengakses akun");
-                }
-                
+                } 
         }else if (text.indexOf("/join")>=0){
         }else if (text.indexOf("/start")>=0){
-            String imageUrl = createUri("/static/buttons/1040.jpg");
-            ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
-                    imageUrl,
-                    "My button sample",
-                    "Hello, my button",
-                    Arrays.asList(
-                            new URIAction("Go to line.me",
-                                          "https://line.me"),
-                            new PostbackAction("Say hello1",
-                                               "hello"),
-                            new PostbackAction("hello2",
-                                               "hello",
-                                               "hello"),
-                            new MessageAction("Say message",
-                                              "Rice")
-                    ));
-            TemplateMessage templateMessage = new TemplateMessage("Button alt text", buttonsTemplate);
-            this.reply(replyToken, templateMessage);
         }else if(text.indexOf("/time")>=0){
 		  		try{
 		  	        Statement stmt = connection.createStatement();
