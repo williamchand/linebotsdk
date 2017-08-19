@@ -207,7 +207,7 @@ public class KitchenSinkController {
     	   return timer;
     }
     private String DB1(Connection connection){
-    	String Messages;
+    	String Messages="";
     	try{
   	        Statement stmt = connection.createStatement();
   	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
