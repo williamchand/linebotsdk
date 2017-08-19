@@ -207,6 +207,7 @@ public class KitchenSinkController {
     	   return timer;
     }
     private String DB1(Connection connection){
+    	String Messages;
     	try{
   	        Statement stmt = connection.createStatement();
   	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
@@ -214,11 +215,12 @@ public class KitchenSinkController {
   	        stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
   	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
   	        while (rs.next()) {
-  	        	return "Waktu Indonesia Barat: " + rs.getTimestamp("tick");
+  	        	Messages = "Waktu Indonesia Barat: " + rs.getTimestamp("tick");
   	        }
   		}catch(SQLException e){
-  				return e.getMessage();
+  			Messages = e.getMessage();
   		}
+    	return Messages;
     }
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
