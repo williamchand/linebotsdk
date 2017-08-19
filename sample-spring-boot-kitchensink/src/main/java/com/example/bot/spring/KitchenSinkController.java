@@ -218,8 +218,6 @@ public class KitchenSinkController {
   	        }
   		}catch(SQLException e){
   				return e.getMessage();
-  		}catch(URISyntaxException err){
-  				return err.getMessage();
   		}
     }
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
