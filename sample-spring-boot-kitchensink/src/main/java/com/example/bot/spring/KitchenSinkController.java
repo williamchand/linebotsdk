@@ -207,16 +207,17 @@ public class KitchenSinkController {
     	   return timer;
     }
     
-    private String DB1(Connection connection){
+    private String DB1(String userId,String groupId,Connection connection){
     	String Messages="";
     	try{
   	        Statement stmt = connection.createStatement();
-  	        stmt.executeUpdate("DELETE TABLE IF EXISTS ticks");
-  	        stmt.executeUpdate("CREATE TABLE ticks (tick timestamp)");
-  	        stmt.executeUpdate("INSERT INTO ticks VALUES (now() + INTERVAL '7 HOUR')");
-  	        ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
-  	        while (rs.next()) {
-  	        	Messages = "Waktu Indonesia Barat: " + rs.getTimestamp("tick");
+  	        ResultSet rs = stmt.executeQuery("SELECT GroupId FROM 'Tabel Pemain' WHERE 'Tabel Pemain'.GroupId = "+groupId);
+  	        if (rs.getString("GroupId")==groupId){
+  	        	Messages = "Already";
+  	        }
+  	        else{
+  	        	stmt.executeUpdate("INSERT INTO 'Tabel Pemain' (UserId,GroupId) VALUES ("+userId+","+groupId+")");
+  	        	Messages = "Insert"
   	        }
   		}catch(SQLException e){
   			Messages = e.getMessage();
@@ -230,24 +231,30 @@ public class KitchenSinkController {
 		Connection connection = getConnection();
         log.info("Got text message from {}: {}", replyToken, text);
         if (text.indexOf("/create")>=0){
+	  			Source source = event.getSource();
+	  			String groupId=""
+	  			if (source instanceof GroupSource) {
+	  				groupId = ((GroupSource) source).getGroupId();
+	  			}
                 String userId = event.getSource().getUserId();
-                if (userId != null) {
-                    lineMessagingClient
-                            .getProfile(userId)
-                            .whenComplete((profile, throwable) -> {
-                                if (throwable != null) {
-                                    this.replyText(replyToken, throwable.getMessage());
-                                    return;
-                                }
-                                this.reply(
-                                        replyToken,
-                                        Arrays.asList(new TextMessage( profile.getDisplayName()+" Memulai Permainan" )
+                if (userId != null && groupId != "") {
+                    if (DB1(userId,groupId,connection)=="Insert")
+                    	lineMessagingClient
+                            	.getProfile(userId)
+                            	.whenComplete((profile, throwable) -> {
+                            		if (throwable != null) {
+                            			this.replyText(replyToken, throwable.getMessage());
+                            			return;
+                            		}
+                            		this.reply(
+                            				replyToken,
+                            				Arrays.asList(new TextMessage( profile.getDisplayName()+" Memulai Permainan" )
                                         			      )
                                 );
                             });
 
-                    String imageUrl = createUri("/static/buttons/1040.jpg");
-                    ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
+                    	String imageUrl = createUri("/static/buttons/1040.jpg");
+                    	ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
                             imageUrl,
                             "Teka Teki Indonesia",
                             "Mari Bermain permainan teka teki indonesia",
@@ -255,8 +262,11 @@ public class KitchenSinkController {
                                     new MessageAction("Join Game",
                                                       "/join")
                             ));
-                    TemplateMessage templateMessage = new TemplateMessage("Teka Teki Indonesia", buttonsTemplate);
-                    this.reply(replyToken, templateMessage);
+                    	TemplateMessage templateMessage = new TemplateMessage("Teka Teki Indonesia", buttonsTemplate);
+                    	this.reply(replyToken, templateMessage);
+                	}else{
+                		this.replyText(replyToken,"Permainan telah dibuat");
+                	}
                 } else {
                     this.replyText(replyToken, "Tolong izinkan Bot mengakses akun");
                 }
