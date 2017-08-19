@@ -235,6 +235,10 @@ public class KitchenSinkController {
                     lineMessagingClient
                             .getProfile(userId)
                             .whenComplete((profile, throwable) -> {
+                                if (throwable != null) {
+                                    this.replyText(replyToken, throwable.getMessage());
+                                    return;
+                                }
                                 String imageUrl = createUri("/static/buttons/1040.jpg");
                                 ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
                                         imageUrl,
@@ -245,11 +249,6 @@ public class KitchenSinkController {
                                                                   "/join")
                                         ));
                                 TemplateMessage templateMessage = new TemplateMessage("Teka Teki Indonesia", buttonsTemplate);
-                                if (throwable != null) {
-                                    this.replyText(replyToken, throwable.getMessage());
-                                    return;
-                                }
-                                
                                 this.reply(
                                         replyToken,
                                         Arrays.asList(new TextMessage( profile.getDisplayName()+" Memulai Permainan" ),
