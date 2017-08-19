@@ -211,7 +211,7 @@ public class KitchenSinkController {
     	String Messages="";
     	try{
   	        Statement stmt = connection.createStatement();
-  	        ResultSet rs = stmt.executeQuery("SELECT UserId,GroupId FROM 'Tabel Pemain' WHERE 'Tabel Pemain'.UserId ="+userId);
+  	        ResultSet rs = stmt.executeQuery("SELECT UserId,GroupId FROM 'Tabel Pemain' WHERE 'Tabel Pemain'.UserId = "+userId);
   	        rs.next();
   	        if ((rs.getString("UserId")==userId)){
   	        	Messages = "Already";
