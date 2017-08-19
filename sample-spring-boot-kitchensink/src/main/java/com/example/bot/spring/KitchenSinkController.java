@@ -217,7 +217,7 @@ public class KitchenSinkController {
   	        }
   	        else{
   	        	stmt.executeUpdate("INSERT INTO 'Tabel Pemain' (UserId,GroupId) VALUES ("+userId+","+groupId+")");
-  	        	Messages = "Insert"
+  	        	Messages = "Insert";
   	        }
   		}catch(SQLException e){
   			Messages = e.getMessage();
@@ -232,7 +232,7 @@ public class KitchenSinkController {
         log.info("Got text message from {}: {}", replyToken, text);
         if (text.indexOf("/create")>=0){
 	  			Source source = event.getSource();
-	  			String groupId=""
+	  			String groupId="";
 	  			if (source instanceof GroupSource) {
 	  				groupId = ((GroupSource) source).getGroupId();
 	  			}
