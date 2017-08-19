@@ -206,9 +206,9 @@ public class KitchenSinkController {
     	   Timer timer =new Timer();
     	   return timer;
     }
-    private String DB1(){
+    
+    private String DB1(Connection connection){
     	String Messages="";
-		Connection connection = getConnection();
     	try{
   	        Statement stmt = connection.createStatement();
   	        stmt.executeUpdate("DROP TABLE IF EXISTS ticks");
@@ -266,7 +266,7 @@ public class KitchenSinkController {
                                 new URIAction("Go to line.me",
                                               "https://line.me"),
                                 new PostbackAction("Say hello1",
-                                                   DB1(),"hi"),
+                                                   DB1(getConnection()),"hi"),
                                 new PostbackAction("hello2",
                                                    "hello",
                                                    "hello"),
