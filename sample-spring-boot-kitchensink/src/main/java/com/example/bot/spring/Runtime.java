@@ -33,10 +33,19 @@ import java.sql.*;
 import javax.sql.*;
 public class Runtime extends TimerTask
 {
+    private static Connection getConnection() throws URISyntaxException, SQLException {
+        URI dbUri = new URI(System.getenv("DATABASE_URL"));
+
+        String username = dbUri.getUserInfo().split(":")[0];
+        String password = dbUri.getUserInfo().split(":")[1];
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + dbUri.getPath();
+
+        return DriverManager.getConnection(dbUrl, username, password);
+    }
 	@Override
 	public void run() {
+		Connection connection = getConnection();
 		try{
-				Connection connection = KitchenSinkController.getConnection();
 				KitchenSinkController kitchensink = new KitchenSinkController();
 	        	Statement stmt = connection.createStatement();
 	        	ResultSet rs = stmt.executeQuery("SELECT \"Condition\",\"GroupId\" FROM ticks WHERE ticks.tick <= now() + INTERVAL '6 HOUR 57 MINUTES'");
@@ -52,6 +61,7 @@ public class Runtime extends TimerTask
 			}catch(URISyntaxException err){
 				err.getMessage();
 		}
+    	connection.close();
 	}
 }
  	   					

@@ -33,6 +33,7 @@ public class KitchenSinkApplication {
     	TimerTask task = new Runtime();
     	Timer timer = new Timer();
     	timer.scheduleAtFixedRate(task, 1000,1000);
+    	timer.close();
         downloadedContentDir = Files.createTempDirectory("line-bot");
         SpringApplication.run(KitchenSinkApplication.class, args);
    }

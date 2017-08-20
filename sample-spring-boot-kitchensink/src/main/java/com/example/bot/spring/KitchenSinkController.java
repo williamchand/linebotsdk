@@ -331,7 +331,7 @@ public class KitchenSinkController {
                 		}
                 		this.reply(
                 				replyToken,
-                				Arrays.asList(new TextMessage( profile.getDisplayName()+" tidak bisa bergabung dalam permainan" )
+                				Arrays.asList(new TextMessage( profile.getDisplayName()+" tidak bisa bergabung dalam permainan"+check )
                             			      )
                 				);
                 	});
@@ -393,9 +393,10 @@ public class KitchenSinkController {
         }else{
                 log.info("Ignore message {}: {}", replyToken, text);
         }
+        connection.close();
     }
     
-    public static Connection getConnection() throws URISyntaxException, SQLException {
+    private static Connection getConnection() throws URISyntaxException, SQLException {
         URI dbUri = new URI(System.getenv("DATABASE_URL"));
 
         String username = dbUri.getUserInfo().split(":")[0];
