@@ -39,14 +39,17 @@ public class Runtime extends TimerTask
 				Connection connection = KitchenSinkController.getConnection();
 				KitchenSinkController kitchensink = new KitchenSinkController();
 	        	Statement stmt = connection.createStatement();
-	        	ResultSet rs = stmt.executeQuery("SELECT Condition,GroupId FROM 'ticks' WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES'");
+	        	ResultSet rs = stmt.executeQuery("SELECT Condition,GroupId FROM `ticks` WHERE `ticks`.tick <= now() + INTERVAL '6 HOUR 57 MINUTES'");
 	        	while (rs.next()) {   	 
 	        		if (rs.getInt("Condition")==0){
 	        			kitchensink.pushText(rs.getString("GroupId"),"Permainan Dimulai");
-	        			stmt.executeUpdate("UPDATE 'ticks' SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
-	    	        			+ "WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.GroupId = "+rs.getString("GroupId"));
+	        			stmt.executeUpdate("UPDATE `ticks` SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
+	    	        			+ "WHERE `ticks`.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND `ticks`.GroupId = "+rs.getString("GroupId"));
 	        		}
 	        	}
+	        	rs.close();
+	        	stmt.close();
+	        	connection.close();
 			}catch(SQLException e){
 				e.getMessage();
 			}catch(URISyntaxException err){

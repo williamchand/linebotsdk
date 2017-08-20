@@ -217,6 +217,8 @@ public class KitchenSinkController {
   	        else{
   	        	Messages = "Already";
   	        }
+  	        rs.close();
+  	        stmt.close();
   		}catch(SQLException e){
   			Messages = e.getMessage();
   		}
@@ -241,6 +243,10 @@ public class KitchenSinkController {
   	        		Messages = "Game Belum";
   	        	}
   	        } 	       
+  	        rs.close();
+  	        rs2.close();
+  	        stmt.close();
+  	        statement2.close();
   		}catch(SQLException e){
   			Messages = e.getMessage();
   		}
@@ -347,10 +353,13 @@ public class KitchenSinkController {
 	  	        	Statement stmt = connection.createStatement();
 	  	        	ResultSet rs = stmt.executeQuery("SELECT GroupId FROM `ticks` WHERE `ticks`.GroupId = "+groupId);
 	  	        	rs.next();
-	  	        	if (rs.getString("GroupId")==null)
+	  	        	if (rs.getString("GroupId")==null){
 	  	        		this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
 	  	        		stmt.executeUpdate("UPDATE `ticks` SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
 	  	        			+ "WHERE `ticks`.Condition = 0 AND `ticks`.GroupId = "+groupId);
+	  	        	}
+	  	        	rs.close();
+	  	        	stmt.close();
         		}catch(SQLException e){
 	  				e.getMessage();
 	  			}
@@ -368,6 +377,7 @@ public class KitchenSinkController {
 	  	        	stmt.executeUpdate("DELETE `tabel Jawaban` WHERE `tabel Jawaban`.GroupId = "+groupId);	
 	  	        	stmt.executeUpdate("DELETE `Tabel Pemain` WHERE `Tabel Pemain`.GroupId = "+groupId);		  	        		
 	  	        	this.pushText(groupId,"Permainan Berhenti");
+	  	        	stmt.close();
 	  		}catch(SQLException e){
 	  				e.getMessage();
 	  		}
