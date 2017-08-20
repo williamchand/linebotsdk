@@ -213,14 +213,7 @@ public class KitchenSinkController {
 	        	stmt.executeUpdate("INSERT INTO ticks (\"Condition\",\"GroupId\",\"tick\") VALUES (0,'"+groupId+"',now() + INTERVAL '7 HOUR')");  	        	
 	        	Messages = "Insert";
   	        }else{
-  	        	if (rs.getString("UserId")==null){
-  	        		stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");
-  	        		stmt.executeUpdate("INSERT INTO ticks (\"Condition\",\"GroupId\",\"tick\") VALUES (0,'"+groupId+"',now() + INTERVAL '7 HOUR')");  	        	
-  	        		Messages = "Insert";
-  	        	}
-  	        	else{
   	        		Messages = "Already";
-  	        	}
   	        }
   		}catch(SQLException e){
   			Messages = e.getMessage();
@@ -235,7 +228,7 @@ public class KitchenSinkController {
   	        ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
   	        ResultSet rs2 = statement2.executeQuery("SELECT COUNT(\"GroupId\") AS \"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"' GROUPBY \"GroupId\"");
   	        if (!rs.next()){
-  	        	Messages = "Already";
+  	        	Messages = "Cannot join";
   	        }else{
   	        	if (rs.getString("UserId")==userId){
   	        		Messages = "Already";
