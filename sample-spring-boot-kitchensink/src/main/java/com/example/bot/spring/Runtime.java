@@ -31,6 +31,8 @@ import java.net.URISyntaxException;
 import java.net.URI;
 import java.sql.*;
 import javax.sql.*;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.client.MessageContentResponse;
 import com.linecorp.bot.model.ReplyMessage;
