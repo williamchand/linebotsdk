@@ -37,12 +37,12 @@ public class Runtime extends TimerTask
 	public void run() {
 		try{
 				Connection connection = KitchenSinkController.getConnection();
-				
+				KitchenSinkController kitchensink = new KitchenSinkController();
 	        	Statement stmt = connection.createStatement();
 	        	ResultSet rs = stmt.executeQuery("SELECT Condition,GroupId FROM 'ticks' WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES'");
 	        	while (rs.next()) {   	 
 	        		if (rs.getInt("Condition")==0){
-	        			KitchenSinkController.push(rs.getString("GroupId"),new TextMessage("Permainan Dimulai"));
+	        			kitchensink.pushText(rs.getString("GroupId"),"Permainan Dimulai");
 	        			stmt.executeUpdate("UPDATE 'ticks' SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
 	    	        			+ "WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.GroupId = "+rs.getString("GroupId"));
 	        		}

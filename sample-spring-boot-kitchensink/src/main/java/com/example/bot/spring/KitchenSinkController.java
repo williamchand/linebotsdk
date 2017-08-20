@@ -177,11 +177,11 @@ public class KitchenSinkController {
         this.reply(replyToken, new TextMessage(message));
     }
 
-    public void push(@NonNull String To, @NonNull Message message) {
+    private void push(@NonNull String To, @NonNull Message message) {
         push(To, Collections.singletonList(message));
     }
 
-   public void push(@NonNull String To, @NonNull List<Message> messages) {
+   private void push(@NonNull String To, @NonNull List<Message> messages) {
         try {
             BotApiResponse apiResponse = lineMessagingClient
                     .pushMessage(new PushMessage(To, messages))
