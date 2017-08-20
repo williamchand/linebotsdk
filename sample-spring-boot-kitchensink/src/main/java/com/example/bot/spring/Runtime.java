@@ -27,6 +27,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 import java.lang.Override;
 import com.heroku.sdk.jdbc.DatabaseUrl;
+import java.util.concurrent.ExecutionException;
+import java.util.Collections;
 import java.net.URISyntaxException;
 import java.net.URI;
 import java.sql.*;
