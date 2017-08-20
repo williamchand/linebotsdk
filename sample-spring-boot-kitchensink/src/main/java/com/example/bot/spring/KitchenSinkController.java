@@ -249,7 +249,6 @@ public class KitchenSinkController {
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
         String text = content.getText();
-		Connection connection = getConnection();
         log.info("Got text message from {}: {}", replyToken, text);
         if (text.indexOf("/create")>=0){
 	  			Source source = event.getSource();
@@ -260,8 +259,9 @@ public class KitchenSinkController {
                     groupId = ((RoomSource) source).getRoomId();
                 } 
                 String userId = event.getSource().getUserId();
-                if (userId != null && groupId != "") {
-                    if (DB1(userId,groupId,connection)=="Insert"){
+                if (userId != null && groupId != null) {
+                	String check =DB1(userId,groupId,getConnection());
+                    if (check=="Insert"){
                     	lineMessagingClient
                             	.getProfile(userId)
                             	.whenComplete((profile, throwable) -> {
@@ -302,8 +302,9 @@ public class KitchenSinkController {
                 groupId = ((RoomSource) source).getRoomId();
             } 
             String userId = event.getSource().getUserId();
-            if (userId != null && groupId != "") {
-                if (DB2(userId,groupId,connection)=="Insert"){
+            if (userId != null && groupId != null) {
+            	String check =DB2(userId,groupId,getConnection());
+                if (check=="Insert"){
                 	lineMessagingClient
                         	.getProfile(userId)
                         	.whenComplete((profile, throwable) -> {
@@ -342,6 +343,7 @@ public class KitchenSinkController {
                 groupId = ((RoomSource) source).getRoomId();
             } 
         	try{
+        			Connection connection = getConnection();
 	  	        	Statement stmt = connection.createStatement();
 	  	        	ResultSet rs = stmt.executeQuery("SELECT GroupId FROM 'ticks' WHERE 'ticks'.GroupId = "+groupId);
 	  	        	rs.next();
@@ -361,6 +363,7 @@ public class KitchenSinkController {
                 groupId = ((RoomSource) source).getRoomId();
             } 
         	try{
+        			Connection connection = getConnection();
 	  	        	Statement stmt = connection.createStatement();
 	  	        	stmt.executeUpdate("DELETE 'ticks' WHERE 'ticks'.GroupId = "+groupId);		 
 	  	        	stmt.executeUpdate("DELETE 'tabel Jawaban' WHERE 'tabel Jawaban'.GroupId = "+groupId);	
