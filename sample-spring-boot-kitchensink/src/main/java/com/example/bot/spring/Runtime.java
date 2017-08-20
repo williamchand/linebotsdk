@@ -121,7 +121,7 @@ public class Runtime extends TimerTask
 	        	ResultSet rs = stmt.executeQuery("SELECT Condition,GroupId FROM 'ticks' WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES'");
 	        	while (rs.next()) {   	 
 	        		if (rs.getInt("Condition")==0){
-	        			KitchenSinkController.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+	        			Runtime.pushText(rs.getString("GroupId"),"Permainan Dimulai");
 	        			stmt.executeUpdate("UPDATE 'ticks' SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
 	    	        			+ "WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.GroupId = "+rs.getString("GroupId"));
 	        		}
