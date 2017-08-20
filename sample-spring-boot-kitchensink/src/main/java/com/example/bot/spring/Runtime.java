@@ -49,7 +49,6 @@ public class Runtime extends TimerTask
 	        	}
 	        	rs.close();
 	        	stmt.close();
-	        	connection.close();
 			}catch(SQLException e){
 				e.getMessage();
 			}catch(URISyntaxException err){
