@@ -209,13 +209,13 @@ public class KitchenSinkController {
   	        Statement stmt = connection.createStatement();
   	        ResultSet rs = stmt.executeQuery("SELECT UserId,GroupId FROM 'Tabel Pemain' WHERE 'Tabel Pemain'.UserId = "+userId);
   	        rs.next();
-  	        if ((rs.getString("UserId")==userId)){
-  	        	Messages = "Already";
-  	        }
-  	        else{
+  	        if ((rs.getString("UserId")==null)){
   	        	stmt.executeUpdate("INSERT INTO 'Tabel Pemain' (UserId,GroupId) VALUES ('"+userId+"','"+groupId+"')");
   	        	stmt.executeUpdate("INSERT INTO 'ticks' (Condition,GroupId,tick) VALUES (0,'"+groupId+"',now() + INTERVAL '7 HOUR')");  	        	
   	        	Messages = "Insert";
+  	        }
+  	        else{
+  	        	Messages = "Already";
   	        }
   		}catch(SQLException e){
   			Messages = e.getMessage();
@@ -261,7 +261,7 @@ public class KitchenSinkController {
                 } 
                 String userId = event.getSource().getUserId();
                 if (userId != null && groupId != null) {
-                	String check =DB1(userId,groupId,getConnection());
+                	String check =DB1(userId,groupId,connection);
                     if (check=="Insert"){
                     	lineMessagingClient
                             	.getProfile(userId)
@@ -289,7 +289,7 @@ public class KitchenSinkController {
                     	TemplateMessage templateMessage = new TemplateMessage("Teka Teki Indonesia", buttonsTemplate);
                     	this.reply(replyToken, templateMessage);
                 	}else{
-                		this.replyText(replyToken,"Tidak bisa membuat permainan");
+                		this.replyText(replyToken,"Tidak bisa membuat permainan "+check);
                 	}
                 } else {
                     this.replyText(replyToken, "Tolong izinkan Bot mengakses akun");
