@@ -202,10 +202,6 @@ public class KitchenSinkController {
         this.push(To, new TextMessage(message));
     }
 
-    private Timer startTimer() {
-    	   Timer timer =new Timer();
-    	   return timer;
-    }
     
     private String DB1(String userId,String groupId,Connection connection){
     	String Messages="";
@@ -252,7 +248,6 @@ public class KitchenSinkController {
     }
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
-    	Timer t0;
         String text = content.getText();
 		Connection connection = getConnection();
         log.info("Got text message from {}: {}", replyToken, text);
@@ -298,28 +293,6 @@ public class KitchenSinkController {
                 } else {
                     this.replyText(replyToken, "Tolong izinkan Bot mengakses akun");
                 }
-                t0 = startTimer();
-		  		t0.scheduleAtFixedRate( new TimerTask() {
-   	   				@Override
-   	   				public void run() {
-   	   					try{
-   	 		  				Connection connection = KitchenSinkController.getConnection();
-   	 		  	        	Statement stmt = connection.createStatement();
-   	 		  	        	ResultSet rs = stmt.executeQuery("SELECT Condition,GroupId FROM 'ticks' WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.Condition = 0");
-   	 		  	        	while (rs.next()) {   	 
-   	 		  	        		if (rs.getInt("Condition")==0){
-   	 		  	        			KitchenSinkController.this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
-   	 		  	        		}
-   	 		  	        	}
-   	 		  	        	stmt.executeUpdate("UPDATE 'ticks' SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
-   	 		  	        			+ "WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.Condition = 0");
-   	 		  			}catch(SQLException e){
-   	 		  				e.getMessage();
-   	 		  			}catch(URISyntaxException err){
-   	 		  				err.getMessage();
-   	 		  			}
-   	   				}
-   	   			}, 0, 100); // Every second        
         }else if (text.indexOf("/join")>=0){
   			Source source = event.getSource();
   			String groupId="";
@@ -371,10 +344,11 @@ public class KitchenSinkController {
         	try{
 	  	        	Statement stmt = connection.createStatement();
 	  	        	ResultSet rs = stmt.executeQuery("SELECT GroupId FROM 'ticks' WHERE 'ticks'.GroupId = "+groupId);
-	  	        	rs.next();        		
-	  	        	this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
-	  	        	stmt.executeUpdate("UPDATE 'ticks' SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
-	  	        			+ "WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.Condition = 0");
+	  	        	rs.next();
+	  	        	if (rs.getString("GroupId")==null)
+	  	        		this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+	  	        		stmt.executeUpdate("UPDATE 'ticks' SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
+	  	        			+ "WHERE 'ticks'.Condition = 0 AND 'ticks'.GroupId = "+groupId);
 	  			}catch(SQLException e){
 	  				e.getMessage();
 	  			}
@@ -392,6 +366,7 @@ public class KitchenSinkController {
 	  	        	stmt.executeUpdate("DELETE 'tabel Jawaban' WHERE 'tabel Jawaban'.GroupId = "+groupId);	
 	  	        	stmt.executeUpdate("DELETE 'Tabel Pemain' WHERE 'Tabel Pemain'.GroupId = "+groupId);		  	        		
 	  	        	this.pushText(groupId,"Permainan Berhenti");
+	  	        	stmt.close();
 	  		}catch(SQLException e){
 	  				e.getMessage();
 	  		}
@@ -413,6 +388,7 @@ public class KitchenSinkController {
         }else{
                 log.info("Ignore message {}: {}", replyToken, text);
         }
+        connection.close();
     }
     
     private static Connection getConnection() throws URISyntaxException, SQLException {

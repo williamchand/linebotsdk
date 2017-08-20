@@ -25,15 +25,35 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
+import java.lang.Override;
+import com.heroku.sdk.jdbc.DatabaseUrl;
+import java.net.URISyntaxException;
+import java.net.URI;
 import java.sql.*;
-@SpringBootApplication
-public class KitchenSinkApplication {
-    static Path downloadedContentDir;
-    public static void main(String[] args) throws IOException {
-    	TimerTask task = new Runtime();
-    	Timer timer = new Timer();
-    	timer.scheduleAtFixedRate(task, 1000,1000);
-        downloadedContentDir = Files.createTempDirectory("line-bot");
-        SpringApplication.run(KitchenSinkApplication.class, args);
-   }
+import javax.sql.*;
+public class Runtime extends TimerTask
+{
+	@Override
+	public void run() {
+		try{
+				Connection connection = KitchenSinkController.getConnection();
+	        	Statement stmt = connection.createStatement();
+	        	ResultSet rs = stmt.executeQuery("SELECT Condition,GroupId FROM 'ticks' WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES'");
+	        	while (rs.next()) {   	 
+	        		if (rs.getInt("Condition")==0){
+	        			KitchenSinkController.this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+	        			stmt.executeUpdate("UPDATE 'ticks' SET Condition = 1 , tick = now() + INTERVAL '7 HOUR'"
+	    	        			+ "WHERE 'ticks'.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND 'ticks'.GroupId = "+rs.getString("GroupId"));
+	        		}
+	        	}
+	        	
+			}catch(SQLException e){
+				e.getMessage();
+			}catch(URISyntaxException err){
+				err.getMessage();
+		}
+	}
 }
+ 	   					
+	   				
+  
