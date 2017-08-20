@@ -278,6 +278,7 @@ public class KitchenSinkController {
                                     new MessageAction("Join Game",
                                                       "/join")
                             ));
+                    	
                     	TemplateMessage templateMessage = new TemplateMessage("Teka Teki Indonesia", buttonsTemplate);
                     	lineMessagingClient
                             	.getProfile(userId)
@@ -288,11 +289,11 @@ public class KitchenSinkController {
                             		}
                             		this.reply(
                             				replyToken,
-                            				Arrays.asList(new TextMessage( profile.getDisplayName()+" Memulai Permainan", templateMessage )
+                            				Arrays.asList(new TextMessage( profile.getDisplayName()+" Memulai Permainan")
                                         			      )
                                 );
                             });
-
+                    	this.reply(replyToken,templateMessage);
                 	}else{
                 		this.replyText(replyToken,"Tidak bisa membuat permainan "+check);
                 	}
@@ -387,7 +388,7 @@ public class KitchenSinkController {
 	  		}catch(SQLException e){
 	  				e.getMessage();
 	  		}
-  			this.pushText(rs.getString("GroupId"),"Permainan Sudah Dihentikan");
+  			this.pushText(groupId,"Permainan Sudah Dihentikan");
         }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/create : Membuat game\n"+"/join:Memasuki game\n"+
@@ -404,6 +405,7 @@ public class KitchenSinkController {
               this.replyText(replyToken, "ini room 1:1 tidak bisa menggunakan perintah /leave");
           }
         }else if (text.indexOf("/id")>=0){
+        	Source source = event.getSource();
         	String groupId="";
   			if (source instanceof GroupSource) {
   				groupId = ((GroupSource) source).getGroupId();
