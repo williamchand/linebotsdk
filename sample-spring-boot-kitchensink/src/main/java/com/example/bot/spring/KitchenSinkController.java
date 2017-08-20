@@ -208,7 +208,8 @@ public class KitchenSinkController {
     	try{
   	        Statement stmt = connection.createStatement();
   	        ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
-  	        if (!rs.next()){
+  	        boolean cek = rs.next();
+	        if (!cek){
   	        	stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");
 	        	stmt.executeUpdate("INSERT INTO ticks (\"Condition\",\"GroupId\",\"tick\") VALUES (0,'"+groupId+"',now() + INTERVAL '7 HOUR')");  	        	
 	        	Messages = "Insert";
@@ -227,7 +228,8 @@ public class KitchenSinkController {
   	        Statement statement2 = connection.createStatement();
   	        ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
   	        ResultSet rs2 = statement2.executeQuery("SELECT COUNT(\"GroupId\") AS \"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"' GROUP BY \"GroupId\"");
-  	        if (!rs.next()){
+  	        boolean cek = rs.next();
+  	        if (cek){
   	        	Messages = "Cannot join";
   	        }else{
   	        	if (rs.getString("UserId")==userId){
@@ -267,20 +269,6 @@ public class KitchenSinkController {
                 if (userId != null && groupId != null) {
                 	String check =DB1(userId,groupId,connection);
                     if (check=="Insert"){
-                    	lineMessagingClient
-                            	.getProfile(userId)
-                            	.whenComplete((profile, throwable) -> {
-                            		if (throwable != null) {
-                            			this.replyText(replyToken, throwable.getMessage());
-                            			return;
-                            		}
-                            		this.reply(
-                            				replyToken,
-                            				Arrays.asList(new TextMessage( profile.getDisplayName()+" Memulai Permainan" )
-                                        			      )
-                                );
-                            });
-
                     	String imageUrl = createUri("/static/buttons/1040.jpg");
                     	ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
                             imageUrl,
@@ -291,7 +279,20 @@ public class KitchenSinkController {
                                                       "/join")
                             ));
                     	TemplateMessage templateMessage = new TemplateMessage("Teka Teki Indonesia", buttonsTemplate);
-                    	this.reply(replyToken, templateMessage);
+                    	lineMessagingClient
+                            	.getProfile(userId)
+                            	.whenComplete((profile, throwable) -> {
+                            		if (throwable != null) {
+                            			this.replyText(replyToken, throwable.getMessage());
+                            			return;
+                            		}
+                            		this.reply(
+                            				replyToken,
+                            				Arrays.asList(new TextMessage( profile.getDisplayName()+" Memulai Permainan", templateMessage )
+                                        			      )
+                                );
+                            });
+
                 	}else{
                 		this.replyText(replyToken,"Tidak bisa membuat permainan "+check);
                 	}
@@ -362,6 +363,8 @@ public class KitchenSinkController {
 	  	        		}else if (rs.getString("GroupId")!=null){
 	  	        			this.pushText(rs.getString("GroupId"),"Permainan Sudah Dimulai");
 	  	        		}
+	  	        	} else{
+  	        			this.pushText(rs.getString("GroupId"),"Tidak ada Permainan");
 	  	        	}
         		}catch(SQLException e){
 	  				e.getMessage();
@@ -384,6 +387,7 @@ public class KitchenSinkController {
 	  		}catch(SQLException e){
 	  				e.getMessage();
 	  		}
+  			this.pushText(rs.getString("GroupId"),"Permainan Sudah Dihentikan");
         }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/create : Membuat game\n"+"/join:Memasuki game\n"+
@@ -399,7 +403,17 @@ public class KitchenSinkController {
           } else {
               this.replyText(replyToken, "ini room 1:1 tidak bisa menggunakan perintah /leave");
           }
-        }else{
+        }else if (text.indexOf("/id")>=0){
+        	String groupId="";
+  			if (source instanceof GroupSource) {
+  				groupId = ((GroupSource) source).getGroupId();
+  			}else if (source instanceof RoomSource) {
+                groupId = ((RoomSource) source).getRoomId();
+            }else{
+            	groupId = event.getSource().getUserId();
+            }
+  			this.replyText(replyToken, "ID : " + groupId);
+    	}else{
                 log.info("Ignore message {}: {}", replyToken, text);
         }
         connection.close();
