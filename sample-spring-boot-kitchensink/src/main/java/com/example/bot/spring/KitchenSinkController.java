@@ -192,7 +192,7 @@ public class KitchenSinkController {
         }
     }
 
-    public void pushText(@NonNull String To, @NonNull String message) {
+    private void pushText(@NonNull String To, @NonNull String message) {
         if (To.isEmpty()) {
             throw new IllegalArgumentException("replyToken must not be empty");
         }
