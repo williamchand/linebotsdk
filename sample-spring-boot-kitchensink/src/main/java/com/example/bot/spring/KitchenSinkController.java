@@ -389,6 +389,7 @@ public class KitchenSinkController {
         }else{
                 log.info("Ignore message {}: {}", replyToken, text);
         }
+        connection.close();
     }
     
     public static Connection getConnection() throws URISyntaxException, SQLException {
