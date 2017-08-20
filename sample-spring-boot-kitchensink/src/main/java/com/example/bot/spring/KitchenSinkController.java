@@ -260,6 +260,8 @@ public class KitchenSinkController {
 	  				groupId = ((GroupSource) source).getGroupId();
 	  			}else if (source instanceof RoomSource) {
                     groupId = ((RoomSource) source).getRoomId();
+                }else{
+                	groupId = event.getSource().getUserId();
                 } 
                 String userId = event.getSource().getUserId();
                 if (userId != null && groupId != null) {
@@ -303,6 +305,8 @@ public class KitchenSinkController {
   				groupId = ((GroupSource) source).getGroupId();
   			}else if (source instanceof RoomSource) {
                 groupId = ((RoomSource) source).getRoomId();
+            }else{
+            	groupId = event.getSource().getUserId();
             } 
             String userId = event.getSource().getUserId();
             if (userId != null && groupId != null) {
@@ -344,6 +348,8 @@ public class KitchenSinkController {
   				groupId = ((GroupSource) source).getGroupId();
   			}else if (source instanceof RoomSource) {
                 groupId = ((RoomSource) source).getRoomId();
+            }else{
+            	groupId = event.getSource().getUserId();
             } 
         	try{
 	  	        	Statement stmt = connection.createStatement();
@@ -365,13 +371,15 @@ public class KitchenSinkController {
   				groupId = ((GroupSource) source).getGroupId();
   			}else if (source instanceof RoomSource) {
                 groupId = ((RoomSource) source).getRoomId();
-            } 
-        	try{
+            }else{
+            	groupId = event.getSource().getUserId();
+            }
+        	try{	  	        		
+  	        		this.pushText(groupId,"Permainan Berhenti");
 	  	        	Statement stmt = connection.createStatement();
 	  	        	stmt.executeUpdate("DELETE ticks WHERE ticks.\"GroupId\" = '"+groupId+"'");		 
-	  	        	stmt.executeUpdate("DELETE \"tabel Jawaban\" WHERE \"tabel Jawaban\".\"GroupId\" = '"+groupId+"'");	
-	  	        	stmt.executeUpdate("DELETE \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"'");		  	        		
-	  	        	this.pushText(groupId,"Permainan Berhenti");
+	  	        	stmt.executeUpdate("DELETE \"tabel Jawaban\" WHERE \"tabel Jawaban\".\"GroupId\" = '"+groupId+"");	
+	  	        	stmt.executeUpdate("DELETE \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"'");	
 	  		}catch(SQLException e){
 	  				e.getMessage();
 	  		}
