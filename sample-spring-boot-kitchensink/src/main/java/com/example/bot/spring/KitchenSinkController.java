@@ -248,6 +248,7 @@ public class KitchenSinkController {
     }
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
+		Connection connection = getConnection();
         String text = content.getText();
         log.info("Got text message from {}: {}", replyToken, text);
         if (text.indexOf("/create")>=0){
@@ -343,7 +344,6 @@ public class KitchenSinkController {
                 groupId = ((RoomSource) source).getRoomId();
             } 
         	try{
-        			Connection connection = getConnection();
 	  	        	Statement stmt = connection.createStatement();
 	  	        	ResultSet rs = stmt.executeQuery("SELECT GroupId FROM 'ticks' WHERE 'ticks'.GroupId = "+groupId);
 	  	        	rs.next();
@@ -363,7 +363,6 @@ public class KitchenSinkController {
                 groupId = ((RoomSource) source).getRoomId();
             } 
         	try{
-        			Connection connection = getConnection();
 	  	        	Statement stmt = connection.createStatement();
 	  	        	stmt.executeUpdate("DELETE 'ticks' WHERE 'ticks'.GroupId = "+groupId);		 
 	  	        	stmt.executeUpdate("DELETE 'tabel Jawaban' WHERE 'tabel Jawaban'.GroupId = "+groupId);	
