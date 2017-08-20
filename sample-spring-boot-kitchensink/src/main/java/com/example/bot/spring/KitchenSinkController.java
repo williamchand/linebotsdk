@@ -207,7 +207,7 @@ public class KitchenSinkController {
     	String Messages="";
     	try{
   	        Statement stmt = connection.createStatement();
-  	        ResultSet rs = stmt.executeQuery("SELECT UserId,GroupId FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".UserId = "+userId);
+  	        ResultSet rs = stmt.executeQuery("SELECT UserId,GroupId FROM \"Tabel Pemain\" WHERE \"Tabel Pemain.UserId\" = "+userId);
   	        rs.next();
   	        if ((rs.getString("UserId")==null)){
   	        	stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (UserId,GroupId) VALUES ('"+userId+"','"+groupId+"')");
@@ -229,8 +229,8 @@ public class KitchenSinkController {
     	try{
   	        Statement stmt = connection.createStatement();
   	        Statement statement2 = connection.createStatement();
-  	        ResultSet rs = stmt.executeQuery("SELECT UserId,GroupId FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".UserId ="+userId);
-  	        ResultSet rs2 = statement2.executeQuery("SELECT COUNT(GroupId) AS GroupId FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".GroupId = "+groupId+" GROUPBY = GroupId");
+  	        ResultSet rs = stmt.executeQuery("SELECT UserId,GroupId FROM \"Tabel Pemain\" WHERE \"Tabel Pemain.UserId\" ="+userId);
+  	        ResultSet rs2 = statement2.executeQuery("SELECT COUNT(GroupId) AS GroupId FROM \"Tabel Pemain\" WHERE \"Tabel Pemain.GroupId\" = "+groupId+" GROUPBY = GroupId");
   	        rs.next();
   	        if ((rs.getString("UserId")==userId)){
   	        	Messages = "Already";
@@ -374,8 +374,8 @@ public class KitchenSinkController {
         	try{
 	  	        	Statement stmt = connection.createStatement();
 	  	        	stmt.executeUpdate("DELETE ticks WHERE ticks.GroupId = "+groupId);		 
-	  	        	stmt.executeUpdate("DELETE \"tabel Jawaban\" WHERE \"tabel Jawaban\".GroupId = "+groupId);	
-	  	        	stmt.executeUpdate("DELETE \"Tabel Pemain\" WHERE \"Tabel Pemain\".GroupId = "+groupId);		  	        		
+	  	        	stmt.executeUpdate("DELETE \"tabel Jawaban\" WHERE \"tabel Jawaban.GroupId\" = "+groupId);	
+	  	        	stmt.executeUpdate("DELETE \"Tabel Pemain\" WHERE \"Tabel Pemain.GroupId\" = "+groupId);		  	        		
 	  	        	this.pushText(groupId,"Permainan Berhenti");
 	  	        	stmt.close();
 	  		}catch(SQLException e){
