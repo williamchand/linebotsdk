@@ -44,7 +44,7 @@ public class Runtime extends TimerTask
 	        		if (rs.getInt("Condition")==0){
 	        			kitchensink.pushText(rs.getString("GroupId"),"Permainan Dimulai");
 	        			stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
-	    	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND ticks.\"GroupId\" = "+rs.getString("GroupId"));
+	    	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
 	        		}
 	        	}
 	        	rs.close();
