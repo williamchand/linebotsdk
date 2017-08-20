@@ -374,16 +374,15 @@ public class KitchenSinkController {
             }else{
             	groupId = event.getSource().getUserId();
             }
-  			String error="";
         	try{	  	        		
 	  	        	Statement stmt = connection.createStatement();
 	  	        	stmt.executeUpdate("DELETE FROM \"ticks\" WHERE \"ticks\".\"GroupId\" = '"+groupId+"'");		 
 	  	        	stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"tabel Jawaban\".\"GroupId\" = '"+groupId+"");	
 	  	        	stmt.executeUpdate("DELETE FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"'");	
 	  		}catch(SQLException e){
-	  				error=e.getMessage();
+	  				e.getMessage();
 	  		}
-      		this.pushText(groupId,"Permainan Berhenti"+error);
+      		this.pushText(groupId,"Permainan Berhenti");
         }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/create : Membuat game\n"+"/join:Memasuki game\n"+
