@@ -56,10 +56,10 @@ public class Runtime extends TimerTask
 	    	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
 	        		}
 	        	}
+	        	connection.close();
 		}catch(SQLException e){
 				e.getMessage();
 		}
-    	connection.close();
 	}
 }
  	   					
