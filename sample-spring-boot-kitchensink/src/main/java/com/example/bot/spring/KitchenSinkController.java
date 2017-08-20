@@ -355,7 +355,7 @@ public class KitchenSinkController {
 	  	        	Statement stmt = connection.createStatement();
 	  	        	ResultSet rs = stmt.executeQuery("SELECT \"GroupId\",\"Condition\" FROM ticks WHERE ticks.\"GroupId\" = '"+groupId+"'");
 	  	        	if(rs.next()){	
-	  	        		if ((rs.getString("GroupId")!=null) &&(rs.getString("Condition")==0)){
+	  	        		if ((rs.getString("GroupId")!=null) &&(rs.getInt("Condition")==0)){
 	  	        			this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
 	  	        			stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
 	  	        					+ "WHERE ticks.\"Condition\" = 0 AND ticks.\"GroupId\" = '"+groupId+"'");
