@@ -208,14 +208,19 @@ public class KitchenSinkController {
     	try{
   	        Statement stmt = connection.createStatement();
   	        ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
-  	        rs.first();
-  	        if ((rs.getString("UserId")==null)){
+  	        if (!rs.next()){
   	        	stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");
-  	        	stmt.executeUpdate("INSERT INTO ticks (\"Condition\",\"GroupId\",\"tick\") VALUES (0,'"+groupId+"',now() + INTERVAL '7 HOUR')");  	        	
-  	        	Messages = "Insert";
-  	        }
-  	        else{
-  	        	Messages = "Already";
+	        	stmt.executeUpdate("INSERT INTO ticks (\"Condition\",\"GroupId\",\"tick\") VALUES (0,'"+groupId+"',now() + INTERVAL '7 HOUR')");  	        	
+	        	Messages = "Insert";
+  	        }else{
+  	        	if (rs.getString("UserId")==null){
+  	        		stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");
+  	        		stmt.executeUpdate("INSERT INTO ticks (\"Condition\",\"GroupId\",\"tick\") VALUES (0,'"+groupId+"',now() + INTERVAL '7 HOUR')");  	        	
+  	        		Messages = "Insert";
+  	        	}
+  	        	else{
+  	        		Messages = "Already";
+  	        	}
   	        }
   		}catch(SQLException e){
   			Messages = e.getMessage();
@@ -229,18 +234,22 @@ public class KitchenSinkController {
   	        Statement statement2 = connection.createStatement();
   	        ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
   	        ResultSet rs2 = statement2.executeQuery("SELECT COUNT(\"GroupId\") AS \"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"' GROUPBY \"GroupId\"");
-  	        rs.first();
-  	        if ((rs.getString("UserId")==userId)){
+  	        if (!rs.next()){
   	        	Messages = "Already";
   	        }else{
-  	        	rs2.first();
-  	        	if((rs.getInt("GroupId")>0)){
-  	        		stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");	        	
-  	        		Messages = "Insert";
+  	        	if (rs.getString("UserId")==userId){
+  	        		Messages = "Already";
   	        	}else{
-  	        		Messages = "Game Belum";
+  	        		if(rs2.next()){
+  	        			if((rs2.getInt("GroupId")>0)){
+  	        				stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");	        	
+  	        				Messages = "Insert";
+  	        			}else{
+  	        				Messages = "Game Belum";
+  	        			}
+  	        		}
   	        	}
-  	        } 	       
+  	        }
   		}catch(SQLException e){
   			Messages = e.getMessage();
   		}
@@ -346,11 +355,12 @@ public class KitchenSinkController {
         	try{
 	  	        	Statement stmt = connection.createStatement();
 	  	        	ResultSet rs = stmt.executeQuery("SELECT \"GroupId\" FROM ticks WHERE ticks.\"GroupId\" = '"+groupId+"'");
-	  	        	rs.first();
-	  	        	if (rs.getString("GroupId")==null){
-	  	        		this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
-	  	        		stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
-	  	        			+ "WHERE ticks.\"Condition\" = 0 AND ticks.\"GroupId\" = '"+groupId+"'");
+	  	        	if(rs.next()){	
+	  	        		if (rs.getString("GroupId")!=null){
+	  	        			this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+	  	        			stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
+	  	        					+ "WHERE ticks.\"Condition\" = 0 AND ticks.\"GroupId\" = '"+groupId+"'");
+	  	        		}
 	  	        	}
         		}catch(SQLException e){
 	  				e.getMessage();
@@ -369,7 +379,6 @@ public class KitchenSinkController {
 	  	        	stmt.executeUpdate("DELETE \"tabel Jawaban\" WHERE \"tabel Jawaban\".\"GroupId\" = '"+groupId+"'");	
 	  	        	stmt.executeUpdate("DELETE \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"'");		  	        		
 	  	        	this.pushText(groupId,"Permainan Berhenti");
-	  	       
 	  		}catch(SQLException e){
 	  				e.getMessage();
 	  		}
