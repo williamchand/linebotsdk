@@ -226,7 +226,7 @@ public class KitchenSinkController {
   	        Statement stmt = connection.createStatement();
   	        Statement statement2 = connection.createStatement();
   	        ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
-  	        ResultSet rs2 = statement2.executeQuery("SELECT COUNT(\"GroupId\") AS \"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"' GROUPBY \"GroupId\"");
+  	        ResultSet rs2 = statement2.executeQuery("SELECT COUNT(\"GroupId\") AS \"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"' GROUP BY \"GroupId\"");
   	        if (!rs.next()){
   	        	Messages = "Cannot join";
   	        }else{
@@ -353,9 +353,9 @@ public class KitchenSinkController {
             } 
         	try{
 	  	        	Statement stmt = connection.createStatement();
-	  	        	ResultSet rs = stmt.executeQuery("SELECT \"GroupId\" FROM ticks WHERE ticks.\"GroupId\" = '"+groupId+"'");
+	  	        	ResultSet rs = stmt.executeQuery("SELECT \"GroupId\",\"Condition\" FROM ticks WHERE ticks.\"GroupId\" = '"+groupId+"'");
 	  	        	if(rs.next()){	
-	  	        		if (rs.getString("GroupId")!=null){
+	  	        		if ((rs.getString("GroupId")!=null) &&(rs.getString("Condition")==0)){
 	  	        			this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
 	  	        			stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
 	  	        					+ "WHERE ticks.\"Condition\" = 0 AND ticks.\"GroupId\" = '"+groupId+"'");
@@ -377,9 +377,9 @@ public class KitchenSinkController {
   			String error="";
         	try{	  	        		
 	  	        	Statement stmt = connection.createStatement();
-	  	        	stmt.executeUpdate("DELETE ticks WHERE ticks.\"GroupId\" = '"+groupId+"'");		 
-	  	        	stmt.executeUpdate("DELETE \"tabel Jawaban\" WHERE \"tabel Jawaban\".\"GroupId\" = '"+groupId+"");	
-	  	        	stmt.executeUpdate("DELETE \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"'");	
+	  	        	stmt.executeUpdate("DELETE FROM \"ticks\" WHERE \"ticks\".\"GroupId\" = '"+groupId+"'");		 
+	  	        	stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"tabel Jawaban\".\"GroupId\" = '"+groupId+"");	
+	  	        	stmt.executeUpdate("DELETE FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"'");	
 	  		}catch(SQLException e){
 	  				error=e.getMessage();
 	  		}
