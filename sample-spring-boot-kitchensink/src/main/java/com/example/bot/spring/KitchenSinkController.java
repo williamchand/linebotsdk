@@ -217,8 +217,6 @@ public class KitchenSinkController {
   	        else{
   	        	Messages = "Already";
   	        }
-  	        rs.close();
-  	        stmt.close();
   		}catch(SQLException e){
   			Messages = e.getMessage();
   		}
@@ -243,10 +241,6 @@ public class KitchenSinkController {
   	        		Messages = "Game Belum";
   	        	}
   	        } 	       
-  	        rs.close();
-  	        rs2.close();
-  	        stmt.close();
-  	        statement2.close();
   		}catch(SQLException e){
   			Messages = e.getMessage();
   		}
@@ -358,8 +352,6 @@ public class KitchenSinkController {
 	  	        		stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
 	  	        			+ "WHERE ticks.\"Condition\" = 0 AND ticks.\"GroupId\" = '"+groupId+"'");
 	  	        	}
-	  	        	rs.close();
-	  	        	stmt.close();
         		}catch(SQLException e){
 	  				e.getMessage();
 	  			}
@@ -377,7 +369,7 @@ public class KitchenSinkController {
 	  	        	stmt.executeUpdate("DELETE \"tabel Jawaban\" WHERE \"tabel Jawaban\".\"GroupId\" = '"+groupId+"'");	
 	  	        	stmt.executeUpdate("DELETE \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"'");		  	        		
 	  	        	this.pushText(groupId,"Permainan Berhenti");
-	  	        	stmt.close();
+	  	       
 	  		}catch(SQLException e){
 	  				e.getMessage();
 	  		}
