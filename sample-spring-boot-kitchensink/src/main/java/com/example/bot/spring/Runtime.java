@@ -35,8 +35,9 @@ public class Runtime extends TimerTask
 {
 	@Override
 	public void run() {
+
+		Connection connection = KitchenSinkController.getConnection();
 		try{
-				Connection connection = KitchenSinkController.getConnection();
 				KitchenSinkController kitchensink = new KitchenSinkController();
 	        	Statement stmt = connection.createStatement();
 	        	ResultSet rs = stmt.executeQuery("SELECT \"Condition\",\"GroupId\" FROM ticks WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES'");
@@ -47,10 +48,11 @@ public class Runtime extends TimerTask
 	    	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
 	        		}
 	        	}
-	        	connection.close();
 			}catch(SQLException e){
 				e.getMessage();
 			}
+
+    	connection.close();
 	}
 }
  	   					
