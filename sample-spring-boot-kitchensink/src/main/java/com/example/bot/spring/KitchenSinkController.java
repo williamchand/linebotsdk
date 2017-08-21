@@ -207,14 +207,22 @@ public class KitchenSinkController {
     	String Messages="";
     	try{
   	        Statement stmt = connection.createStatement();
-  	        ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
-  	        boolean cek = rs.next();
+ 	        Statement statement2 = connection.createStatement();
+ 	        ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"'");
+ 	        ResultSet rs2 = statement2.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
+ 	        boolean cek = rs.next();
+     		boolean cek2 = rs2.next();
 	        if (!cek){
-  	        	stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");
-	        	stmt.executeUpdate("INSERT INTO ticks (\"Condition\",\"GroupId\",\"tick\") VALUES (0,'"+groupId+"',now() + INTERVAL '7 HOUR')");  	        	
-	        	Messages = "Insert";
+	        	if(!cek2){
+	        		stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");
+		        	stmt.executeUpdate("INSERT INTO ticks (\"Condition\",\"GroupId\",\"tick\") VALUES (0,'"+groupId+"',now() + INTERVAL '7 HOUR')");  	        	
+		        	Messages = "Insert";
+	        	}
+	        	else{
+	        		Messages = "Pemain ada digame lain";
+  	        	}
   	        }else{
-  	        		Messages = "Already";
+  	        	Messages = "Sudah ada game";
   	        }
   		}catch(SQLException e){
   			Messages = e.getMessage();
@@ -230,17 +238,17 @@ public class KitchenSinkController {
   	        ResultSet rs2 = statement2.executeQuery("SELECT COUNT(\"GroupId\") AS \"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"' GROUP BY \"GroupId\"");
   	        boolean cek = rs.next();
      		boolean cek2 = rs2.next();
-  	        if (cek){
-  	        	Messages = "Cannot join";
-  	        }else{
+  	        if (!cek){
   	        	if(cek2){
   	        		if((rs2.getInt("GroupId")>0)){
   	        			stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");	        	
   	        			Messages = "Insert";
   	        		}else{
-  	        			Messages = "Game Belum";
+  	        			Messages = "Game Belum ada";
   	        		}
   	        	}
+  	        }else{
+  	        	Messages = "Sudah terdaftar di grup lain";
   	        }
   		}catch(SQLException e){
   			Messages = e.getMessage();
@@ -266,36 +274,35 @@ public class KitchenSinkController {
                 if (userId != null && groupId != null) {
                 	String check =DB1(userId,groupId,connection);
                     if (check=="Insert"){
-                    	String imageUrl = createUri("/static/buttons/1040.jpg");
-                    	ButtonsTemplate buttonsTemplate = new ButtonsTemplate(
-                            imageUrl,
-                            "Teka Teki Indonesia",
-                            "Mari Bermain permainan teka teki indonesia",
-                            Arrays.asList(
-                                    new MessageAction("Join Game",
-                                                      "/join")
-                            ));
-                    	
-                    	TemplateMessage templateMessage = new TemplateMessage("Teka Teki Indonesia", buttonsTemplate);
                     	lineMessagingClient
-                            	.getProfile(userId)
-                            	.whenComplete((profile, throwable) -> {
-                            		if (throwable != null) {
-                            			this.replyText(replyToken, throwable.getMessage());
-                            			return;
-                            		}
-                            		this.reply(
-                            				replyToken,
-                            				Arrays.asList(new TextMessage( profile.getDisplayName()+" Memulai Permainan")
-                                        			      )
-                                );
-                            });
-                    	this.reply(replyToken,templateMessage);
+                    	.getProfile(userId)
+                    	.whenComplete((profile, throwable) -> {
+                    		if (throwable != null) {
+                    			this.replyText(replyToken, throwable.getMessage());
+                    			return;
+                    		}
+                    		this.reply(
+                    				replyToken,
+                    				Arrays.asList(new TextMessage( profile.getDisplayName()+" Memulai Permainan"),
+                    							  new TemplateMessage("Teka Teki Indonesia", 
+                    									 new ButtonsTemplate(
+                    										createUri("/static/buttons/1040.jpg"),
+                    			                            "Teka Teki Indonesia",
+                    			                            "Mari Bermain permainan teka teki indonesia",
+                    			                            Arrays.asList(
+                    			                                    new MessageAction("Join Game",
+                    			                                                      "/join")
+                    			                            )
+                    			                         )
+                    								 )
+                                			     )
+                            );
+                    	});
                 	}else{
-                		this.replyText(replyToken,"Tidak bisa membuat permainan "+check);
+                		this.replyText(replyToken,"Tidak bisa membuat permainan karena"+check);
                 	}
                 } else {
-                    this.replyText(replyToken, "Tolong izinkan Bot mengakses akun");
+                    this.replyText(replyToken, "Tolong izinkan Bot mengakses akun / update ke LINE versi baru");
                 }
         }else if (text.indexOf("/join")>=0){
   			Source source = event.getSource();
@@ -334,11 +341,13 @@ public class KitchenSinkController {
                 		}
                 		this.reply(
                 				replyToken,
-                				Arrays.asList(new TextMessage( profile.getDisplayName()+" tidak bisa bergabung dalam permainan"+check )
+                				Arrays.asList(new TextMessage( profile.getDisplayName()+" tidak bisa bergabung dalam permainan karena "+check )
                             			      )
                 				);
                 	});
                 }
+            } else {
+                this.replyText(replyToken, "Tolong izinkan Bot mengakses akun / update ke LINE versi baru");
             }
         }else if (text.indexOf("/start")>=0){
         	Source source = event.getSource();
@@ -354,11 +363,11 @@ public class KitchenSinkController {
 	  	        	Statement stmt = connection.createStatement();
 	  	        	ResultSet rs = stmt.executeQuery("SELECT \"GroupId\",\"Condition\" FROM ticks WHERE ticks.\"GroupId\" = '"+groupId+"'");
 	  	        	if(rs.next()){	
-	  	        		if ((rs.getString("GroupId")!=null) &&(rs.getInt("Condition")==0)){
-	  	        			this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+	  	        		if (rs.getInt("Condition")==0){
 	  	        			stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
 	  	        					+ "WHERE ticks.\"Condition\" = 0 AND ticks.\"GroupId\" = '"+groupId+"'");
-	  	        		}else if (rs.getString("GroupId")!=null){
+	  	        			this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+	  	        		}else {
 	  	        			this.pushText(rs.getString("GroupId"),"Permainan Sudah Dimulai");
 	  	        		}
 	  	        	} else{
@@ -411,7 +420,11 @@ public class KitchenSinkController {
             }else{
             	groupId = event.getSource().getUserId();
             }
-  			this.replyText(replyToken, "ID : " + groupId);
+  			if (groupId!=""){
+  				this.replyText(replyToken, "ID : " + groupId);
+  			}else{
+  				this.replyText(replyToken, "Tolong izinkan Bot mengakses akun / update ke LINE versi baru");
+  			}
     	}else{
                 log.info("Ignore message {}: {}", replyToken, text);
         }
@@ -489,13 +502,7 @@ public class KitchenSinkController {
 				Connection connection = getConnection();
         		Statement stmt = connection.createStatement();
         		stmt.executeUpdate("DELETE FROM \"Tabel Pertanyaan\" WHERE \"Tabel Pertanyaan\".\"QuestionId\" = "+questionId);
-        		while (rs.next()) {   	 
-        		if (rs.getInt("Condition")==0){
-        			this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
-        			stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
-    	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
-        			}
-        		}
+        		stmt.executeUpdate("INSERT INTO \"Tabel Pertanyaan\" (\"QuestionId\",\"Question\",\"Answer\") VALUES ('"+questionId+"','"+question+"','"+answer+"')");
         		connection.close();
 			}catch(SQLException e){
 				e.getMessage();
