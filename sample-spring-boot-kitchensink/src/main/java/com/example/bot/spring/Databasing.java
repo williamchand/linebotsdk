@@ -12,7 +12,7 @@ public class Databasing {
         this.answer = answer;
     }
 
-    public String getQuestionId() {
+    public int getQuestionId() {
         return questionId;
     }
 

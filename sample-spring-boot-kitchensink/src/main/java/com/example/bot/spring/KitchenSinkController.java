@@ -497,7 +497,7 @@ public class KitchenSinkController {
     }
     @RequestMapping("/db")
     public Databasing databasing(@RequestParam(value="QuestionId", defaultValue="0") int questionId,@RequestParam(value="Question", defaultValue="") String question,@RequestParam(value="Answer", defaultValue="") String answer) {
-    	if (QuestionId>0){
+    	if (questionId>0){
     		try{
 				Connection connection = getConnection();
         		Statement stmt = connection.createStatement();
