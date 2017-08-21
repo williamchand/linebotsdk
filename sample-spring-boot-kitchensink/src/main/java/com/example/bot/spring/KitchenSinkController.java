@@ -235,7 +235,8 @@ public class KitchenSinkController {
   	        	if (rs.getString("UserId")==userId){
   	        		Messages = "Already";
   	        	}else{
-  	        		if(rs2.next()){
+  	        		 boolean cek2 = rs2.next();
+  	        		if(cek2){
   	        			if((rs2.getInt("GroupId")>0)){
   	        				stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");	        	
   	        				Messages = "Insert";
@@ -388,7 +389,7 @@ public class KitchenSinkController {
 	  		}catch(SQLException e){
 	  				e.getMessage();
 	  		}
-  			this.pushText(groupId,"Permainan Sudah Dihentikan");
+  			this.pushText(groupId,"Permainan Dihentikan");
         }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/create : Membuat game\n"+"/join:Memasuki game\n"+
