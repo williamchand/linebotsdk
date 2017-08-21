@@ -35,7 +35,6 @@ public class Runtime extends TimerTask
 {
 	@Override
 	public void run() {
-
 		Connection connection = KitchenSinkController.getConnection();
 		try{
 				KitchenSinkController kitchensink = new KitchenSinkController();
@@ -50,8 +49,9 @@ public class Runtime extends TimerTask
 	        	}
 			}catch(SQLException e){
 				e.getMessage();
-			}
-
+			}catch(URISyntaxException err){
+				err.getMessage();
+		}
     	connection.close();
 	}
 }
