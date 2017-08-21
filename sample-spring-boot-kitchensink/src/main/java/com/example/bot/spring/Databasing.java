@@ -6,8 +6,8 @@ public class Databasing {
     private final String question;
     private final String answer;
 
-    public Greeting(String id, String content) {
-    	this.questionId=questionId;
+    public Databasing(int questionId, String question, String answer) {
+    	this.questionId = questionId;
         this.question = question;
         this.answer = answer;
     }

@@ -501,8 +501,8 @@ public class KitchenSinkController {
     		try{
 				Connection connection = getConnection();
         		Statement stmt = connection.createStatement();
-        		stmt.executeUpdate("DELETE FROM \"Tabel Pertanyaan\" WHERE \"Tabel Pertanyaan\".\"QuestionId\" = "+questionId);
-        		stmt.executeUpdate("INSERT INTO \"Tabel Pertanyaan\" (\"QuestionId\",\"Question\",\"Answer\") VALUES ('"+questionId+"','"+question+"','"+answer+"')");
+        		stmt.executeUpdate("DELETE FROM \"Tabel Pertanyaan\" WHERE \"Tabel Pertanyaan\".\"Id\" = "+questionId);
+        		stmt.executeUpdate("INSERT INTO \"Tabel Pertanyaan\" (\"Id\",\"Pertanyaan\",\"Jawaban\") VALUES ('"+questionId+"','"+question+"','"+answer+"')");
         		connection.close();
 			}catch(SQLException e){
 				e.getMessage();
