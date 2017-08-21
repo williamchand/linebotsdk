@@ -229,20 +229,16 @@ public class KitchenSinkController {
   	        ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
   	        ResultSet rs2 = statement2.executeQuery("SELECT COUNT(\"GroupId\") AS \"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"' GROUP BY \"GroupId\"");
   	        boolean cek = rs.next();
+     		boolean cek2 = rs2.next();
   	        if (cek){
   	        	Messages = "Cannot join";
   	        }else{
-  	        	if (rs.getString("UserId")==userId){
-  	        		Messages = "Already";
-  	        	}else{
-  	        		 boolean cek2 = rs2.next();
-  	        		if(cek2){
-  	        			if((rs2.getInt("GroupId")>0)){
-  	        				stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");	        	
-  	        				Messages = "Insert";
-  	        			}else{
-  	        				Messages = "Game Belum";
-  	        			}
+  	        	if(cek2){
+  	        		if((rs2.getInt("GroupId")>0)){
+  	        			stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");	        	
+  	        			Messages = "Insert";
+  	        		}else{
+  	        			Messages = "Game Belum";
   	        		}
   	        	}
   	        }
@@ -485,6 +481,29 @@ public class KitchenSinkController {
     public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="message", defaultValue="") String message) {
        this.pushText(User, message);
        return new Greeting(User,message);
+    }
+    @RequestMapping("/db")
+    public Databasing databasing(@RequestParam(value="QuestionId", defaultValue="0") int questionId,@RequestParam(value="Question", defaultValue="") String question,@RequestParam(value="Answer", defaultValue="") String answer) {
+    	if (QuestionId>0){
+    		try{
+				Connection connection = getConnection();
+        		Statement stmt = connection.createStatement();
+        		stmt.executeUpdate("DELETE FROM \"Tabel Pertanyaan\" WHERE \"Tabel Pertanyaan\".\"QuestionId\" = "+questionId);
+        		while (rs.next()) {   	 
+        		if (rs.getInt("Condition")==0){
+        			this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+        			stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
+    	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 57 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
+        			}
+        		}
+        		connection.close();
+			}catch(SQLException e){
+				e.getMessage();
+			}catch(URISyntaxException err){
+				err.getMessage();
+			}
+    	}
+       return new Databasing(questionId,question,answer);
     }
 
 }
