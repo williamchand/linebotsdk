@@ -443,7 +443,67 @@ public class KitchenSinkController {
   				this.replyText(replyToken, "Tolong izinkan Bot mengakses akun / update ke LINE versi baru");
   			}
     	}else{
-                log.info("Ignore message {}: {}", replyToken, text);
+    		Source source = event.getSource();
+        	String groupId="";
+  			if (source instanceof GroupSource) {
+  				groupId = ((GroupSource) source).getGroupId();
+  			}else if (source instanceof RoomSource) {
+                groupId = ((RoomSource) source).getRoomId();
+            }else{
+            	groupId = event.getSource().getUserId();
+            }
+            String userId = event.getSource().getUserId();
+  	       	try{
+  	         	Statement stmt = connection.createStatement();
+  	         	ResultSet rs = stmt.executeQuery("SELECT \"Jawaban\",\"GroupId\" FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
+  	         	        if(rs2.next()){
+  	         	        	if (text==rs.getString("Jawaban")){
+  	    	         	        Statement stmt2 = connection.createStatement();
+  	    	         	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
+  	         	        		if (rs2.next()){	
+  	    	         	        	stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR'"
+  	    	         	        			+ "ticks.\"GroupId\" = '"+groupId+"'");
+  	         	        			stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
+  	         	        			stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
+  	         	        			stmt.executeUpdate("IF EXIST (SELECT * FROM \"Tabel Skor\" WHERE GroupId = '"+groupId+"' AND UserId = '"+ userId + "') THEN"
+  	         	        					+ "UPDATE \"Tabel Skor\" SET \"Skor\" = \"Skor\"+1 WHERE GroupId = '"+groupId+"' AND UserId = '"+ userId + "')"
+  	         	        					+ "ELSE"
+  	         	        					+ "INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") VALUES('"+userId+"','"+groupId+"',1)");
+  	         	        			if (userId != null && groupId != null) { 
+  	         	        				lineMessagingClient
+  	         	        				.getProfile(userId)
+  	         	        				.whenComplete((profile, throwable) -> {
+  	         	                		if (throwable != null) {
+  	         	                			this.replyText(replyToken, throwable.getMessage());
+  	         	                			return;
+  	         	                		}
+  	         	                		this.reply(
+  	         	                				replyToken,
+  	         	                				Arrays.asList(new TextMessage( profile.getDisplayName()+" Berhasil menjawab")
+  	         	                            			      )
+  	         	                				);
+  	         	        				});		
+  	         	        			}
+  	         	        			this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
+  	         	        		}
+  	        					rs2.close();
+  	        					stmt2.close();
+  	         	        	}
+  	        				rs.close();
+  	        				stmt.close();
+  	         	        }
+  	        		}else {
+  	  	        		log.info("Ignore message {}: {}", replyToken, text);
+  	        		}
+  	        	} else{
+  	        		log.info("Ignore message {}: {}", replyToken, text);
+  	        	}
+  	        	rs.close();
+  		        stmt.close();
+    		}catch(SQLException e){
+  				e.getMessage();
+  			}
+            
         }
         connection.close();
     }
@@ -528,7 +588,7 @@ public class KitchenSinkController {
 	         	    	stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR'"
     	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
         				stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+rs.getString("GroupId")+"'");
-        				stmt2.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')");
+        				stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')");
         				this.pushText(rs.getString("GroupId"),""+ rs2.getString("Pertanyaan"));
         				rs2.close();
         				stmt2.close();
