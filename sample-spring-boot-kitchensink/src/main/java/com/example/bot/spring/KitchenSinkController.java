@@ -513,11 +513,11 @@ public class KitchenSinkController {
          	        Statement stmt2 = connection.createStatement();
          	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
          	        if(rs2.next()){
-         	        	stmt2.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')");
+         	        	stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')");
          	        	stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
     	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'"); 
-  	        			this.pushText(rs.getString("GroupId"), rs2.getString("Id"));
   	        			this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+  	        			this.pushText(rs.getString("GroupId"), rs2.getString("Pertanyaan"));
   	        			rs2.close();
         				stmt2.close();
          	        }
