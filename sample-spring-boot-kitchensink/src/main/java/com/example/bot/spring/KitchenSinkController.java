@@ -370,12 +370,12 @@ public class KitchenSinkController {
 	  	        		if (rs.getInt("Condition")==0){
 	  	        			stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
 	  	        					+ "WHERE ticks.\"Condition\" = 0 AND ticks.\"GroupId\" = '"+groupId+"'");
-	  	        			this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+	  	        			this.pushText(groupId,"Permainan Dimulai");
 	  	        		}else {
-	  	        			this.pushText(rs.getString("GroupId"),"Permainan Sudah Dimulai");
+	  	        			this.pushText(groupId,"Permainan Sudah Dimulai");
 	  	        		}
 	  	        	} else{
-  	        			this.pushText(rs.getString("GroupId"),"Tidak ada Permainan");
+  	        			this.pushText(groupId,"Tidak ada Permainan");
 	  	        	}
 	  	        	rs.close();
 	  		        stmt.close();
