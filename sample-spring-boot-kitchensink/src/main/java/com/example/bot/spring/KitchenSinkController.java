@@ -524,7 +524,6 @@ public class KitchenSinkController {
        return new Databasing(questionId,question,answer);
     }
 
-     
     @Scheduled(fixedRate = 1000)
     public void GameStart() {
     	try{
@@ -544,4 +543,5 @@ public class KitchenSinkController {
 		}catch(URISyntaxException err){
 			err.getMessage();
 		}
+    }
 }
