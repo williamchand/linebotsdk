@@ -286,28 +286,26 @@ public class KitchenSinkController {
                     	.getProfile(userId)
                     	.whenComplete((profile, throwable) -> {
                     		if (throwable != null) {
-                    			this.pushText(groupId, throwable.getMessage());
+                    			this.replyText(replyToken, throwable.getMessage());
                     			return;
                     		}
-                    		this.push(
-                    				groupId,
-                    				Arrays.asList(new TextMessage( profile.getDisplayName()+" Memulai Permainan"),
-                    							  new TemplateMessage("Teka Teki Indonesia", 
-                    									 new ButtonsTemplate(
-                    										createUri("/static/buttons/1040.jpg"),
-                    			                            "Teka Teki Indonesia",
-                    			                            "Mari Bermain permainan teka teki indonesia",
-                    			                            Arrays.asList(
-                    			                                    new MessageAction("Join Game",
-                    			                                                      "/join")
-                    			                            )
-                    			                         )
-                    								 )
-                                			     )
+                    		this.replyText(replyToken,profile.getDisplayName()+" Memulai Permainan")
                             );
                     	});
-                	}else{
-                		this.replyText(replyToken,"Tidak bisa membuat permainan karena"+check);
+                    	this.push(groupId,new TemplateMessage("Teka Teki Indonesia", 
+								 	new ButtonsTemplate(
+									createUri("/static/buttons/1040.jpg"),
+		                            "Teka Teki Indonesia",
+		                            "Mari Bermain permainan teka teki indonesia",
+		                            Arrays.asList(
+		                                    new MessageAction("Join Game",
+		                                                      "/join")
+		                            		)
+										 )
+                    			)
+                    			);
+                    }else{
+                		this.replyText(replyToken,"Tidak bisa membuat permainan karena "+check);
                 	}
                 } else {
                     this.replyText(replyToken, "Tolong izinkan Bot mengakses akun / update ke LINE versi baru");
