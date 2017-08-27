@@ -16,7 +16,7 @@ import java.net.URI;
 import java.sql.*;
 import javax.sql.DataSource;
 import java.lang.Override;
-import com.heroku.sdk.jdbc.DatabaseUrl;
+
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
