@@ -185,9 +185,9 @@ subprojects {
                             }
                             developers {
                                 developer {
-                                    id 'tokuhirom'
-                                    name 'Tokuhiro Matsuno'
-                                    email 'tokuhirom@gmail.com'
+                                    id 'williamchans'
+                                    name 'william chandra'
+                                    email 'williamchans57@gmail.com'
                                 }
                             }
                         }
