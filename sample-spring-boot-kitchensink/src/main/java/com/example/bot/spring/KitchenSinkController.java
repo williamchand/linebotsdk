@@ -371,7 +371,7 @@ public class KitchenSinkController {
 	  	        	if(rs.next()){	
 	  	        		if (rs.getInt("Condition")==0){
 	  	         	        Statement stmt2 = connection.createStatement();
-	  	         	        ResultSet rs2 = stmt2.executeQuery("SELECT * FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
+	  	         	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
 	  	         	        if(rs2.next()){
 	  	         	        	stmt2.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
 	  	        				stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
@@ -511,7 +511,7 @@ public class KitchenSinkController {
         	while (rs.next()) {   	 
         		if (rs.getInt("Condition")==0){
          	        Statement stmt2 = connection.createStatement();
-         	        ResultSet rs2 = stmt2.executeQuery("SELECT * FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
+         	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
          	        if(rs2.next()){
          	        	stmt2.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')");
          	        	stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
@@ -523,7 +523,7 @@ public class KitchenSinkController {
          	        }
         		}else if (rs.getInt("Condition")==1){
         			Statement stmt2 = connection.createStatement();
-         	        ResultSet rs2 = stmt2.executeQuery("SELECT * FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
+         	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
 	         	    if(rs2.next()){
 	         	    	stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR'"
     	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
