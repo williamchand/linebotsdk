@@ -290,7 +290,6 @@ public class KitchenSinkController {
                     			return;
                     		}
                     		this.replyText(replyToken,profile.getDisplayName()+" Memulai Permainan");
-                            );
                     	});
                     	this.push(groupId,new TemplateMessage("Teka Teki Indonesia", 
 								 	new ButtonsTemplate(
