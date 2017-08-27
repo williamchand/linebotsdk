@@ -376,8 +376,8 @@ public class KitchenSinkController {
 	  	         	        	stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
 	  	        				stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
 	  	        					+ "WHERE ticks.\"Condition\" = 0 AND ticks.\"GroupId\" = '"+groupId+"'");
-	  	        				this.pushText(groupId,"Permainan Dimulai");
 	  	        				this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
+	  	        				this.pushText(groupId,"Permainan Dimulai");
 	  	        				rs2.close();
 	  	        				stmt2.close();
 	  	         	        }
