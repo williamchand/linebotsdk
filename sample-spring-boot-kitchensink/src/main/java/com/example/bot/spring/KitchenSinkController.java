@@ -372,13 +372,14 @@ public class KitchenSinkController {
 	  	        		if (rs.getInt("Condition")==0){
 	  	         	        Statement stmt2 = connection.createStatement();
 	  	         	        ResultSet rs2 = stmt2.executeQuery("SELECT * FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
-	  	         	        rs2.next();
-	  	        			stmt2.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
-	  	        			stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
+	  	         	        if(rs2.next()){
+	  	         	        	stmt2.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
+	  	        				stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
 	  	        					+ "WHERE ticks.\"Condition\" = 0 AND ticks.\"GroupId\" = '"+groupId+"'");
-	  	        			this.push(groupId,Arrays.asList(new TextMessage("Permainan Dimulai"),new TextMessage(rs2.getString("Pertanyaan"))));
-	  	        			rs2.close();
-	  	        			stmt2.close();
+	  	        				this.push(groupId,Arrays.asList(new TextMessage("Permainan Dimulai"),new TextMessage(rs2.getString("Pertanyaan"))));
+	  	        				rs2.close();
+	  	        				stmt2.close();
+	  	         	        }
 	  	        		}else {
 	  	        			this.pushText(groupId,"Permainan Sudah Dimulai");
 	  	        		}
