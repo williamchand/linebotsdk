@@ -521,10 +521,10 @@ public class KitchenSinkController {
         			stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR'"
     	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
         			stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+rs.getString("GroupId")+"'");
-        			stmt2.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')")
+        			stmt2.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')");
         			this.push(rs.getString("GroupId"), 
     						Arrays.asList(new ImageMessage(createUri("/static/question/"+rs2.getInt("Id")+".jpg")),
-    									  new TextMessage(createUri("/static/question/"+rs2.getInt("Id")+".jpg")
+    									  new TextMessage(createUri("/static/question/"+rs2.getInt("Id")+".jpg")),
     									  new TextMessage(rs2.getString("Pertanyaan"))
     									 )
         			);
