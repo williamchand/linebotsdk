@@ -541,6 +541,7 @@ public class KitchenSinkController {
         	connection.close();
 		}catch(SQLException e){
 			e.getMessage();
+		}catch(URISyntaxException err){
+			err.getMessage();
 		}
-    }
 }
