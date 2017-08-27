@@ -376,7 +376,7 @@ public class KitchenSinkController {
 	  	         	        	stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
 	  	        				stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
 	  	        					+ "WHERE ticks.\"Condition\" = 0 AND ticks.\"GroupId\" = '"+groupId+"'");
-	  	        				this.pushText(groupId,""+ rs2.getString("Id"));
+	  	        				this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
 	  	        				this.pushText(groupId,"Permainan Dimulai");
 	  	        				rs2.close();
 	  	        				stmt2.close();
@@ -516,8 +516,8 @@ public class KitchenSinkController {
          	        	stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')");
          	        	stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
     	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'"); 
-  	        			this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
-  	        			this.pushText(rs.getString("GroupId"),"" + rs2.getString("Pertanyaan"));
+	        			this.pushText(rs.getString("GroupId"),""+ rs2.getString("Pertanyaan"));
+         	        	this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
   	        			rs2.close();
         				stmt2.close();
          	        }
@@ -529,7 +529,7 @@ public class KitchenSinkController {
     	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
         				stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+rs.getString("GroupId")+"'");
         				stmt2.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')");
-        				this.pushText(rs.getString("GroupId"), rs2.getString("Pertanyaan"));
+        				this.pushText(rs.getString("GroupId"),""+ rs2.getString("Pertanyaan"));
         				rs2.close();
         				stmt2.close();
 	         	    }
