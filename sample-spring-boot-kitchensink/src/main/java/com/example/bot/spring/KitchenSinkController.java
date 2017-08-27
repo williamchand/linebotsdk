@@ -286,11 +286,11 @@ public class KitchenSinkController {
                     	.getProfile(userId)
                     	.whenComplete((profile, throwable) -> {
                     		if (throwable != null) {
-                    			this.replyText(replyToken, throwable.getMessage());
+                    			this.pushText(groupId, throwable.getMessage());
                     			return;
                     		}
-                    		this.reply(
-                    				replyToken,
+                    		this.push(
+                    				groupId,
                     				Arrays.asList(new TextMessage( profile.getDisplayName()+" Memulai Permainan"),
                     							  new TemplateMessage("Teka Teki Indonesia", 
                     									 new ButtonsTemplate(
