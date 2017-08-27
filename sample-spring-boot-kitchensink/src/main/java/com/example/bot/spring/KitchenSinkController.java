@@ -373,11 +373,11 @@ public class KitchenSinkController {
 	  	         	        Statement stmt2 = connection.createStatement();
 	  	         	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
 	  	         	        if(rs2.next()){
-	  	         	        	stmt2.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
+	  	         	        	stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
 	  	        				stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
 	  	        					+ "WHERE ticks.\"Condition\" = 0 AND ticks.\"GroupId\" = '"+groupId+"'");
 	  	        				this.pushText(groupId,"Permainan Dimulai");
-	  	        				this.pushText(groupId, rs2.getString("Pertanyaan"));
+	  	        				this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
 	  	        				rs2.close();
 	  	        				stmt2.close();
 	  	         	        }
