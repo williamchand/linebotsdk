@@ -456,7 +456,7 @@ public class KitchenSinkController {
   	       	try{
   	         	Statement stmt = connection.createStatement();
   	         	ResultSet rs = stmt.executeQuery("SELECT \"Jawaban\",\"GroupId\" FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
-  	         	        if(rs2.next()){
+  	         	        if(rs.next()){
   	         	        	if (text==rs.getString("Jawaban")){
   	    	         	        Statement stmt2 = connection.createStatement();
   	    	         	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
@@ -489,18 +489,10 @@ public class KitchenSinkController {
   	        					rs2.close();
   	        					stmt2.close();
   	         	        	}
-  	        				rs.close();
-  	        				stmt.close();
   	         	        }
-  	        		}else {
-  	  	        		log.info("Ignore message {}: {}", replyToken, text);
-  	        		}
-  	        	} else{
-  	        		log.info("Ignore message {}: {}", replyToken, text);
-  	        	}
-  	        	rs.close();
-  		        stmt.close();
-    		}catch(SQLException e){
+	        	rs.close();
+	        	stmt.close();
+  	        }catch(SQLException e){
   				e.getMessage();
   			}
             
