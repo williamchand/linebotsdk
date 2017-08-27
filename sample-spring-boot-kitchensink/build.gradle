@@ -22,4 +22,5 @@ dependencies {
   compile project(':line-bot-spring-boot')       
   compile 'org.springframework:spring-jdbc:4.3.10.RELEASE'
   testCompile('com.jayway.jsonpath:json-path')
+  testCompile("junit:junit")
 }

@@ -16,8 +16,6 @@
 
 package com.example.bot.spring;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,13 +24,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 import java.sql.*;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
 @SpringBootApplication
+@EnableScheduling
 public class KitchenSinkApplication {
     static Path downloadedContentDir;
     public static void main(String[] args) throws IOException {
-    	TimerTask task = new Runtime();
-    	Timer timer = new Timer();
-    	timer.scheduleAtFixedRate(task, 1000,1000);
         downloadedContentDir = Files.createTempDirectory("line-bot");
         SpringApplication.run(KitchenSinkApplication.class, args);
    }

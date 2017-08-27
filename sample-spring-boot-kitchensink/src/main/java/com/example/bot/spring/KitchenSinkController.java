@@ -14,9 +14,7 @@ import java.util.function.Consumer;
 import java.net.URISyntaxException;
 import java.net.URI;
 import java.sql.*;
-import javax.sql.DataSource;;
-import java.util.Timer;
-import java.util.TimerTask;
+import javax.sql.DataSource;
 import java.lang.Override;
 import com.heroku.sdk.jdbc.DatabaseUrl;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
@@ -31,6 +29,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.scheduling.annotation.Scheduled;
 import com.google.common.io.ByteStreams;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.client.MessageContentResponse;
@@ -85,10 +84,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @LineMessageHandler
 @RestController
+@Component
 public class KitchenSinkController {
     @Autowired
     private LineMessagingClient lineMessagingClient;
-    private String TokenCallback1;
+    
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
         TextMessageContent message = event.getMessage();
@@ -224,6 +224,10 @@ public class KitchenSinkController {
   	        }else{
   	        	Messages = "Sudah ada game";
   	        }
+	        rs.close();
+	        stmt.close();
+	        rs2.close();
+	        statement2.close();
   		}catch(SQLException e){
   			Messages = e.getMessage();
   		}
@@ -250,6 +254,10 @@ public class KitchenSinkController {
   	        }else{
   	        	Messages = "Sudah terdaftar di grup lain";
   	        }
+	        rs.close();
+	        stmt.close();
+	        rs2.close();
+	        statement2.close();
   		}catch(SQLException e){
   			Messages = e.getMessage();
   		}
@@ -373,6 +381,8 @@ public class KitchenSinkController {
 	  	        	} else{
   	        			this.pushText(rs.getString("GroupId"),"Tidak ada Permainan");
 	  	        	}
+	  	        	rs.close();
+	  		        stmt.close();
         		}catch(SQLException e){
 	  				e.getMessage();
 	  			}
@@ -390,7 +400,8 @@ public class KitchenSinkController {
 	  	        	Statement stmt = connection.createStatement();
 	  	        	stmt.executeUpdate("DELETE FROM ticks WHERE \"ticks\".\"GroupId\" = '"+groupId+"'");		 
 	  	        	stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"tabel Jawaban\".\"GroupId\" = '"+groupId+"'");	
-	  	        	stmt.executeUpdate("DELETE FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"'");	
+	  	        	stmt.executeUpdate("DELETE FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"'");
+	  		        stmt.close();
 	  		}catch(SQLException e){
 	  				e.getMessage();
 	  		}
@@ -513,4 +524,23 @@ public class KitchenSinkController {
        return new Databasing(questionId,question,answer);
     }
 
+     
+    @Scheduled(fixedRate = 1000)
+    public void GameStart() {
+    	try{
+			Connection connection = getConnection();
+        	Statement stmt = connection.createStatement();
+        	ResultSet rs = stmt.executeQuery("SELECT \"Condition\",\"GroupId\" FROM ticks WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES'");
+        	while (rs.next()) {   	 
+        		if (rs.getInt("Condition")==0){
+        			this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+        			stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
+    	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
+        		}
+        	}
+        	connection.close();
+		}catch(SQLException e){
+			e.getMessage();
+		}
+    }
 }
