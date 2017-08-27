@@ -16,7 +16,6 @@ import java.net.URI;
 import java.sql.*;
 import javax.sql.DataSource;
 import java.lang.Override;
-
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
@@ -207,9 +206,9 @@ public class KitchenSinkController {
     	String Messages="";
     	try{
   	        Statement stmt = connection.createStatement();
- 	        Statement statement2 = connection.createStatement();
+ 	        Statement stmt2 = connection.createStatement();
  	        ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"'");
- 	        ResultSet rs2 = statement2.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
+ 	        ResultSet rs2 = stmt2.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
  	        boolean cek = rs.next();
      		boolean cek2 = rs2.next();
 	        if (!cek){
@@ -227,7 +226,7 @@ public class KitchenSinkController {
 	        rs.close();
 	        stmt.close();
 	        rs2.close();
-	        statement2.close();
+	        stmt2.close();
   		}catch(SQLException e){
   			Messages = e.getMessage();
   		}
@@ -237,9 +236,9 @@ public class KitchenSinkController {
     	String Messages="";
     	try{
   	        Statement stmt = connection.createStatement();
-  	        Statement statement2 = connection.createStatement();
+  	        Statement stmt2 = connection.createStatement();
   	        ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
-  	        ResultSet rs2 = statement2.executeQuery("SELECT COUNT(\"GroupId\") AS \"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"' GROUP BY \"GroupId\"");
+  	        ResultSet rs2 = stmt2.executeQuery("SELECT COUNT(\"GroupId\") AS \"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"' GROUP BY \"GroupId\"");
   	        boolean cek = rs.next();
      		boolean cek2 = rs2.next();
   	        if (!cek){
@@ -257,7 +256,7 @@ public class KitchenSinkController {
 	        rs.close();
 	        stmt.close();
 	        rs2.close();
-	        statement2.close();
+	        stmt2.close();
   		}catch(SQLException e){
   			Messages = e.getMessage();
   		}
@@ -469,35 +468,6 @@ public class KitchenSinkController {
         }
     }
 
-    private static DownloadedContent saveContent(String ext, MessageContentResponse responseBody) {
-        log.info("Got content-type: {}", responseBody);
-
-        DownloadedContent tempFile = createTempFile(ext);
-        try (OutputStream outputStream = Files.newOutputStream(tempFile.path)) {
-            ByteStreams.copy(responseBody.getStream(), outputStream);
-            log.info("Saved {}: {}", ext, tempFile);
-            return tempFile;
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    
-    private static DownloadedContent createTempFile(String ext) {
-        String fileName = LocalDateTime.now().toString() + '-' + UUID.randomUUID().toString() + '.' + ext;
-        Path tempFile = KitchenSinkApplication.downloadedContentDir.resolve(fileName);
-        tempFile.toFile().deleteOnExit();
-        return new DownloadedContent(
-                tempFile,
-                createUri("/downloaded/" + tempFile.getFileName()));
-    }
-
-    @Value
-    public static class DownloadedContent {
-        Path path;
-        String uri;
-    }
-    
     @RequestMapping("/greeting")
     public Greeting greeting(@RequestParam(value="UserId", defaultValue="") String User,@RequestParam(value="message", defaultValue="") String message) {
        this.pushText(User, message);
@@ -529,11 +499,18 @@ public class KitchenSinkController {
         	ResultSet rs = stmt.executeQuery("SELECT \"Condition\",\"GroupId\" FROM ticks WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES'");
         	while (rs.next()) {   	 
         		if (rs.getInt("Condition")==0){
+         	        Statement stmt2 = connection.createStatement();
+         	        ResultSet rs2 = stmt2.executeQuery("");
         			this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
         			stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
     	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
+        			
+        			rs2.close();
+        			stmt2.close();
         		}
         	}
+        	rs.close();
+        	stmt.close();
         	connection.close();
 		}catch(SQLException e){
 			e.getMessage();
