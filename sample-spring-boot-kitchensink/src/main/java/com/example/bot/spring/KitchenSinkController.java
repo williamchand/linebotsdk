@@ -1,4 +1,5 @@
 package com.example.bot.spring;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
@@ -180,7 +181,7 @@ public class KitchenSinkController {
         push(To, Collections.singletonList(message));
     }
 
-   private void push(@NonNull String To, @NonNull List<Message> messages) {
+    private void push(@NonNull String To, @NonNull List<Message> messages) {
         try {
             BotApiResponse apiResponse = lineMessagingClient
                     .pushMessage(new PushMessage(To, messages))
@@ -200,8 +201,7 @@ public class KitchenSinkController {
         }
         this.push(To, new TextMessage(message));
     }
-
-    
+   
     private String DB1(String userId,String groupId,Connection connection){
     	String Messages="";
     	try{
@@ -232,6 +232,7 @@ public class KitchenSinkController {
   		}
     	return Messages;
     }
+    
     private String DB2(String userId,String groupId,Connection connection){
     	String Messages="";
     	try{
@@ -262,6 +263,7 @@ public class KitchenSinkController {
   		}
     	return Messages;
     }
+    
     private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
 		Connection connection = getConnection();
@@ -473,6 +475,7 @@ public class KitchenSinkController {
        this.pushText(User, message);
        return new Greeting(User,message);
     }
+
     @RequestMapping("/db")
     public Databasing databasing(@RequestParam(value="QuestionId", defaultValue="0") int questionId,@RequestParam(value="Question", defaultValue="") String question,@RequestParam(value="Answer", defaultValue="") String answer) {
     	if (questionId>0){
@@ -500,11 +503,31 @@ public class KitchenSinkController {
         	while (rs.next()) {   	 
         		if (rs.getInt("Condition")==0){
          	        Statement stmt2 = connection.createStatement();
-         	        ResultSet rs2 = stmt2.executeQuery("");
-        			this.pushText(rs.getString("GroupId"),"Permainan Dimulai");
+         	        ResultSet rs2 = stmt2.executeQuery("SELECT * FROM \"Tabel Pertanyaan\" ORDER BY RANDOM() LIMIT 1");
+        			stmt2.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')")
         			stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR'"
     	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
-        			
+        			this.push(rs.getString("GroupId"), 
+    						Arrays.asList(new TextMessage("Permainan Dimulai"),
+    									  new ImageMessage(createUri("/static/question/"+rs2.getInt("Id")+".jpg")),
+    									  new TextMessage(rs2.getString("Pertanyaan"))
+    									 )
+    					 );
+        			rs2.close();
+        			stmt2.close();
+        		}else if (rs.getInt("Condition")==1){
+        			Statement stmt2 = connection.createStatement();
+         	        ResultSet rs2 = stmt2.executeQuery("SELECT * FROM \"Tabel Pertanyaan\" ORDER BY RANDOM() LIMIT 1");
+        			stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR'"
+    	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
+        			stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+rs.getString("GroupId")+"'");
+        			stmt2.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')")
+        			this.push(rs.getString("GroupId"), 
+    						Arrays.asList(new ImageMessage(createUri("/static/question/"+rs2.getInt("Id")+".jpg")),
+    									  new TextMessage(createUri("/static/question/"+rs2.getInt("Id")+".jpg")
+    									  new TextMessage(rs2.getString("Pertanyaan"))
+    									 )
+        			);
         			rs2.close();
         			stmt2.close();
         		}
