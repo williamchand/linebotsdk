@@ -438,9 +438,9 @@ public class KitchenSinkController {
 	                		if (throwable != null) {
 	                			return;
 	                		}
-	                		tabelskor += profile.getDisplayName()+" = ";
+	                		tabelskor += profile.getDisplayName();
 	        				});
-	  	        		tabelskor += rs.getInt("Skor")+"\n";	
+	  	        		tabelskor += " = " + rs.getInt("Skor")+"\n";	
 	  	        	}	
 	  	        	rs.close();
 	  	        	stmt.close();
