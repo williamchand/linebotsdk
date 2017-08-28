@@ -387,7 +387,7 @@ public class KitchenSinkController {
   			this.pushText(groupId,"Permainan Dihentikan");
         }else if (text.indexOf("/help")>=0){
         		this.replyText(replyToken,
-        			  "feature /help : bantuan\n"+"/create : Membuat game\n"+"/join:Memasuki game\n"+
+        			  "feature /help : bantuan\n"+"/create : Membuat game\n"+"/join:Memasuki game\n"+"/skor:melihat skor\n"+"/id:melihat id\n"+
 		    		  "/Start:memulai game\n"+"/stop : Menghentikan Game\n"+"/leave:keluar dari grup\n");
 	    }else if (text.indexOf("/skor")>=0){
         	Source source = event.getSource();
