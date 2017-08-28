@@ -437,7 +437,7 @@ public class KitchenSinkController {
             }
   			if (groupId!=""){
 	        	UserProfileResponse profile = lineMessagingClient.getProfile(userId).get();
-  				this.replyText(replyToken, "ID : " + groupId +"\n Nama : "+ profile.getDisplayName());
+  				this.replyText(replyToken, "ID : " + groupId +"\nNama : "+ profile.getDisplayName());
   			}else{
   				this.replyText(replyToken, "Tolong izinkan Bot mengakses akun / update ke LINE versi baru");
   			}
