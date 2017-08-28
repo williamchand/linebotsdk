@@ -80,7 +80,6 @@ import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import sun.java2d.cmm.Profile;
 
 @Slf4j
 @LineMessageHandler
