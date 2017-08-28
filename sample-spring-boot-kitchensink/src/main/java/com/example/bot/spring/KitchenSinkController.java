@@ -464,14 +464,14 @@ public class KitchenSinkController {
   	    	         	        	stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR'"
   	    	         	        			+ "WHERE ticks.\"GroupId\" = '"+groupId+"'");
   	         	        			stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
-  	         	        			stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
-  	         	        			stmt.executeUpdate("IF EXIST (SELECT * FROM \"Tabel Skor\" WHERE GroupId = '"+groupId+"' AND UserId = '"+ userId + "') THEN"
-  	         	        					+ "UPDATE \"Tabel Skor\" SET \"Skor\" = \"Skor\"+1 WHERE GroupId = '"+groupId+"' AND UserId = '"+ userId + "')"
-  	         	        					+ "ELSE"
-  	         	        					+ "INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") VALUES('"+userId+"','"+groupId+"',1)");
   	         	        			UserProfileResponse profile = lineMessagingClient.getProfile(userId).get();
   	         	        			this.pushText(groupId,profile.getDisplayName()+" Berhasil menjawab");
   	  	         	        		this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
+  	         	        			stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
+  	         	        			stmt.executeUpdate("IF EXIST (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "')"
+  	         	        					+ "UPDATE \"Tabel Skor\" SET \"Skor\" = \"Skor\"+1 WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "'"
+  	         	        					+ "ELSE"
+  	         	        					+ "INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") VALUES('"+userId+"','"+groupId+"',1)");
   	         	        		}
   	        					rs2.close();
   	        					stmt2.close();
