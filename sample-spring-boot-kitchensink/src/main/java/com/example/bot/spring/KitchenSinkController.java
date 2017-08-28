@@ -389,7 +389,7 @@ public class KitchenSinkController {
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/create : Membuat game\n"+"/join:Memasuki game\n"+
 		    		  "/Start:memulai game\n"+"/stop : Menghentikan Game\n"+"/leave:keluar dari grup\n");
-	    }else if (text.indexOf("/Skor")>=0){
+	    }else if (text.indexOf("/skor")>=0){
         	Source source = event.getSource();
   			String groupId="";
   			if (source instanceof GroupSource) {
