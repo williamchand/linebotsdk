@@ -456,6 +456,7 @@ public class KitchenSinkController {
         }else if (text.indexOf("/id")>=0){
         	Source source = event.getSource();
         	String groupId="";
+            String userId = event.getSource().getUserId();
   			if (source instanceof GroupSource) {
   				groupId = ((GroupSource) source).getGroupId();
   			}else if (source instanceof RoomSource) {
@@ -464,7 +465,9 @@ public class KitchenSinkController {
             	groupId = event.getSource().getUserId();
             }
   			if (groupId!=""){
-  				this.replyText(replyToken, "ID : " + groupId);
+	        	UserProfileResponse profile = lineMessagingClient.getProfile(userId).get();
+	        	
+  				this.replyText(replyToken, "ID : " + groupId +" "+ profile.getDisplayName());
   			}else{
   				this.replyText(replyToken, "Tolong izinkan Bot mengakses akun / update ke LINE versi baru");
   			}
