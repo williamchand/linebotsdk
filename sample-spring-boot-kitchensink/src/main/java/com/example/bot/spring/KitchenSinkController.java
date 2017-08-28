@@ -407,6 +407,7 @@ public class KitchenSinkController {
 	  	        	stmt.executeUpdate("DELETE FROM ticks WHERE \"ticks\".\"GroupId\" = '"+groupId+"'");		 
 	  	        	stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"tabel Jawaban\".\"GroupId\" = '"+groupId+"'");	
 	  	        	stmt.executeUpdate("DELETE FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"'");
+	  	        	stmt.executeUpdate("DELETE FROM \"Tabel Skor\" WHERE \"Tabel Skor\".\"GroupId\" = '"+groupId+"'");
 	  		        stmt.close();
 	  		}catch(SQLException e){
 	  				e.getMessage();
@@ -416,6 +417,36 @@ public class KitchenSinkController {
         		this.replyText(replyToken,
         			  "feature /help : bantuan\n"+"/create : Membuat game\n"+"/join:Memasuki game\n"+
 		    		  "/Start:memulai game\n"+"/stop : Menghentikan Game\n"+"/leave:keluar dari grup\n");
+	    }else if (text.indexOf("/Skor")>=0){
+        	Source source = event.getSource();
+  			String groupId="";
+  			if (source instanceof GroupSource) {
+  				groupId = ((GroupSource) source).getGroupId();
+  			}else if (source instanceof RoomSource) {
+                groupId = ((RoomSource) source).getRoomId();
+            }else{
+            	groupId = event.getSource().getUserId();
+            }
+        	try{	  	        		
+	  	        	Statement stmt = connection.createStatement();
+	  	        	ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"Skor\" FROM \"Tabel Skor\" WHERE \"Tabel Skor\".\"GroupId\" = '"+groupId+"'");
+	  		        String tabelskor = "Tabel Skor Sebagai Berikut\n"; 
+	  	        	while (rs.next()){
+	  	        		lineMessagingClient
+	        				.getProfile(rs.getString("UserId"))
+	        				.whenComplete((profile, throwable) -> {
+	                		if (throwable != null) {
+	                			return;
+	                		}
+	                		tabelskor += profile.getDisplayName()+" = ";
+	        				});
+	  	        		tabelskor += rs.getInt("Skor")+"\n";	
+	  	        	}	
+	  	        	rs.close();
+	  	        	stmt.close();
+	  		}catch(SQLException e){
+	  				e.getMessage();
+	  		}
 	    }else if (text.indexOf("/leave")>=0){
           Source source = event.getSource();
           if (source instanceof GroupSource) {
