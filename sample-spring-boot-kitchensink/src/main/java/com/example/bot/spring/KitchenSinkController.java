@@ -80,6 +80,7 @@ import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import sun.java2d.cmm.Profile;
 
 @Slf4j
 @LineMessageHandler
@@ -229,6 +230,7 @@ public class KitchenSinkController {
 	        stmt2.close();
   		}catch(SQLException e){
   			Messages = e.getMessage();
+  			
   		}
     	return Messages;
     }
@@ -432,14 +434,8 @@ public class KitchenSinkController {
 	  	        	ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"Skor\" FROM \"Tabel Skor\" WHERE \"Tabel Skor\".\"GroupId\" = '"+groupId+"'");
 	  		        String tabelskor = "Tabel Skor Sebagai Berikut\n"; 
 	  	        	while (rs.next()){
-	  	        		lineMessagingClient
-	        				.getProfile(rs.getString("UserId"))
-	        				.whenComplete((profile, throwable) -> {
-	                		if (throwable != null) {
-	                			return;
-	                		}
-	                		tabelskor += profile.getDisplayName();
-	        				});
+	  	        		UserProfileResponse profile = lineMessagingClient.getProfile(rs.getString("UserId"));
+	                	tabelskor += profile.getDisplayName();
 	  	        		tabelskor += " = " + rs.getInt("Skor")+"\n";	
 	  	        	}	
 	  	        	rs.close();
