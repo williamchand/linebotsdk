@@ -568,7 +568,6 @@ public class KitchenSinkController {
     	        			+ "WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
         				stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+rs.getString("GroupId")+"'");
         				stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')");
-        				this.push(rs.getString("Id"), new ImageMessage(CreateUri("/static/question/1.jpg"),CreateUri("/static/question/1.jpg")));
         				this.pushText(rs.getString("GroupId"),""+ rs2.getString("Pertanyaan"));
         				rs2.close();
         				stmt2.close();
