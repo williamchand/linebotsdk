@@ -466,7 +466,6 @@ public class KitchenSinkController {
             }
   			if (groupId!=""){
 	        	UserProfileResponse profile = lineMessagingClient.getProfile(userId).get();
-	        	
   				this.replyText(replyToken, "ID : " + groupId +" "+ profile.getDisplayName());
   			}else{
   				this.replyText(replyToken, "Tolong izinkan Bot mengakses akun / update ke LINE versi baru");
@@ -498,22 +497,9 @@ public class KitchenSinkController {
   	         	        					+ "UPDATE \"Tabel Skor\" SET \"Skor\" = \"Skor\"+1 WHERE GroupId = '"+groupId+"' AND UserId = '"+ userId + "')"
   	         	        					+ "ELSE"
   	         	        					+ "INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") VALUES('"+userId+"','"+groupId+"',1)");
-  	         	        			if (userId != null && groupId != null) { 
-  	         	        				lineMessagingClient
-  	         	        				.getProfile(userId)
-  	         	        				.whenComplete((profile, throwable) -> {
-  	         	                		if (throwable != null) {
-  	         	                			this.replyText(replyToken, throwable.getMessage());
-  	         	                			return;
-  	         	                		}
-  	         	                		this.reply(
-  	         	                				replyToken,
-  	         	                				Arrays.asList(new TextMessage( profile.getDisplayName()+" Berhasil menjawab")
-  	         	                            			      )
-  	         	                				);
-  	         	        				});		
-  	         	        			}
-  	         	        			this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
+  	         	        			UserProfileResponse profile = lineMessagingClient.getProfile(userId).get();
+  	         	        			this.pushText(groupId,profile.getDisplayName()+" Berhasil menjawab");
+  	  	         	        		this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
   	         	        		}
   	        					rs2.close();
   	        					stmt2.close();
