@@ -284,15 +284,8 @@ public class KitchenSinkController {
                 if (userId != null && groupId != null) {
                 	String check =DB1(userId,groupId,connection);
                     if (check=="Insert"){
-                    	lineMessagingClient
-                    	.getProfile(userId)
-                    	.whenComplete((profile, throwable) -> {
-                    		if (throwable != null) {
-                    			this.replyText(replyToken, throwable.getMessage());
-                    			return;
-                    		}
-                    		this.replyText(replyToken,profile.getDisplayName()+" Memulai Permainan");
-                    	});
+        	        	UserProfileResponse profile = lineMessagingClient.getProfile(userId).get();
+                    	this.pushText(groupId,profile.getDisplayName()+" Memulai Permainan");
                     	this.push(groupId,new TemplateMessage("Teka Teki Indonesia", 
 								 	new ButtonsTemplate(
 									createUri("/static/buttons/1040.jpg"),
@@ -301,12 +294,12 @@ public class KitchenSinkController {
 		                            Arrays.asList(
 		                                    new MessageAction("Join Game",
 		                                                      "/join")
-		                            		)
-										 )
-                    			)
+		                            			)
+								 			)
+                    					)
                     			);
                     }else{
-                		this.replyText(replyToken,"Tidak bisa membuat permainan karena "+check);
+                		this.pushText(groupId,"Tidak bisa membuat permainan karena "+ check);
                 	}
                 } else {
                     this.replyText(replyToken, "Tolong izinkan Bot mengakses akun / update ke LINE versi baru");
@@ -323,35 +316,13 @@ public class KitchenSinkController {
             } 
             String userId = event.getSource().getUserId();
             if (userId != null && groupId != null) {
-            	String check =DB2(userId,groupId,getConnection());
+            	String check = DB2(userId,groupId,getConnection());
                 if (check=="Insert"){
-                	lineMessagingClient
-                        	.getProfile(userId)
-                        	.whenComplete((profile, throwable) -> {
-                        		if (throwable != null) {
-                        			this.replyText(replyToken, throwable.getMessage());
-                        			return;
-                        		}
-                        		this.reply(
-                        				replyToken,
-                        				Arrays.asList(new TextMessage( profile.getDisplayName()+" Bergabung ke Permainan" )
-                                    			      )
-                            );
-                        });
+    	        	UserProfileResponse profile = lineMessagingClient.getProfile(userId).get();
+    	        	this.replyText(replyToken,profile.getDisplayName()+" Bergabung ke Permainan");
                 } else {
-                	lineMessagingClient
-                	.getProfile(userId)
-                	.whenComplete((profile, throwable) -> {
-                		if (throwable != null) {
-                			this.replyText(replyToken, throwable.getMessage());
-                			return;
-                		}
-                		this.reply(
-                				replyToken,
-                				Arrays.asList(new TextMessage( profile.getDisplayName()+" tidak bisa bergabung dalam permainan karena "+check )
-                            			      )
-                				);
-                	});
+    	        	UserProfileResponse profile = lineMessagingClient.getProfile(userId).get();
+    	        	this.replyText(replyToken,profile.getDisplayName()+" tidak bisa bergabung dalam permainan karena "+check);
                 }
             } else {
                 this.replyText(replyToken, "Tolong izinkan Bot mengakses akun / update ke LINE versi baru");
@@ -466,7 +437,7 @@ public class KitchenSinkController {
             }
   			if (groupId!=""){
 	        	UserProfileResponse profile = lineMessagingClient.getProfile(userId).get();
-  				this.replyText(replyToken, "ID : " + groupId +" "+ profile.getDisplayName());
+  				this.replyText(replyToken, "ID : " + groupId +"\n Nama : "+ profile.getDisplayName());
   			}else{
   				this.replyText(replyToken, "Tolong izinkan Bot mengakses akun / update ke LINE versi baru");
   			}
