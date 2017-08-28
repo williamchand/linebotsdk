@@ -434,7 +434,7 @@ public class KitchenSinkController {
 	  	        	ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"Skor\" FROM \"Tabel Skor\" WHERE \"Tabel Skor\".\"GroupId\" = '"+groupId+"'");
 	  		        String tabelskor = "Tabel Skor Sebagai Berikut\n"; 
 	  	        	while (rs.next()){
-	  	        		UserProfileResponse profile = lineMessagingClient.getProfile(rs.getString("UserId"));
+	  	        		UserProfileResponse profile = lineMessagingClient.getProfile(rs.getString("UserId")).get();
 	                	tabelskor += profile.getDisplayName();
 	  	        		tabelskor += " = " + rs.getInt("Skor")+"\n";	
 	  	        	}	
