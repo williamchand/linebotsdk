@@ -547,6 +547,7 @@ public class KitchenSinkController {
 			Connection connection = getConnection();
         	Statement stmt = connection.createStatement();
         	ResultSet rs = stmt.executeQuery("SELECT \"Condition\",\"GroupId\" FROM ticks WHERE tick <= now() + INTERVAL '6 HOUR 59 MINUTES'");
+        	String groupId = rs.getString("GroupId");
         	while (rs.next()) {
         		if (rs.getInt("Condition")==0){
          	        Statement stmt2 = connection.createStatement();
@@ -576,9 +577,10 @@ public class KitchenSinkController {
         	stmt.close();
         	connection.close();
 		}catch(SQLException e){
-			e.getMessage();
+			this.pushText(groupId,""+e.getMessage());
+			
 		}catch(URISyntaxException err){
-			err.getMessage();
+			this.pushText(groupId,""+err.getMessage());
 		}
     }
 }
