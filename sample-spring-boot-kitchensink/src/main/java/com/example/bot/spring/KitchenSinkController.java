@@ -546,8 +546,8 @@ public class KitchenSinkController {
     	try{
 			Connection connection = getConnection();
         	Statement stmt = connection.createStatement();
-        	ResultSet rs = stmt.executeQuery("SELECT \"Condition\",\"GroupId\" FROM ticks WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES'");
-        	while (rs.next()) {   	 
+        	ResultSet rs = stmt.executeQuery("SELECT \"Condition\",\"GroupId\" FROM ticks WHERE tick <= now() + INTERVAL '6 HOUR 59 MINUTES'");
+        	while (rs.next()) {
         		if (rs.getInt("Condition")==0){
          	        Statement stmt2 = connection.createStatement();
          	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
