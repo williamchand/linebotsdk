@@ -454,13 +454,14 @@ public class KitchenSinkController {
             }
             String userId = event.getSource().getUserId();
    			UserProfileResponse profile = lineMessagingClient.getProfile(userId).get();
-   			String DisplayName = profile.getDisplayName();
+   			String DisplayName = ""+profile.getDisplayName();
   	       	try{
   	         	Statement stmt = connection.createStatement();
   	         	ResultSet rs = stmt.executeQuery("SELECT \"Jawaban\",\"GroupId\" FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
   	         	        if(rs.next()){
 	         	        	this.pushText(groupId,DisplayName+" Berhasil menjawab");
-  	         	        	if (text==rs.getString("Jawaban")){    	         	   			
+  	         	        	if (text==rs.getString("Jawaban")){    	         	
+  		         	        	this.pushText(groupId,DisplayName+" Berhasil menjawab");   			
   	    	         	        Statement stmt2 = connection.createStatement();
   		  	         	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
   		  	         	        if (rs2.next()){
