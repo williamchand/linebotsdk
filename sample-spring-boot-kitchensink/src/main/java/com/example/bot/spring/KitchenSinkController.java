@@ -407,7 +407,6 @@ public class KitchenSinkController {
 	  	        		UserProfileResponse profile = lineMessagingClient.getProfile(""+rs.getString("UserId")).get();
 	                	tabelskor += profile.getDisplayName();
 	  	        		tabelskor += " = " + rs.getInt("Skor")+"\n";	
-		        		this.pushText(groupId,"text");	
 	  	        	}
 	        		this.pushText(groupId,tabelskor);	
 	  	        	rs.close();
@@ -470,7 +469,7 @@ public class KitchenSinkController {
   	    	         	   			this.pushText(groupId,DisplayName+" Berhasil menjawab");
   	  	         	        		this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
 	         	        			stmt.executeUpdate("UPDATE \"Tabel Skor\" SET \"Skor\" = (SELECT \"Skor\" FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId +"')+1  WHERE EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "')");	
-  	         	        			stmt.executeUpdate("INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") SELECT '"+userId+"','"+groupId+"',1 FROM \"Tabel Skor\" WHERE NOT EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId +"')");
+  	         	        			stmt.executeUpdate("INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") VALUES('"+userId+"','"+groupId+"',1) WHERE NOT EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId +"')");
   		  	         	        }
   	        					rs2.close();
   	        					stmt2.close();
