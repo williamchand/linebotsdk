@@ -462,7 +462,8 @@ public class KitchenSinkController {
   	         	        	if (text==rs.getString("Jawaban")){
   	    	         	        Statement stmt2 = connection.createStatement();
   		  	         	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
-  	    	         	        if (rs2.next()){
+    	         	   			this.pushText(groupId,DisplayName+" Berhasil menjawab");
+  		  	         	        if (rs2.next()){
   	    	         	   			this.pushText(groupId,DisplayName+" Berhasil menjawab");
   	    	         	        	stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR' WHERE ticks.\"GroupId\" = '"+groupId+"'");
   	         	        			stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
