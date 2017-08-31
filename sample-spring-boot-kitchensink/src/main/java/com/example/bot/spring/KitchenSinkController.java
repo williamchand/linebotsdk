@@ -460,7 +460,7 @@ public class KitchenSinkController {
   	         	ResultSet rs = stmt.executeQuery("SELECT \"Jawaban\",\"GroupId\" FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
   	         	        if(rs.next()){
 	         	        	this.pushText(groupId,DisplayName+" Berhasil menjawab");
-  	         	        	if (text==rs.getString("Jawaban")){    	         	
+  	         	        	if (text.indexOf(rs.getString("Jawaban"))>=0){    	         	
   		         	        	this.pushText(groupId,DisplayName+" Berhasil menjawab");   			
   	    	         	        Statement stmt2 = connection.createStatement();
   		  	         	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
