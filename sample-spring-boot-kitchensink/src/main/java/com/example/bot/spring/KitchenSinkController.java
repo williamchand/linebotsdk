@@ -411,14 +411,12 @@ public class KitchenSinkController {
         	try{	  	        		
 	  	        	Statement stmt = connection.createStatement();
 	  	        	ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"Skor\" FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"'");
-	  		        if (rs.next()){
-	  		        	String tabelskor = "Tabel Skor Sebagai Berikut = \n"; 
-	  		        }
-	  	        	do{
+	  		        String tabelskor = "Tabel Skor Sebagai Berikut = \n"; 
+	  	        	while (rs.next()){
 	  	        		UserProfileResponse profile = lineMessagingClient.getProfile(""+rs.getString("UserId")).get();
 	                	tabelskor += profile.getDisplayName();
 	  	        		tabelskor += " = " + rs.getInt("Skor")+"\n";	
-	  	        	}while (rs.next());
+	  	        	}
 	        		this.pushText(groupId,tabelskor);
 	  	        	rs.close();
 	  	        	stmt.close();
