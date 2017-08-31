@@ -468,10 +468,9 @@ public class KitchenSinkController {
   	         	        			stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");	
   	    	         	   			this.pushText(groupId,DisplayName+" Berhasil menjawab");
   	  	         	        		this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
-	         	        			stmt.executeUpdate("UPDATE \"Tabel Skor\" SET \"Skor\" = \"Skor\"+1 WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "' EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "')");	
+	         	        			stmt.executeUpdate("UPDATE \"Tabel Skor\" SET \"Skor\" = (SELECT \"Skor\" FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId +"')+1  WHERE EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "')");	
   	    	         	   			this.pushText(groupId,DisplayName+" Berhasil menjawab");
 	         	        			stmt.executeUpdate("INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") SELECT ('"+userId+"','"+groupId+"',1) FROM \"Tabel Skor\" WHERE NOT EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "')");
-
   		  	         	        }
   	        					rs2.close();
   	        					stmt2.close();
