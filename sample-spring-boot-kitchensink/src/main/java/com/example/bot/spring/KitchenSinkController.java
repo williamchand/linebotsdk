@@ -466,24 +466,30 @@ public class KitchenSinkController {
    			String DisplayName = ""+profile.getDisplayName();
   	       	try{
   	         	Statement stmt = connection.createStatement();
-  	         	ResultSet rs = stmt.executeQuery("SELECT \"Jawaban\",\"GroupId\" FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
-  	         	        if(rs.next()){
-	         	        	if (text.indexOf(rs.getString("Jawaban"))>=0){  			
-  	    	         	        Statement stmt2 = connection.createStatement();
-  		  	         	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
-  		  	         	        if (rs2.next()){
-  	    	         	        	stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR' WHERE ticks.\"GroupId\" = '"+groupId+"'");
-  	         	        			stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");  	    
-  	         	        			stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");	
-  	    	         	   			this.pushText(groupId,DisplayName+" Berhasil menjawab");
-  	  	         	        		this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
-	         	        			stmt.executeUpdate("UPDATE \"Tabel Skor\" SET \"Skor\" = (SELECT \"Skor\" FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId +"')+1  WHERE EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "')");	
-  	         	        			stmt.executeUpdate("INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") SELECT '"+userId+"','"+groupId+"',1 WHERE NOT EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId +"')");
-  		  	         	        }
-  	        					rs2.close();
-  	        					stmt2.close();
-  	         	        	}
-  	         	        }
+  	         	ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"UserId\" ='"+userId+"' AND \"GroupId\" = '"+groupId+"'");
+  	         	if(rs.next()){
+  	         		Statement stmt2 = connection.createStatement();
+  	         		ResultSet rs2 = stmt2.executeQuery("SELECT \"Jawaban\",\"GroupId\" FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
+  	         	    if(rs2.next()){
+	         	       	if (text.indexOf(rs2.getString("Jawaban"))>=0){  			
+  	    	                Statement stmt3 = connection.createStatement();
+  		  	                ResultSet rs3 = stmt3.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
+  		  	                if (rs3.next()){
+  	    	                	stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR' WHERE ticks.\"GroupId\" = '"+groupId+"'");
+  	         	       			stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");  	    
+  	         	       			stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs3.getString("Jawaban")+"','"+groupId+"')");	
+  	    	           			this.pushText(groupId,DisplayName+" Berhasil menjawab");
+  	  	         	       		this.pushText(groupId,""+ rs3.getString("Pertanyaan"));
+	         	       			stmt.executeUpdate("UPDATE \"Tabel Skor\" SET \"Skor\" = (SELECT \"Skor\" FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId +"')+1  WHERE EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "')");	
+  	         	       			stmt.executeUpdate("INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") SELECT '"+userId+"','"+groupId+"',1 WHERE NOT EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId +"')");
+  		  	                }
+  	        				rs3.close();
+  	        				stmt3.close();
+  	         	       	}
+  	         	   }
+  	         	   rs2.close();
+  	         	   stmt2.close();
+  	       		}
 	        	rs.close();
 	        	stmt.close();
   	        }catch(SQLException e){
