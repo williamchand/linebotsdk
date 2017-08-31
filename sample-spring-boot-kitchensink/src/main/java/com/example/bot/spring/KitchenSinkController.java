@@ -483,6 +483,7 @@ public class KitchenSinkController {
   				
   	        	this.pushText(groupId,e.getMessage());
   			}
+  	       	this.pushText(groupId, "test");
         }
         connection.close();
     }
