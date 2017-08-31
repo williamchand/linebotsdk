@@ -459,8 +459,7 @@ public class KitchenSinkController {
   	         	Statement stmt = connection.createStatement();
   	         	ResultSet rs = stmt.executeQuery("SELECT \"Jawaban\",\"GroupId\" FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
   	         	        if(rs.next()){
-	         	        	this.pushText(groupId,DisplayName+" Berhasil menjawab");
-  	         	        	if (text.indexOf(rs.getString("Jawaban"))>=0){    	         	
+	         	        	if (text.indexOf(rs.getString("Jawaban"))>=0){    	         	
   		         	        	this.pushText(groupId,DisplayName+" Berhasil menjawab");   			
   	    	         	        Statement stmt2 = connection.createStatement();
   		  	         	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
@@ -470,10 +469,11 @@ public class KitchenSinkController {
   	         	        			stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
   	  	         	        		this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
   	         	        			stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
-  	         	        			stmt.executeUpdate("IF EXIST (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "') "
+  	         	        			stmt.executeUpdate("IF EXIST (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "') THEN"
   	         	        					+ "UPDATE \"Tabel Skor\" SET \"Skor\" = \"Skor\"+1 WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "' "
   	         	        					+ "ELSE "
-  	         	        					+ "INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") VALUES('"+userId+"','"+groupId+"',1)");
+  	         	        					+ "INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") VALUES('"+userId+"','"+groupId+"',1) "
+  	         	        					+ "END IF;");
   	         	        		}
   	        					rs2.close();
   	        					stmt2.close();
