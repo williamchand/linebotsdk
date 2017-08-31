@@ -457,6 +457,7 @@ public class KitchenSinkController {
   	         	Statement stmt = connection.createStatement();
   	         	ResultSet rs = stmt.executeQuery("SELECT \"Jawaban\",\"GroupId\" FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
   	         	        if(rs.next()){
+  	         	        	this.push(groupId,""+rs.getString("Jawaban"));
   	         	        	if (text==rs.getString("Jawaban")){
   	    	         	        Statement stmt2 = connection.createStatement();
   	    	         	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
@@ -483,7 +484,6 @@ public class KitchenSinkController {
   				
   	        	this.pushText(groupId,e.getMessage());
   			}
-  	       	this.pushText(groupId, "test");
         }
         connection.close();
     }
