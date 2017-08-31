@@ -457,16 +457,14 @@ public class KitchenSinkController {
   	         	Statement stmt = connection.createStatement();
   	         	ResultSet rs = stmt.executeQuery("SELECT \"Jawaban\",\"GroupId\" FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
   	         	        if(rs.next()){
-  	         	        	this.pushText(groupId,""+rs.getString("Jawaban")+ "\n"+text);
   	         	        	if (text==rs.getString("Jawaban")){
   	    	         	        Statement stmt2 = connection.createStatement();
   	    	         	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
-  	         	        		if (rs2.next()){	
-  	    	         	        	stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR' "
-  	    	         	        			+ "WHERE ticks.\"GroupId\" = '"+groupId+"'");
+  	    	         	        if (rs2.next()){	
+  	         	        			this.pushText(groupId,profile.getDisplayName()+" Berhasil menjawab");
+  	    	         	        	stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR' WHERE ticks.\"GroupId\" = '"+groupId+"'");
   	         	        			stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
   	         	        			UserProfileResponse profile = lineMessagingClient.getProfile(userId).get();
-  	         	        			this.pushText(groupId,profile.getDisplayName()+" Berhasil menjawab");
   	  	         	        		this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
   	         	        			stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
   	         	        			stmt.executeUpdate("IF EXIST (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "') "
