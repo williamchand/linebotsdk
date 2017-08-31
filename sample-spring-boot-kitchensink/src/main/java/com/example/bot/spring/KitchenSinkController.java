@@ -553,10 +553,10 @@ public class KitchenSinkController {
          	        Statement stmt2 = connection.createStatement();
          	        ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
          	        if(rs2.next()){
-         	        	stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')");
-         	        	stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR' WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'"); 
-	        			this.pushText(""+rs.getString("GroupId"),""+ rs2.getString("Pertanyaan"));
-         	        	this.pushText(""+rs.getString("GroupId"),"Permainan Dimulai");
+         	        	stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
+         	        	stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR' WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+groupId+"'"); 
+	        			this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
+         	        	this.pushText(groupId,"Permainan Dimulai");
   	        			rs2.close();
         				stmt2.close();
          	        }
@@ -564,10 +564,10 @@ public class KitchenSinkController {
         			Statement stmt2 = connection.createStatement();	  	         	       
         			ResultSet rs2 = stmt2.executeQuery("SELECT \"Id\", \"Pertanyaan\" , \"Jawaban\" FROM \"Tabel Pertanyaan\" ORDER BY random() LIMIT 1");
 	         	    if(rs2.next()){
-	         	    	stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR' WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+rs.getString("GroupId")+"'");
-        				stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+rs.getString("GroupId")+"'");
-        				stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+rs.getString("GroupId")+"')");
-        				this.pushText(""+rs.getString("GroupId"),""+ rs2.getString("Pertanyaan"));
+	         	    	stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR' WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+groupId+"'");
+        				stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
+        				stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
+        				this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
         				rs2.close();
         				stmt2.close();
 	         	    }
