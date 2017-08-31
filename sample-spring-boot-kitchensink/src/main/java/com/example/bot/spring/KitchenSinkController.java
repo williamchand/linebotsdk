@@ -481,8 +481,7 @@ public class KitchenSinkController {
 	        	rs.close();
 	        	stmt.close();
   	        }catch(SQLException e){
-  				
-  	        	this.pushText(groupId,e.getMessage());
+  	        	this.pushText(groupId,""+e.getMessage());
   			}
         }
         connection.close();
