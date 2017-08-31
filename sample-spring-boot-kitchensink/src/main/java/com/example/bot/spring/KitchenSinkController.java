@@ -401,10 +401,10 @@ public class KitchenSinkController {
             }
         	try{	  	        		
 	  	        	Statement stmt = connection.createStatement();
-	  	        	ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"Skor\" FROM \"Tabel Skor\" WHERE \"Tabel Skor\".\"GroupId\" = '"+groupId+"'");
+	  	        	ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"Skor\" FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"'");
 	  		        String tabelskor = "Tabel Skor Sebagai Berikut = \n"; 
 	  	        	while (rs.next()){
-	  	        		UserProfileResponse profile = lineMessagingClient.getProfile(rs.getString("UserId")).get();
+	  	        		UserProfileResponse profile = lineMessagingClient.getProfile(""+rs.getString("UserId")).get();
 	                	tabelskor += profile.getDisplayName();
 	  	        		tabelskor += " = " + rs.getInt("Skor")+"\n";	
 	  	        	}
@@ -469,8 +469,7 @@ public class KitchenSinkController {
   	    	         	   			this.pushText(groupId,DisplayName+" Berhasil menjawab");
   	  	         	        		this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
 	         	        			stmt.executeUpdate("UPDATE \"Tabel Skor\" SET \"Skor\" = (SELECT \"Skor\" FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId +"')+1  WHERE EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "')");	
-  	    	         	   			this.pushText(groupId,DisplayName+" Berhasil menjawab");
-	         	        			stmt.executeUpdate("INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") SELECT '"+userId+"','"+groupId+"',1 FROM \"Tabel Skor\" WHERE NOT EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId +"')");
+  	         	        			stmt.executeUpdate("INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") SELECT '"+userId+"','"+groupId+"',1 FROM \"Tabel Skor\" WHERE NOT EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId +"')");
   		  	         	        }
   	        					rs2.close();
   	        					stmt2.close();
