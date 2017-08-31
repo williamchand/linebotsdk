@@ -407,8 +407,9 @@ public class KitchenSinkController {
 	  	        		UserProfileResponse profile = lineMessagingClient.getProfile(""+rs.getString("UserId")).get();
 	                	tabelskor += profile.getDisplayName();
 	  	        		tabelskor += " = " + rs.getInt("Skor")+"\n";	
+		        		this.pushText(groupId,"text");	
 	  	        	}
-	        		this.replyText(replyToken,tabelskor);	
+	        		this.pushText(groupId,tabelskor);	
 	  	        	rs.close();
 	  	        	stmt.close();
 	  		}catch(SQLException e){
