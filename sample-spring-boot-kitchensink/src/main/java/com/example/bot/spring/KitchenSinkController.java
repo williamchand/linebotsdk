@@ -555,8 +555,8 @@ public class KitchenSinkController {
          	        if(rs2.next()){
          	        	stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
          	        	stmt.executeUpdate("UPDATE ticks SET \"Condition\" = 1 , tick = now() + INTERVAL '7 HOUR' WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+groupId+"'"); 
-	        			this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
          	        	this.pushText(groupId,"Permainan Dimulai");
+         	        	this.pushText(groupId,rs2.getString("Pertanyaan"));
   	        			rs2.close();
         				stmt2.close();
          	        }
@@ -567,7 +567,8 @@ public class KitchenSinkController {
 	         	    	stmt.executeUpdate("UPDATE ticks SET tick = now() + INTERVAL '7 HOUR' WHERE ticks.tick <= now() + INTERVAL '6 HOUR 59 MINUTES' AND ticks.\"GroupId\" = '"+groupId+"'");
         				stmt.executeUpdate("DELETE FROM \"tabel Jawaban\" WHERE \"GroupId\" = '"+groupId+"'");
         				stmt.executeUpdate("INSERT INTO \"tabel Jawaban\" (\"Jawaban\",\"GroupId\") VALUES ('"+rs2.getString("Jawaban")+"','"+groupId+"')");
-        				this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
+        				this.pushText(groupId, "");
+        				this.pushText(groupId,rs2.getString("Pertanyaan"));
         				rs2.close();
         				stmt2.close();
 	         	    }
