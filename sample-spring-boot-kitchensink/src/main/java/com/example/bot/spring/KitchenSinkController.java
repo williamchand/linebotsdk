@@ -469,7 +469,7 @@ public class KitchenSinkController {
   	    	         	   			this.pushText(groupId,DisplayName+" Berhasil menjawab");
   	  	         	        		this.pushText(groupId,""+ rs2.getString("Pertanyaan"));
 	         	        			stmt.executeUpdate("UPDATE \"Tabel Skor\" SET \"Skor\" = \"Skor\"+1 WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "' EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "')");
-	         	        			stmt.executeUpdate("INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") VALUES('"+userId+"','"+groupId+"',1) NOT EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "')");
+	         	        			stmt.executeUpdate("INSERT INTO \"Tabel Skor\" (\"UserId\",\"GroupId\",\"Skor\") VALUES('"+userId+"','"+groupId+"',1) WHERE NOT EXISTS (SELECT * FROM \"Tabel Skor\" WHERE \"GroupId\" = '"+groupId+"' AND \"UserId\" = '"+ userId + "')");
 
   		  	         	        }
   	        					rs2.close();
