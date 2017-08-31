@@ -218,7 +218,7 @@ public class KitchenSinkController {
 		        	Messages = "Insert";
 	        	}
 	        	else{
-	        		Messages = "Pemain ada digame lain";
+	        		Messages = "Pemain ada di game lain";
   	        	}
   	        }else{
   	        	Messages = "Sudah ada game";
@@ -239,27 +239,36 @@ public class KitchenSinkController {
     	try{
   	        Statement stmt = connection.createStatement();
   	        Statement stmt2 = connection.createStatement();
-  	        ResultSet rs = stmt.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
-  	        ResultSet rs2 = stmt2.executeQuery("SELECT COUNT(\"GroupId\") AS \"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"' GROUP BY \"GroupId\"");
+  	        Statement stmt3 = connection.createStatement();
+  	        ResultSet rs = stmt.executeQuery("SELECT \"Condition\" FROM ticks WHERE \"Condition\" = 0 AND \"GroupId\" = '"+groupId+"'");
+  	        ResultSet rs2 = stmt2.executeQuery("SELECT \"UserId\",\"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"UserId\" = '"+userId+"'");
+  	        ResultSet rs3 = stmt3.executeQuery("SELECT COUNT(\"GroupId\") AS \"GroupId\" FROM \"Tabel Pemain\" WHERE \"Tabel Pemain\".\"GroupId\" = '"+groupId+"' GROUP BY \"GroupId\"");
   	        boolean cek = rs.next();
      		boolean cek2 = rs2.next();
-  	        if (!cek){
-  	        	if(cek2){
-  	        		if((rs2.getInt("GroupId")>0)){
-  	        			stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");	        	
-  	        			Messages = "Insert";
-  	        		}else{
-  	        			Messages = "Game Belum ada";
-  	        		}
-  	        	}
-  	        }else{
-  	        	Messages = "Sudah terdaftar di grup lain";
-  	        }
+     		boolean cek3 = rs3.next();
+     		if(cek){
+     			if (!cek2){
+     				if(cek3){
+     					if((rs2.getInt("GroupId")>0)){
+     						stmt.executeUpdate("INSERT INTO \"Tabel Pemain\" (\"UserId\",\"GroupId\") VALUES ('"+userId+"','"+groupId+"')");	        	
+     						Messages = "Insert";
+     					}else{
+     						Messages = "Game Belum ada";
+     					}
+     				}
+     			}else{
+     				Messages = "Sudah terdaftar di grup lain";
+     			}
+    		}else {
+					Messages = "Game Sudah Dimulai";
+    		}
 	        rs.close();
 	        stmt.close();
 	        rs2.close();
 	        stmt2.close();
-  		}catch(SQLException e){
+	        rs3.close();
+	        stmt3.close();
+    	}catch(SQLException e){
   			Messages = e.getMessage();
   		}
     	return Messages;
